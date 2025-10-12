@@ -1,94 +1,95 @@
-# 10x Astro Starter
+# 10xCards
 
-A modern, opinionated starter template for building fast, accessible, and AI-friendly web applications.
+A web application for rapid generation and management of educational flashcards, leveraging AI and manual workflows to streamline spaced-repetition learning.
+
+## Table of Contents
+
+1. [Tech Stack](#tech-stack)  
+2. [Getting Started Locally](#getting-started-locally)  
+3. [Available Scripts](#available-scripts)  
+4. [Project Scope](#project-scope)  
+5. [Project Status](#project-status)  
+6. [License](#license)  
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v5.5.5 - Modern web framework for building fast, content-focused websites
-- [React](https://react.dev/) v19.0.0 - UI library for building interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4.0.17 - Utility-first CSS framework
+- **Frontend:** Astro 5, React 19, TypeScript 5, Tailwind CSS 4, Shadcn/ui  
+- **Backend / Database:** Supabase Auth & Postgres (serverless, row-level security)  
+- **AI Integration:** Openrouter.ai (LLM API)  
+- **CI/CD & Hosting:** GitHub Actions, DigitalOcean (Droplet / App Platform)  
+- **Runtime:** Node.js 22.14.0 (see `.nvmrc`)
 
-## Prerequisites
+## Getting Started Locally
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+### Prerequisites
 
-## Getting Started
+- Node.js v22.14.0 (use `nvm use` to switch)  
+- npm ≥ 8  
+- Supabase project (Auth & Database)  
+- Openrouter.ai API key  
 
-1. Clone the repository:
+### Setup
 
-```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
-```
+1. **Clone the repository**  
+   ```bash
+   git clone https://github.com/your-org/10xCards.git
+   cd 10xCards
+   ```
 
-2. Install dependencies:
+2. **Install dependencies**  
+   ```bash
+   npm install
+   ```
 
-```bash
-npm install
-```
+3. **Configure environment variables**  
+   Create a `.env` file at the project root with the following entries:  
+   ```env
+   SUPABASE_URL=your_supabase_url
+   SUPABASE_ANON_KEY=your_supabase_anon_key
+   OPENROUTER_API_KEY=your_openrouter_api_key
+   ```
 
-3. Run the development server:
-
-```bash
-npm run dev
-```
-
-4. Build for production:
-
-```bash
-npm run build
-```
+4. **Run in development mode**  
+   ```bash
+   npm run dev
+   ```
+   The app will be available at `http://localhost:3000`.
 
 ## Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
+- `npm run dev` — Start the Astro development server  
+- `npm run build` — Build the production site  
+- `npm run preview` — Preview the production build  
+- `npm run astro` — Run the Astro CLI  
+- `npm run lint` — Run ESLint on all source files  
+- `npm run lint:fix` — Auto-fix linting issues  
+- `npm run format` — Format all files with Prettier  
 
-## Project Structure
+## Project Scope
 
-```md
-.
-├── src/
-│   ├── layouts/    # Astro layouts
-│   ├── pages/      # Astro pages
-│   │   └── api/    # API endpoints
-│   ├── components/ # UI components (Astro & React)
-│   └── assets/     # Static assets
-├── public/         # Public assets
-```
+### In Scope (MVP)
 
-## AI Development Support
+- Email/password authentication with Supabase Auth  
+- Password reset via one-time links  
+- AI-powered flashcard generation from pasted text (1,000–10,000 characters)  
+- Manual creation and editing of individual flashcards (front/back length validation)  
+- Persistent CRUD interface for flashcards with text search (front/back)  
+- Event logging (create/edit, source, sessions, timestamps)  
+- Spaced-repetition session view using external algorithm  
 
-This project is configured with AI development tools to enhance the development experience, providing guidelines for:
+### Out of Scope (for MVP)
 
-- Project structure
-- Coding practices
-- Frontend development
-- Styling with Tailwind
-- Accessibility best practices
-- Astro and React guidelines
+- Custom spaced-repetition algorithms (Anki, SuperMemo)  
+- Importing flashcards from PDF, DOCX, or other formats  
+- Sharing or collaborating on flashcard sets  
+- Mobile applications  
 
-### Cursor IDE
+## Project Status
 
-The project includes AI rules in `.cursor/rules/` directory that help Cursor IDE understand the project structure and provide better code suggestions.
-
-### GitHub Copilot
-
-AI instructions for GitHub Copilot are available in `.github/copilot-instructions.md`
-
-### Windsurf
-
-The `.windsurfrules` file contains AI configuration for Windsurf.
-
-## Contributing
-
-Please follow the AI guidelines and coding practices defined in the AI configuration files when contributing to this project.
+- **Version:** 0.0.1 (initial MVP)  
+- Active development: core authentication, AI integration, and CRUD features implemented.  
+- Next milestones: batch review workflows, session analytics, polishing UI/UX.
 
 ## License
 
-MIT
+This project is released under the [MIT License](LICENSE).
