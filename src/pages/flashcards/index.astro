@@ -1,0 +1,16 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import MyFlashcards from "@/components/flashcards/MyFlashcards";
+
+export const prerender = false;
+
+// TODO: Add authentication guard when auth is implemented
+// const session = await Astro.locals.supabase.auth.getSession();
+// if (!session.data.session) {
+//   return Astro.redirect("/");
+// }
+---
+
+<Layout title="My Flashcards - 10xCards">
+  <MyFlashcards client:load />
+</Layout>

@@ -1,132 +1,126 @@
-# Dokument wymagań produktu (PRD) - 10xCards
+# Product Requirements Document (PRD) – 10xCards
 
-## 1. Przegląd produktu
+## 1. Product Overview
 
-10xCards to webowa aplikacja do szybkiego generowania i zarządzania fiszkami edukacyjnymi. Dzięki integracji AI (Openrouter.ai) i prostemu interfejsowi użytkownika, pozwala tworzyć fiszki z wklejanego tekstu lub ręcznie, organizować je oraz korzystać z gotowego algorytmu powtórek.
+10xCards is a web application for quickly generating and managing educational flashcards. With AI integration (Openrouter.ai) and a simple user interface, it enables creating flashcards from pasted text or manually, organizing them, and leveraging a pre-built spaced-repetition algorithm.
 
-## 2. Problem użytkownika
+## 2. User Problem
 
-Ręczne tworzenie wysokiej jakości fiszek jest czasochłonne i zniechęca do korzystania z efektywnej metody nauki jaką jest spaced repetition. Użytkownicy potrzebują narzędzia, które automatyzuje część pracy, zachowując kontrolę nad treścią.
+Manually creating high-quality flashcards is time-consuming and discourages use of the effective spaced-repetition learning method. Users need a tool that automates part of the work while retaining control over content.
 
-## 3. Wymagania funkcjonalne
+## 3. Functional Requirements
 
-- uwierzytelnianie email/hasło oraz reset hasła jednorazowymi linkami (Supabase Auth)
-- formularz do wklejania tekstu i generowania listy kandydatów fiszek AI
-- ręczne tworzenie pojedynczej fiszki (front/back)
-- lista kandydatów do recenzji z masowym akceptowaniem/edytowaniem/odrzucaniem
-- trwałe przechowywanie zaakceptowanych fiszek w bazie
-- widok CRUD (przeglądanie, wyszukiwanie, edycja, usuwanie) zapisanych fiszek
-- logi zdarzeń (tworzenie, edycja, źródło AI/manualne, sesje, timestampy)
-- integracja z gotowym algorytmem powtórek (zewnętrzny pakiet)
+- Email/password authentication and password reset via one-time links (Supabase Auth)
+- Form for pasting text and generating a list of AI-generated flashcard candidates
+- Manual creation of single flashcards (front/back)
+- Review list with bulk accept/edit/reject operations
+- Persistent storage of accepted flashcards in the database
+- CRUD view (browse, search, edit, delete) for saved flashcards
+- Event logging (creation, edit, AI/manual source, sessions, timestamps)
+- Integration with an existing spaced-repetition algorithm (external package)
 
-## 4. Granice produktu
+## 4. Product Scope
 
-### W zakresie MVP
+### In Scope for MVP
 
-- bezpieczne logowanie, rejestracja, reset hasła
-- AI generowanie jednej fiszki z wklejanego tekstu
-- ręczna edycja i tworzenie fiszek
-- prosty interfejs CRUD fiszek
-- wyszukiwarka tekstowa front/back
-- logowanie zdarzeń
-- widok sesji i nauki z algorytmem powtórek
+- Secure sign-up, login, and password reset
+- AI generation of **multiple flashcard candidates** from pasted text (see US-004 for details)
+- Manual creation and editing of flashcards
+- Simple CRUD interface for flashcards
+- Text search on front/back fields
+- Event logging
+- "Study Session" view using an external spaced-repetition algorithm (see US-010)
 
-### Poza zakresem MVP
+### Out of Scope for MVP
 
-- własne algorytmy powtórek (Anki, SuperMemo)
-- import formatów plików (PDF, DOCX)
-- współdzielenie zestawów między użytkownikami
-- integracje z zewnętrznymi platformami
-- aplikacje mobilne
+- Custom spaced-repetition algorithms (Anki, SuperMemo)
+- Importing file formats (PDF, DOCX)
+- Sharing decks between users
+- Integrations with external platforms
+- Mobile applications
 
-## 5. Historyjki użytkowników
+## 5. User Stories
 
-- ID: US-001  
-  Tytuł: Rejestracja, logowanie i bezpieczeństwo
-  Opis: Nowy użytkownik rejestruje konto przy użyciu adresu email i hasła, potwierdza adres email i loguje się do aplikacji. Nikt inny nie ma dostępu do interfejsu użytkownika.
-  Kryteria akceptacji:
+- **ID: US-001**  
+  **Title:** Registration, Login & Security  
+  **Description:** A new user registers using email and password, confirms their email, and logs in. No one else can access the UI.  
+  **Acceptance Criteria:**
+  - User can sign up with a valid email and strong password.
+  - They receive an email confirmation link (separate feature from password-reset).
+  - After email confirmation and logging in, the user is directed to the flashcard generation view.
+  - Only authenticated users can view, edit, or delete their own flashcards.
+  - Users cannot access or share other users' flashcards.
+  - Users not authenticated cannot enter pages other than login/registration pages
+  - **CLARIFIED**: Landing page `/` acts as smart router - redirects to `/auth/login` (unauthenticated) or `/generate` (authenticated)
 
-  - Użytkownik może zarejestrować się przy użyciu prawidłowego adresu email i silnego hasła.
-  - Otrzymuje link do potwierdzenia email lub resetu hasła.
-  - Po zalogowaniu użytkownik przechodzi do widoku generowania fiszek
-  - Tylko zalogowany użytkownik moze wyświetlać, edytować i usuwać swoje fiszki
-  - Nie ma dostępu do fiszek innych użytkowników ani mozliwości wspóldzielenia
+- **ID: US-002**  
+  **Title:** Password Reset  
+  **Description:** A user who forgot their password requests a one-time reset link and sets a new password.  
+  **Acceptance Criteria:**
+  - User enters their email and receives a reset link.
+  - The link allows them to set a new password.
+  - After resetting, the user can log in with the new password.
 
-- ID: US-002  
-  Tytuł: Reset hasła  
-  Opis: Użytkownik, który zapomniał hasła, prosi o przesłanie jednorazowego linku resetującego i ustala nowe hasło.  
-  Kryteria akceptacji:
+- **ID: US-003**  
+  **Title:** Manual Flashcard Creation  
+  **Description:** An authenticated user creates a new flashcard by providing a front (≤200 characters) and back (≤500 characters).  
+  **Acceptance Criteria:**
+  - Form validates front/back length.
+  - New flashcard is saved in the database with `source = manual`.
+  - User sees it in their “My Flashcards” list.
 
-  - Użytkownik wprowadza adres email i otrzymuje link resetujący.
-  - Link pozwala ustawić nowe hasło.
-  - Po zmianie hasła użytkownik może się zalogować.
+- **ID: US-004**  
+  **Title:** AI-Generated Flashcards  
+  **Description:** An authenticated user pastes text into a field, clicks “Generate,” and receives several AI-generated flashcard suggestions.  
+  **Acceptance Criteria:**
+  - Text field accepts 1,000–10,000 characters.
+  - Text is sent to the LLM API.
+  - Multiple front/back suggestions appear.
+  - User can accept, edit, or reject each suggestion.
 
-- ID: US-003  
-  Tytuł: Ręczne tworzenie fiszki  
-  Opis: Zalogowany użytkownik tworzy nową fiszkę, podając front (≤200 znaków) i back (≤500 znaków).  
-  Kryteria akceptacji:
+- **ID: US-005**  
+  **Title:** Bulk Review of Candidates  
+  **Description:** An authenticated user sees a list of AI-generated flashcards and can select multiple items to perform bulk accept/edit/reject actions.  
+  **Acceptance Criteria:**
+  - List shows front, back, and generation timestamp.
+  - User can select multiple items and apply bulk operations.
+  - Accepted cards go to the CRUD database, rejected ones are deleted, and edited ones return to the review list.
 
-  - Formularz waliduje długość frontu i tylnej strony.
-  - Nowa fiszka zapisywana jest w bazie z source=manual.
-  - Użytkownik widzi ją w swojej liście na widoku "Moje fiszki".
+- **ID: US-006**  
+  **Title:** Browsing & Searching Flashcards  
+  **Description:** An authenticated user browses saved flashcards and filters by front/back text.  
+  **Acceptance Criteria:**
+  - User enters a text fragment and sees only matching flashcards.
 
-- ID: US-004  
-  Tytuł: Generowanie fiszki AI  
-  Opis: Zalogowany użytkownik wkleja tekst w polu tekstowym, klika "Generuj" i otrzymuje kilka propozycji fiszek AI.
-  Kryteria akceptacji:
+- **ID: US-007**  
+  **Title:** Editing & Deleting Flashcards  
+  **Description:** An authenticated user edits the front/back of an existing flashcard or deletes it.  
+  **Acceptance Criteria:**
+  - Editing updates front/back and the `updated_at` timestamp.
+  - Deletion removes the entry from the database and logs the action.
 
-  - Pole tekstowe oczekuje od 1000 do 10 000 znaków.
-  - Tekst przekazywany jest do API modelu LLM.
-  - Pojawia się kilka fiszek z front/back.
-  - Użytkownik może zaakceptować, edytować lub odrzucić propozycje.
+- **ID: US-008**  
+  **Title:** Secure Access  
+  **Description:** Only authenticated users can access the UI and API.  
+  **Acceptance Criteria:**
+  - All endpoints require a valid session token.
+  - Unauthorized requests return HTTP 401.
 
-- ID: US-005  
-  Tytuł: Masowa recenzja kandydatów  
-  Opis: Zalogowany użytkownik widzi listę wygenerowanych fiszek AI i może zaznaczać wiele pozycji, aby wykonać masowe operacje (akceptuj, edytuj, odrzuć).  
-  Kryteria akceptacji:
+- **ID: US-009**  
+  **Title:** Display & Layout  
+  **Description:** AI-generated and manual flashcards display below the generation form. Accepted cards appear in the “My Flashcards” view.
 
-  - Lista pokazuje front, back i timestamp generacji.
-  - Użytkownik może zaznaczyć wiele pozycji i wykonać masowe operacje.
-  - Zaakceptowane trafiają do bazy CRUD, odrzucone są usuwane, edytowane wracają do listy.
+- **ID: US-010**  
+  **Title:** Study Session View  
+  **Description:** As an authenticated user, I want my added flashcards available in a “Study Session” view that uses an external algorithm so I can effectively learn via spaced repetition.  
+  **Acceptance Criteria:**
+  - “Study Session” view prepares cards for me according to the algorithm.
+  - Initially shows the front of a card; user reveals the back on interaction.
+  - User rates recall quality per the algorithm’s requirements.
+  - Next card is displayed according to the session flow.
 
-- ID: US-006  
-  Tytuł: Przeglądanie i wyszukiwanie fiszek  
-  Opis: Użytkownik przegląda zapisane fiszki i filtruje je według tekstu front/back.
-  Kryteria akceptacji:
+## 6. Success Metrics
 
-  - Użytkownik wpisuje fragment tekstu i widzi tylko pasujące fiszki.
-
-- ID: US-007  
-  Tytuł: Edycja i usuwanie fiszek  
-  Opis: Użytkownik edytuje front/back istniejącej fiszki lub usuwa ją z bazy.  
-  Kryteria akceptacji:
-
-  - Edycja aktualizuje front/back i timestamp updated_at.
-  - Usunięcie usuwa wpis z bazy i loguje akcję.
-
-- ID: US-008  
-  Tytuł: Bezpieczny dostęp  
-  Opis: Tylko uwierzytelnieni użytkownicy mają dostęp do interfejsu i API.  
-  Kryteria akceptacji:
-
-  - Wszystkie endpointy wymagają ważnego tokenu sesji.
-  - Nieautoryzowani użytkownicy otrzymują HTTP 401.
-
-- ID: US-009  
-  Tytuł: Wygląd i wyświetlanie
-  Opis: Lista wygenerowanych fiszek AI i manualnie wyświetla się pod formularzem generowania. Lista zaakceptowanych fiszek trafia do widoku "Moje fiszki"
-
-- ID: US-010  
-  Tytuł: Widok sesji i nauki z algorytmem powtórek
-  Opis: Jako zalogowany użytkownik chcę, aby dodane fiszki były odstępne w widoku "Sesja nauki" opartym na zewnętrznym algorytmie, aby móc efetkywnie się uczyć (spaced repetition).
-  Kryteria akceptacji:
-  - W widoku "Sesja nauki" algorytm przygotowuje dla mnie sesje nauki fiszek
-  - Na start wyświetlany jest przód fiszki, poprzez interakcję użytkownik wyświetla jej tył
-  - Użytkownik ocenia zgodnie z oczekiwaniami algrytmu na ile przyswoił fiszkę
-  - Następnie algorytm pokazuje kolejną fiszkę w ramach sesji nauki
-
-## 6. Metryki sukcesu
-
-- 75% fiszek wygenerowanych przez AI zaakceptowanych przez użytkowników (monitorowane w logach).
-- 75% wszystkich utworzonych fiszek pochodzi z AI generowania.
-- Analiza i logowanie liczby generacji vs. liczby akceptacji vs. liczby tworzeń manualnych.
+- 75% of AI-generated flashcards are accepted by users (tracked in logs).
+- 75% of all created flashcards originate from AI generation.
+- Analysis and logging of count of generations vs. acceptances vs. manual creations.

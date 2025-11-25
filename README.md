@@ -4,52 +4,57 @@ A web application for rapid generation and management of educational flashcards,
 
 ## Table of Contents
 
-1. [Tech Stack](#tech-stack)  
-2. [Getting Started Locally](#getting-started-locally)  
-3. [Available Scripts](#available-scripts)  
-4. [Project Scope](#project-scope)  
-5. [Project Status](#project-status)  
-6. [License](#license)  
+1. [Tech Stack](#tech-stack)
+2. [Getting Started Locally](#getting-started-locally)
+3. [Available Scripts](#available-scripts)
+4. [Project Scope](#project-scope)
+5. [Project Status](#project-status)
+6. [License](#license)
 
 ## Tech Stack
 
-- **Frontend:** Astro 5, React 19, TypeScript 5, Tailwind CSS 4, Shadcn/ui  
-- **Backend / Database:** Supabase Auth & Postgres (serverless, row-level security)  
-- **AI Integration:** Openrouter.ai (LLM API)  
-- **CI/CD & Hosting:** GitHub Actions, DigitalOcean (Droplet / App Platform)  
+- **Frontend:** Astro 5, React 19, TypeScript 5, Tailwind CSS 4, Shadcn/ui
+- **Backend / Database:** Supabase Auth & Postgres (serverless, row-level security)
+- **AI Integration:** Openrouter.ai (LLM API)
+- **CI/CD & Hosting:** GitHub Actions, DigitalOcean (Droplet / App Platform)
 - **Runtime:** Node.js 22.14.0 (see `.nvmrc`)
 
 ## Getting Started Locally
 
 ### Prerequisites
 
-- Node.js v22.14.0 (use `nvm use` to switch)  
-- npm ≥ 8  
-- Supabase project (Auth & Database)  
-- Openrouter.ai API key  
+- Node.js v22.14.0 (use `nvm use` to switch)
+- npm ≥ 8
+- Supabase project (Auth & Database)
+- Openrouter.ai API key
 
 ### Setup
 
-1. **Clone the repository**  
+1. **Clone the repository**
+
    ```bash
    git clone https://github.com/your-org/10xCards.git
    cd 10xCards
    ```
 
-2. **Install dependencies**  
+2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Configure environment variables**  
-   Create a `.env` file at the project root with the following entries:  
+   Create a `.env` file at the project root with the following entries:
+
    ```env
    SUPABASE_URL=your_supabase_url
-   SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_KEY=your_supabase_anon_key
    OPENROUTER_API_KEY=your_openrouter_api_key
+   OPENROUTER_API_URL=https://openrouter.ai/api/v1  # Optional, defaults to this value
+   SITE_URL=http://localhost:3000  # Optional, for development
    ```
 
-4. **Run in development mode**  
+4. **Run in development mode**
    ```bash
    npm run dev
    ```
@@ -57,37 +62,57 @@ A web application for rapid generation and management of educational flashcards,
 
 ## Available Scripts
 
-- `npm run dev` — Start the Astro development server  
-- `npm run build` — Build the production site  
-- `npm run preview` — Preview the production build  
-- `npm run astro` — Run the Astro CLI  
-- `npm run lint` — Run ESLint on all source files  
-- `npm run lint:fix` — Auto-fix linting issues  
-- `npm run format` — Format all files with Prettier  
+- `npm run dev` — Start the Astro development server
+- `npm run build` — Build the production site
+- `npm run preview` — Preview the production build
+- `npm run astro` — Run the Astro CLI
+- `npm run lint` — Run ESLint on all source files
+- `npm run lint:fix` — Auto-fix linting issues
+- `npm run format` — Format all files with Prettier
+
+## Testing the OpenRouter Integration
+
+After setting up the environment and starting the dev server, you can test the AI flashcard generation:
+
+### Quick Test
+
+```bash
+./test-quick.sh
+```
+
+### Full Test Suite
+
+```bash
+./test-openrouter-integration.sh
+```
+
+### Manual cURL Examples
+
+See [CURL_EXAMPLES.md](CURL_EXAMPLES.md) for detailed cURL examples and testing scenarios.
 
 ## Project Scope
 
 ### In Scope (MVP)
 
-- Email/password authentication with Supabase Auth  
-- Password reset via one-time links  
-- AI-powered flashcard generation from pasted text (1,000–10,000 characters)  
-- Manual creation and editing of individual flashcards (front/back length validation)  
-- Persistent CRUD interface for flashcards with text search (front/back)  
-- Event logging (create/edit, source, sessions, timestamps)  
-- Spaced-repetition session view using external algorithm  
+- Email/password authentication with Supabase Auth
+- Password reset via one-time links
+- AI-powered flashcard generation from pasted text (1,000–10,000 characters)
+- Manual creation and editing of individual flashcards (front/back length validation)
+- Persistent CRUD interface for flashcards with text search (front/back)
+- Event logging (create/edit, source, sessions, timestamps)
+- Spaced-repetition session view using external algorithm
 
 ### Out of Scope (for MVP)
 
-- Custom spaced-repetition algorithms (Anki, SuperMemo)  
-- Importing flashcards from PDF, DOCX, or other formats  
-- Sharing or collaborating on flashcard sets  
-- Mobile applications  
+- Custom spaced-repetition algorithms (Anki, SuperMemo)
+- Importing flashcards from PDF, DOCX, or other formats
+- Sharing or collaborating on flashcard sets
+- Mobile applications
 
 ## Project Status
 
-- **Version:** 0.0.1 (initial MVP)  
-- Active development: core authentication, AI integration, and CRUD features implemented.  
+- **Version:** 0.0.1 (initial MVP)
+- Active development: core authentication, AI integration, and CRUD features implemented.
 - Next milestones: batch review workflows, session analytics, polishing UI/UX.
 
 ## License

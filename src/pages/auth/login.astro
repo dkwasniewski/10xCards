@@ -1,0 +1,23 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { LoginForm } from "@/components/auth/LoginForm";
+
+export const prerender = false;
+
+// TODO: Add authentication check - redirect authenticated users to /generate
+// const session = Astro.locals.session;
+// if (session) {
+//   return Astro.redirect("/generate");
+// }
+
+// Extract redirect parameter
+const url = new URL(Astro.request.url);
+const redirectTo = url.searchParams.get("redirect") || "/generate";
+---
+
+<Layout title="Login - 10xCards">
+  <main class="min-h-screen flex items-center justify-center p-4">
+    <LoginForm client:load redirectTo={redirectTo} />
+  </main>
+</Layout>
+

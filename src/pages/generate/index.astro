@@ -1,0 +1,18 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import GenerateReview from "@/components/generate/GenerateReview";
+
+export const prerender = false;
+
+// TODO: Add authentication guard when auth is implemented
+// const session = await Astro.locals.supabase.auth.getSession();
+// if (!session.data.session) {
+//   return Astro.redirect("/");
+// }
+---
+
+<Layout title="Generate & Review - 10xCards">
+  <GenerateReview client:load />
+</Layout>
+
+
