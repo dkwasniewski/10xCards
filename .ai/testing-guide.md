@@ -7,27 +7,33 @@ This guide provides comprehensive testing instructions for the OpenRouter integr
 ## Test Files Created
 
 ### 1. `test-quick.sh` - Quick Test
+
 **Purpose**: Single-command test to verify the integration is working
 
 **Usage**:
+
 ```bash
 ./test-quick.sh
 ```
 
 **What it does**:
+
 - Sends a POST request with sample AI text (1000+ chars)
 - Uses default model (openai/gpt-4o-mini)
 - Pretty-prints the JSON response
 
 ### 2. `test-openrouter-integration.sh` - Full Test Suite
+
 **Purpose**: Comprehensive test suite covering all scenarios
 
 **Usage**:
+
 ```bash
 ./test-openrouter-integration.sh
 ```
 
 **Tests included**:
+
 1. ✅ Valid request with default model
 2. ✅ Valid request with specific model (gpt-3.5-turbo)
 3. ✅ Invalid request - text too short (< 1000 chars)
@@ -35,15 +41,18 @@ This guide provides comprehensive testing instructions for the OpenRouter integr
 5. ✅ Invalid request - malformed JSON
 
 **Features**:
+
 - Color-coded output (green = success, red = error, yellow = test name)
 - HTTP status code validation
 - Detailed error messages
 - JSON pretty-printing with jq
 
 ### 3. `CURL_EXAMPLES.md` - Documentation
+
 **Purpose**: Complete reference for all cURL commands
 
 **Contents**:
+
 - Basic request examples
 - All model variations
 - Error scenarios
@@ -52,9 +61,11 @@ This guide provides comprehensive testing instructions for the OpenRouter integr
 - Tips and tricks
 
 ### 4. `sample-text.txt` - Test Data
+
 **Purpose**: Sample text file for testing (1000+ characters)
 
 **Usage**:
+
 ```bash
 INPUT_TEXT=$(cat sample-text.txt)
 curl -X POST http://localhost:4321/api/ai-sessions \
@@ -67,6 +78,7 @@ curl -X POST http://localhost:4321/api/ai-sessions \
 ### 1. Environment Setup
 
 Create `.env` file with:
+
 ```env
 OPENROUTER_API_KEY=sk-or-v1-your-key-here
 SUPABASE_URL=https://your-project.supabase.co
@@ -76,6 +88,7 @@ SUPABASE_KEY=your-anon-key
 ### 2. Dependencies
 
 Install required tools:
+
 ```bash
 # jq for JSON parsing (optional but recommended)
 brew install jq  # macOS
@@ -99,6 +112,7 @@ Server should be running at `http://localhost:3000`
 ```
 
 **Expected output**:
+
 ```json
 {
   "id": "uuid-here",
@@ -107,7 +121,7 @@ Server should be running at `http://localhost:3000`
       "front": "What is Artificial Intelligence?",
       "back": "AI refers to the simulation of human intelligence...",
       "prompt": "Generate a flashcard about AI definition"
-    },
+    }
     // ... more candidates
   ],
   "input_text_hash": "md5-hash-here"
@@ -121,6 +135,7 @@ Server should be running at `http://localhost:3000`
 ```
 
 **Expected results**:
+
 - Test 1: ✓ Status 201 (Success)
 - Test 2: ✓ Status 201 (Success)
 - Test 3: ✓ Status 400 (Expected validation error)
@@ -182,6 +197,7 @@ curl -X POST http://localhost:3000/api/ai-sessions \
 ### Issue 1: "command not found: jq"
 
 **Solution**: Install jq or remove `| jq '.'` from commands
+
 ```bash
 brew install jq  # macOS
 ```
@@ -189,6 +205,7 @@ brew install jq  # macOS
 ### Issue 2: "Connection refused"
 
 **Solution**: Ensure dev server is running
+
 ```bash
 npm run dev
 ```
@@ -196,6 +213,7 @@ npm run dev
 ### Issue 3: "OPENROUTER_API_KEY environment variable is not set"
 
 **Solution**: Check `.env` file exists and contains the key
+
 ```bash
 cat .env | grep OPENROUTER_API_KEY
 ```
@@ -203,6 +221,7 @@ cat .env | grep OPENROUTER_API_KEY
 ### Issue 4: 500 Internal Server Error
 
 **Solution**: Check server logs for details
+
 ```bash
 # In the terminal running npm run dev
 # Look for error messages
@@ -211,6 +230,7 @@ cat .env | grep OPENROUTER_API_KEY
 ### Issue 5: Rate limit errors
 
 **Solution**: Wait for the retry-after period or use a different model
+
 ```bash
 # OpenRouter has different rate limits per model
 # Try switching to a different model
@@ -233,6 +253,7 @@ time ./test-quick.sh
 ```
 
 Or with curl:
+
 ```bash
 time curl -X POST http://localhost:3000/api/ai-sessions \
   -H "Content-Type: application/json" \
@@ -244,26 +265,29 @@ time curl -X POST http://localhost:3000/api/ai-sessions \
 After successful generation, verify in database:
 
 ### Check Session Created
+
 ```sql
-SELECT * FROM ai_generation_sessions 
-ORDER BY created_at DESC 
+SELECT * FROM ai_generation_sessions
+ORDER BY created_at DESC
 LIMIT 1;
 ```
 
 ### Check Candidates Stored
+
 ```sql
-SELECT id, front, back, ai_session_id 
-FROM flashcards 
-WHERE ai_session_id IS NOT NULL 
-ORDER BY created_at DESC 
+SELECT id, front, back, ai_session_id
+FROM flashcards
+WHERE ai_session_id IS NOT NULL
+ORDER BY created_at DESC
 LIMIT 10;
 ```
 
 ### Check Event Logged
+
 ```sql
-SELECT * FROM event_logs 
-WHERE event_type = 'generation_session_created' 
-ORDER BY created_at DESC 
+SELECT * FROM event_logs
+WHERE event_type = 'generation_session_created'
+ORDER BY created_at DESC
 LIMIT 1;
 ```
 
@@ -301,6 +325,7 @@ If you encounter issues:
 ## Summary
 
 The testing suite provides:
+
 - ✅ Quick smoke test for rapid verification
 - ✅ Comprehensive test suite for all scenarios
 - ✅ Detailed documentation with examples
@@ -310,4 +335,3 @@ The testing suite provides:
 - ✅ Troubleshooting guide
 
 All tests are automated and can be run with a single command!
-

@@ -605,3 +605,4 @@ npm test openrouter.service.test.ts
 - **Network errors**: Check internet connection and OpenRouter status
 - **Rate limits**: Add delays between tests or use mock fetch
 - **TypeScript errors**: Ensure all types are imported correctly
+

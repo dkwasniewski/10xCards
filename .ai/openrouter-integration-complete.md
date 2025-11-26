@@ -9,11 +9,13 @@ Successfully integrated the OpenRouter service with the AI sessions service to r
 ### 1. Updated `src/lib/services/ai-sessions.service.ts`
 
 **Added:**
+
 - Import of `generateFlashcards` from `ai.service.ts`
 - New `generateCandidates()` function that wraps the AI service
 - Deprecated the `generateMockCandidates()` function (kept for backward compatibility)
 
 **New Function:**
+
 ```typescript
 export async function generateCandidates(
   inputText: string,
@@ -24,18 +26,21 @@ export async function generateCandidates(
 ```
 
 **Improvements:**
+
 - Added proper validation for edit actions to avoid non-null assertions
 - Fixed linting issues (array type syntax, formatting)
 
 ### 2. Updated `src/pages/api/ai-sessions.ts`
 
 **Changed:**
+
 - Replaced `generateMockCandidates` import with `generateCandidates`
 - Updated the generation logic to use the real AI service
 - Enhanced error handling to provide more specific error messages
 - Updated documentation comments
 
 **Before:**
+
 ```typescript
 const startTime = Date.now();
 candidates = generateMockCandidates(input_text);
@@ -43,6 +48,7 @@ duration = Date.now() - startTime;
 ```
 
 **After:**
+
 ```typescript
 const result = await generateCandidates(input_text, model);
 candidates = result.candidates;
@@ -52,6 +58,7 @@ duration = result.duration;
 ### 3. Updated `README.md`
 
 **Fixed:**
+
 - Corrected environment variable name from `SUPABASE_ANON_KEY` to `SUPABASE_KEY`
 - Added optional environment variables (`OPENROUTER_API_URL`, `SITE_URL`)
 - Added comments to clarify optional vs required variables
@@ -199,6 +206,7 @@ curl -X POST http://localhost:3000/api/ai-sessions \
 ## Backward Compatibility
 
 The `generateMockCandidates()` function is still available but marked as deprecated. It can be used for:
+
 - Testing without API calls
 - Development without API keys
 - Fallback in case of API issues

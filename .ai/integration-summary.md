@@ -7,22 +7,26 @@ The OpenRouter service has been successfully integrated with the AI sessions ser
 ## Files Modified
 
 ### 1. `src/lib/services/ai-sessions.service.ts`
+
 - ✅ Added import: `generateFlashcards` from `ai.service`
-- ✅ Created new function: `generateCandidates()` 
+- ✅ Created new function: `generateCandidates()`
 - ✅ Deprecated: `generateMockCandidates()` (kept for backward compatibility)
 - ✅ Fixed linting issues and improved validation
 
 ### 2. `src/pages/api/ai-sessions.ts`
+
 - ✅ Replaced mock generation with real AI generation
 - ✅ Enhanced error handling with detailed messages
 - ✅ Updated documentation comments
 
 ### 3. `README.md`
+
 - ✅ Fixed environment variable names
 - ✅ Added optional environment variables
 - ✅ Clarified configuration requirements
 
 ### 4. Documentation
+
 - ✅ Created comprehensive integration guide
 - ✅ Added architecture overview
 - ✅ Documented error handling
@@ -31,6 +35,7 @@ The OpenRouter service has been successfully integrated with the AI sessions ser
 ## Key Changes
 
 ### Before (Mock)
+
 ```typescript
 // Generate mock candidates
 const startTime = Date.now();
@@ -39,6 +44,7 @@ duration = Date.now() - startTime;
 ```
 
 ### After (Real AI)
+
 ```typescript
 // Generate candidates using OpenRouter AI
 const result = await generateCandidates(input_text, model);

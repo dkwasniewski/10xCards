@@ -4,11 +4,11 @@ import { LoginForm } from "@/components/auth/LoginForm";
 
 export const prerender = false;
 
-// TODO: Add authentication check - redirect authenticated users to /generate
-// const session = Astro.locals.session;
-// if (session) {
-//   return Astro.redirect("/generate");
-// }
+// Redirect authenticated users to /generate
+const session = Astro.locals.session;
+if (session) {
+  return Astro.redirect("/generate");
+}
 
 // Extract redirect parameter
 const url = new URL(Astro.request.url);

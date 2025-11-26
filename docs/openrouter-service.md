@@ -470,3 +470,4 @@ For issues with this service implementation, check the source code in:
 
 - `src/lib/services/openrouter.service.ts`
 - `src/lib/openrouter.types.ts`
+

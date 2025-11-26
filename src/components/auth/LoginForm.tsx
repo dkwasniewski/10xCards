@@ -54,14 +54,24 @@ export function LoginForm({ redirectTo = "/generate" }: LoginFormProps) {
     setIsLoading(true);
 
     try {
-      // TODO: Implement API call to /api/auth/login
-      console.log("Login attempt:", { email, redirectTo });
-      
-      // Placeholder for actual implementation
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+      // Call login API endpoint
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Handle error response
+        throw new Error(data.error || "Login failed. Please try again");
+      }
+
       // On success, redirect to the target page
-      // window.location.href = redirectTo;
+      window.location.href = redirectTo;
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred. Please try again");
     } finally {
