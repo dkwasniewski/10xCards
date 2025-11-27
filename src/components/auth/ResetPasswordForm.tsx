@@ -76,7 +76,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
       // Redirect to login after 3 seconds
       setTimeout(() => {
-        window.location.href = "/auth/login";
+        window.location.href = "/login";
       }, 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred. Please try again");

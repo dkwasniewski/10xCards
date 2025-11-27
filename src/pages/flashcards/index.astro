@@ -4,11 +4,8 @@ import MyFlashcards from "@/components/flashcards/MyFlashcards";
 
 export const prerender = false;
 
-// TODO: Add authentication guard when auth is implemented
-// const session = await Astro.locals.supabase.auth.getSession();
-// if (!session.data.session) {
-//   return Astro.redirect("/");
-// }
+// Authentication is enforced by middleware (src/middleware/index.ts)
+// Unauthenticated users are automatically redirected to /login
 ---
 
 <Layout title="My Flashcards - 10xCards">

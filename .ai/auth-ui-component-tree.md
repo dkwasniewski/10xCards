@@ -33,6 +33,7 @@ src/
 ## 🔗 Component Dependencies
 
 ### Login Page Flow
+
 ```
 login.astro
   └── Layout.astro
@@ -46,6 +47,7 @@ login.astro
 ```
 
 ### Register Page Flow
+
 ```
 register.astro
   └── Layout.astro
@@ -61,6 +63,7 @@ register.astro
 ```
 
 ### Forgot Password Page Flow
+
 ```
 forgot-password.astro
   └── Layout.astro
@@ -72,6 +75,7 @@ forgot-password.astro
 ```
 
 ### Reset Password Page Flow
+
 ```
 reset-password.astro
   └── Layout.astro
@@ -86,6 +90,7 @@ reset-password.astro
 ```
 
 ### Email Verification Page Flow
+
 ```
 verify-email.astro
   └── Layout.astro
@@ -107,7 +112,9 @@ All forms use these shadcn/ui components:
 ## 🔄 State Management
 
 ### Form Components State
+
 Each form manages its own state:
+
 - `email` - Email input value
 - `password` - Password input value
 - `confirmPassword` - Confirm password value (register/reset)
@@ -119,17 +126,20 @@ Each form manages its own state:
 - `showConfirmPassword` - Confirm password visibility toggle
 
 ### Header Component State
+
 - `isLoggingOut` - Logout action state
 - `user` prop - User data (passed from Layout)
 
 ## 📊 Data Flow
 
 ### Current (UI Only)
+
 ```
 User Input → Form Component → Console.log → Success/Error State
 ```
 
 ### Future (With Backend)
+
 ```
 User Input → Form Component → API Endpoint → Supabase Auth → Response → Success/Error State
 ```
@@ -137,6 +147,7 @@ User Input → Form Component → API Endpoint → Supabase Auth → Response �
 ## 🎯 Props Interface
 
 ### Layout.astro
+
 ```typescript
 interface Props {
   title?: string;
@@ -148,6 +159,7 @@ interface Props {
 ```
 
 ### Header.tsx
+
 ```typescript
 interface HeaderProps {
   user?: {
@@ -158,6 +170,7 @@ interface HeaderProps {
 ```
 
 ### LoginForm.tsx
+
 ```typescript
 interface LoginFormProps {
   redirectTo?: string;
@@ -165,6 +178,7 @@ interface LoginFormProps {
 ```
 
 ### ResetPasswordForm.tsx
+
 ```typescript
 interface ResetPasswordFormProps {
   token: string;
@@ -172,6 +186,7 @@ interface ResetPasswordFormProps {
 ```
 
 ### PasswordStrengthIndicator.tsx
+
 ```typescript
 interface PasswordStrengthIndicatorProps {
   password: string;
@@ -181,6 +196,7 @@ interface PasswordStrengthIndicatorProps {
 ## 🎭 Conditional Rendering
 
 ### Header Component
+
 ```
 if (user exists):
   - Show navigation links (Generate, My Flashcards)
@@ -190,6 +206,7 @@ else:
 ```
 
 ### Form Success States
+
 ```
 if (success):
   - Show success message
@@ -208,6 +225,7 @@ User submits → onSubmit → Validate all fields → Show errors OR Submit
 ```
 
 ### Validation Rules Applied
+
 - Email: format, required, max length
 - Password (login): required, min length
 - Password (register/reset): required, min/max length, complexity
@@ -216,5 +234,3 @@ User submits → onSubmit → Validate all fields → Show errors OR Submit
 ---
 
 **All components are ready and follow React 19 best practices with TypeScript!** 🎉
-
-

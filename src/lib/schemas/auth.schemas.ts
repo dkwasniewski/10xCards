@@ -20,10 +20,7 @@ const emailSchema = z
  * - Required field
  * - Minimum 8 characters
  */
-const loginPasswordSchema = z
-  .string()
-  .min(1, "Password is required")
-  .min(8, "Password must be at least 8 characters");
+const loginPasswordSchema = z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters");
 
 /**
  * Strong password validation for registration/reset
@@ -75,5 +72,3 @@ export type LoginSchema = z.infer<typeof loginSchema>;
 export type RegisterSchema = z.infer<typeof registerSchema>;
 export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
-
-

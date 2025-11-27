@@ -2,6 +2,12 @@
 import Layout from "@/layouts/Layout.astro";
 
 export const prerender = false;
+
+// Redirect authenticated users to /generate
+const session = Astro.locals.session;
+if (session) {
+  return Astro.redirect("/generate");
+}
 ---
 
 <Layout title="Verify Email - 10xCards">
@@ -35,7 +41,7 @@ export const prerender = false;
 
       <div class="pt-4">
         <a
-          href="/auth/login"
+          href="/login"
           class="inline-flex items-center justify-center w-full h-10 px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-md hover:bg-primary/90 transition-colors"
         >
           Go to login
@@ -44,5 +50,4 @@ export const prerender = false;
     </div>
   </main>
 </Layout>
-
 

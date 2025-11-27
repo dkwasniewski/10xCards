@@ -1,8 +1,14 @@
 ---
-import Welcome from "../components/Welcome.astro";
-import Layout from "../layouts/Layout.astro";
----
+export const prerender = false;
 
-<Layout>
-  <Welcome />
-</Layout>
+// Root path redirects based on authentication status:
+// - Logged out → /login
+// - Logged in → /generate
+const session = Astro.locals.session;
+
+if (session) {
+  return Astro.redirect("/generate");
+} else {
+  return Astro.redirect("/login");
+}
+---

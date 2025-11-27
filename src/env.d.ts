@@ -20,6 +20,7 @@ interface ImportMetaEnv {
   readonly OPENROUTER_API_KEY: string;
   readonly OPENROUTER_API_URL: string;
   readonly SITE_URL: string;
+  readonly PUBLIC_SITE_URL: string; // Public version of SITE_URL for client-side access
 }
 
 interface ImportMeta {

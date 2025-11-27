@@ -45,23 +45,46 @@ function parseCookieHeader(cookieHeader: string): { name: string; value: string 
  * @returns Configured Supabase client for SSR
  */
 export function createSupabaseServerInstance(context: { headers: Headers; cookies: AstroCookies }): SupabaseClient {
+  // Local cache for cookies that have been set during this request
+  // This ensures that getItem can read cookies that were just set via setItem
+  const cookieCache = new Map<string, string>();
+
   // Create a client with custom storage that uses Astro cookies
   return createClient<Database>(supabaseUrl, supabaseAnonKey, {
     auth: {
       flowType: "pkce",
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
+      autoRefreshToken: false, // Disable auto-refresh to prevent network requests that can hang
+      detectSessionInUrl: false, // Disable URL detection in server-side context
       persistSession: true,
       storage: {
         getItem: (key: string) => {
+          // First check the cache for recently set cookies
+          const cachedValue = cookieCache.get(key);
+          if (cachedValue !== undefined) {
+            return cachedValue;
+          }
+
+          // Then check Astro's cookies (which includes both request and response cookies)
+          const cookieValue = context.cookies.get(key);
+          if (cookieValue) {
+            return cookieValue.value;
+          }
+
+          // Fallback to parsing the Cookie header (for initial request)
           const cookies = parseCookieHeader(context.headers.get("Cookie") ?? "");
           const cookie = cookies.find((c) => c.name === key);
           return cookie?.value ?? null;
         },
         setItem: (key: string, value: string) => {
+          // Store in cache for immediate retrieval
+          cookieCache.set(key, value);
+          // Set in Astro cookies for response
           context.cookies.set(key, value, cookieOptions);
         },
         removeItem: (key: string) => {
+          // Remove from cache
+          cookieCache.delete(key);
+          // Remove from Astro cookies
           context.cookies.delete(key, { path: "/" });
         },
       },

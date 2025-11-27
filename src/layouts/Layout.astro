@@ -10,7 +10,15 @@ interface Props {
   } | null;
 }
 
-const { title = "10x Astro Starter", user = null } = Astro.props;
+// Get user from Astro.locals (set by middleware) if not explicitly passed
+const userFromLocals = Astro.locals.user
+  ? {
+      id: Astro.locals.user.id,
+      email: Astro.locals.user.email ?? "",
+    }
+  : null;
+
+const { title = "10x Astro Starter", user = userFromLocals } = Astro.props;
 ---
 
 <!doctype html>

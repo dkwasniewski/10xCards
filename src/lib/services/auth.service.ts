@@ -16,16 +16,12 @@ class AuthService {
    * @returns User data (id, email, created_at)
    * @throws Error if registration fails or email already exists
    */
-  async register(
-    supabase: SupabaseClient,
-    email: string,
-    password: string
-  ): Promise<RegisterResponseDto> {
+  async register(supabase: SupabaseClient, email: string, password: string): Promise<RegisterResponseDto> {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${import.meta.env.SITE_URL}/auth/verify-email`,
+        emailRedirectTo: `${import.meta.env.PUBLIC_SITE_URL}/verify-email`,
       },
     });
 
@@ -58,11 +54,7 @@ class AuthService {
    * @returns Access token and expiration time
    * @throws Error if login fails or credentials are invalid
    */
-  async login(
-    supabase: SupabaseClient,
-    email: string,
-    password: string
-  ): Promise<LoginResponseDto> {
+  async login(supabase: SupabaseClient, email: string, password: string): Promise<LoginResponseDto> {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -113,11 +105,7 @@ class AuthService {
    * @param email - User's email address
    * @param redirectUrl - URL to redirect to after password reset
    */
-  async requestPasswordReset(
-    supabase: SupabaseClient,
-    email: string,
-    redirectUrl: string
-  ): Promise<void> {
+  async requestPasswordReset(supabase: SupabaseClient, email: string, redirectUrl: string): Promise<void> {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl,
     });
@@ -155,5 +143,3 @@ class AuthService {
 
 // Export singleton instance
 export const authService = new AuthService();
-
-

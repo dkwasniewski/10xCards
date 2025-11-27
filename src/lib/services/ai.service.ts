@@ -116,6 +116,7 @@ export async function generateFlashcards(inputText: string, model: string): Prom
     try {
       parsed = JSON.parse(content);
     } catch (parseError) {
+      console.error("Failed to parse AI response. Raw content:", content);
       throw new Error(
         `Failed to parse AI response: ${parseError instanceof Error ? parseError.message : "Unknown error"}`
       );
@@ -125,23 +126,43 @@ export async function generateFlashcards(inputText: string, model: string): Prom
     let candidates = parsed.flashcards;
 
     if (!Array.isArray(candidates) || candidates.length === 0) {
+      console.error("AI response structure:", JSON.stringify(parsed, null, 2));
       throw new Error("AI response did not contain valid flashcards array");
     }
 
-    // Validate each candidate has required fields
-    candidates = candidates.filter(
-      (c) =>
-        c.front &&
-        typeof c.front === "string" &&
-        c.back &&
-        typeof c.back === "string" &&
-        c.prompt &&
-        typeof c.prompt === "string"
-    );
+    console.log(`Received ${candidates.length} flashcards from AI. Validating...`);
+    
+    // Validate each candidate has required fields and add default prompt if missing
+    const validatedCandidates: CandidateCreateDto[] = [];
+    const invalidCandidates: unknown[] = [];
+    
+    for (const c of candidates) {
+      // Check if front and back are valid strings
+      if (c.front && typeof c.front === "string" && c.back && typeof c.back === "string") {
+        // If prompt is missing or invalid, generate a default one
+        const prompt = c.prompt && typeof c.prompt === "string" ? c.prompt : "Flashcard generated from input text";
+        
+        validatedCandidates.push({
+          front: c.front.trim(),
+          back: c.back.trim(),
+          prompt: prompt.trim(),
+        });
+      } else {
+        invalidCandidates.push(c);
+      }
+    }
 
-    if (candidates.length === 0) {
+    if (invalidCandidates.length > 0) {
+      console.warn(`Filtered out ${invalidCandidates.length} invalid flashcards:`, JSON.stringify(invalidCandidates, null, 2));
+    }
+
+    if (validatedCandidates.length === 0) {
+      console.error("All flashcards failed validation. Sample invalid flashcard:", JSON.stringify(candidates[0], null, 2));
       throw new Error("No valid flashcards in AI response after validation");
     }
+
+    console.log(`Successfully validated ${validatedCandidates.length} flashcards`);
+    candidates = validatedCandidates;
 
     const duration = Date.now() - startTime;
 

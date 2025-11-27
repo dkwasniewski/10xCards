@@ -1,12 +1,12 @@
 import type { APIRoute } from "astro";
 
-import { loginSchema } from "../../../lib/schemas/auth.schemas";
-import { authService } from "../../../lib/services/auth.service";
-import { eventLogService } from "../../../lib/services/event-log.service";
-import { errorResponse, ErrorMessages, handleApiError } from "../../../lib/utils/api-error";
+import { loginSchema } from "../../lib/schemas/auth.schemas";
+import { authService } from "../../lib/services/auth.service";
+import { logEvent } from "../../lib/services/event-log.service";
+import { errorResponse, ErrorMessages, handleApiError } from "../../lib/utils/api-error";
 
 /**
- * POST /api/auth/login
+ * POST /api/login
  *
  * Authenticates a user with email and password.
  * Sets session cookies automatically via Supabase client.
@@ -68,26 +68,29 @@ export const POST: APIRoute = async ({ request, locals }) => {
     } = await supabase.auth.getSession();
 
     if (session?.user?.id) {
-      await eventLogService.logEvent(supabase, {
-        event_type: "user_logged_in",
-        event_source: "manual",
-        user_id: session.user.id,
+      await logEvent(supabase, {
+        userId: session.user.id,
+        eventType: "user_logged_in",
+        eventSource: "manual",
       });
     }
 
-    // 6. Return success response
-    return new Response(JSON.stringify(result), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    // 6. Return success response with redirect URL
+    return new Response(
+      JSON.stringify({
+        ...result,
+        redirect: "/generate",
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     // Handle authentication errors
     if (error instanceof Error) {
       // Check for specific auth errors
-      if (
-        error.message.includes("Invalid email or password") ||
-        error.message.includes("Invalid login credentials")
-      ) {
+      if (error.message.includes("Invalid email or password") || error.message.includes("Invalid login credentials")) {
         return errorResponse(401, "Invalid email or password");
       }
 
@@ -98,14 +101,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Log unexpected errors
     console.error("Login error:", error);
-    return await handleApiError(
-      500,
-      "Login failed. Please try again",
-      error,
-      locals.supabase,
-      "POST /api/auth/login"
-    );
+    return await handleApiError(500, "Login failed. Please try again", error, locals.supabase, "POST /api/login");
   }
 };
-
 

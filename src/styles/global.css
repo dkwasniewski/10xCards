@@ -117,4 +117,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Prevent layout shift when dropdown opens by maintaining scrollbar space */
+  html {
+    overflow-y: scroll;
+  }
 }

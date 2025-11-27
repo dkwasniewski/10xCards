@@ -25,13 +25,26 @@ export function Header({ user }: HeaderProps) {
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
-      // TODO: Implement API call to /api/auth/logout
-      console.log("Logout attempt");
+      const response = await fetch("/api/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // Ensure cookies are included in the request
+      });
 
-      // Placeholder for actual implementation
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to logout");
+      }
 
-      // Redirect to home page
+      // Parse the response to ensure it completed
+      await response.json();
+
+      // Wait a brief moment for cookies to be cleared, then redirect
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // Redirect to home page after successful logout
       window.location.href = "/";
     } catch (error) {
       console.error("Logout error:", error);
@@ -88,15 +101,15 @@ export function Header({ user }: HeaderProps) {
             // Authenticated User Menu
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
+                  <div className="flex h-full w-full items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
                     <span className="text-sm font-medium">
                       {user.email.charAt(0).toUpperCase()}
                     </span>
                   </div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuContent className="w-56" align="end" forceMount sideOffset={8}>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">Account</p>
@@ -174,10 +187,10 @@ export function Header({ user }: HeaderProps) {
             // Unauthenticated Links
             <div className="flex items-center gap-2">
               <Button variant="ghost" asChild>
-                <a href="/auth/login">Sign in</a>
+                <a href="/login">Sign in</a>
               </Button>
               <Button asChild>
-                <a href="/auth/register">Sign up</a>
+                <a href="/register">Sign up</a>
               </Button>
             </div>
           )}

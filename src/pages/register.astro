@@ -4,11 +4,11 @@ import { RegisterForm } from "@/components/auth/RegisterForm";
 
 export const prerender = false;
 
-// TODO: Add authentication check - redirect authenticated users to /generate
-// const session = Astro.locals.session;
-// if (session) {
-//   return Astro.redirect("/generate");
-// }
+// Redirect authenticated users to /generate
+const session = Astro.locals.session;
+if (session) {
+  return Astro.redirect("/generate");
+}
 ---
 
 <Layout title="Register - 10xCards">
@@ -16,5 +16,4 @@ export const prerender = false;
     <RegisterForm client:load />
   </main>
 </Layout>
-
 
