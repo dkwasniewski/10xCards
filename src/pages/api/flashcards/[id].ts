@@ -1,6 +1,5 @@
 import type { APIRoute } from "astro";
 import { updateFlashcardSchema, uuidParamSchema } from "../../../lib/schemas/flashcards.schemas";
-import { DEFAULT_USER_ID } from "../../../db/supabase.client";
 import { flashcardsService } from "../../../lib/services/flashcards.service";
 import { errorResponse, handleApiError, ErrorMessages } from "../../../lib/utils/api-error";
 
@@ -12,9 +11,25 @@ export const prerender = false;
  * Only the owner of the flashcard can perform the update.
  */
 export const PATCH: APIRoute = async ({ params, request, locals }) => {
-  // TODO: Get user ID from authentication when implemented
-  // For now, using DEFAULT_USER_ID for development
-  const userId = DEFAULT_USER_ID;
+  // Get Supabase client from locals (provided by middleware)
+  const supabase = locals.supabase;
+  if (!supabase) {
+    return await handleApiError(
+      500,
+      ErrorMessages.SUPABASE_CLIENT_UNAVAILABLE,
+      undefined,
+      undefined,
+      `PATCH /api/flashcards/${params.id}`,
+      undefined
+    );
+  }
+
+  // Get authenticated user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return errorResponse(401, "Unauthorized");
+  }
+  const userId = user.id;
 
   // Validate path parameter (flashcard ID)
   const { id } = params;
@@ -39,19 +54,6 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
   }
 
   const command = parseResult.data;
-
-  // Get Supabase client from locals (provided by middleware)
-  const supabase = locals.supabase;
-  if (!supabase) {
-    return await handleApiError(
-      500,
-      ErrorMessages.SUPABASE_CLIENT_UNAVAILABLE,
-      undefined,
-      undefined,
-      `PATCH /api/flashcards/${flashcardId}`,
-      userId
-    );
-  }
 
   try {
     // Call service to update the flashcard
@@ -88,9 +90,25 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
  * Returns 204 No Content on success with an empty body.
  */
 export const DELETE: APIRoute = async ({ params, locals }) => {
-  // TODO: Get user ID from authentication when implemented
-  // For now, using DEFAULT_USER_ID for development
-  const userId = DEFAULT_USER_ID;
+  // Get Supabase client from locals (provided by middleware)
+  const supabase = locals.supabase;
+  if (!supabase) {
+    return await handleApiError(
+      500,
+      ErrorMessages.SUPABASE_CLIENT_UNAVAILABLE,
+      undefined,
+      undefined,
+      `DELETE /api/flashcards/${params.id}`,
+      undefined
+    );
+  }
+
+  // Get authenticated user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return errorResponse(401, "Unauthorized");
+  }
+  const userId = user.id;
 
   // Validate path parameter (flashcard ID)
   const { id } = params;
@@ -100,19 +118,6 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
   }
 
   const flashcardId = idValidation.data;
-
-  // Get Supabase client from locals (provided by middleware)
-  const supabase = locals.supabase;
-  if (!supabase) {
-    return await handleApiError(
-      500,
-      ErrorMessages.SUPABASE_CLIENT_UNAVAILABLE,
-      undefined,
-      undefined,
-      `DELETE /api/flashcards/${flashcardId}`,
-      userId
-    );
-  }
 
   try {
     // Call service to soft-delete the flashcard

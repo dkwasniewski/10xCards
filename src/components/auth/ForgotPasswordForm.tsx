@@ -38,11 +38,22 @@ export function ForgotPasswordForm() {
     setIsLoading(true);
 
     try {
-      // TODO: Implement API call to /api/auth/forgot-password
-      console.log("Password reset request:", { email });
+      // Call forgot password API endpoint
+      const response = await fetch("/api/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+        credentials: "include", // Ensure cookies are included in the request
+      });
 
-      // Placeholder for actual implementation
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Handle error response
+        throw new Error(data.error || "Failed to send reset link. Please try again");
+      }
 
       // On success, show success message
       setSuccess(true);
@@ -150,12 +161,10 @@ export function ForgotPasswordForm() {
 
       {/* Back to Login Link */}
       <div className="text-center text-sm">
-        <a href="/auth/login" className="text-primary hover:underline font-medium">
+        <a href="/login" className="text-primary hover:underline font-medium">
           Back to login
         </a>
       </div>
     </div>
   );
 }
-
-

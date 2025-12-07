@@ -432,7 +432,7 @@ export default function GenerateReview() {
   );
 
   return (
-    <div className="container mx-auto py-8 px-4 md:max-w-5xl">
+    <div className="container mx-auto py-8 px-4 md:max-w-5xl" data-testid="generate-review-page">
       <PageHeader
         title="Generate & Review"
         description="Generate new flashcards from text or review pending candidates"
@@ -440,9 +440,9 @@ export default function GenerateReview() {
 
       {/* Pending Candidates Section */}
       {pendingCandidates.length > 0 && (
-        <section className="mb-12">
+        <section className="mb-12" data-testid="pending-candidates-section">
           <h2 className="text-2xl font-semibold mb-4">Pending Candidates</h2>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-muted-foreground mb-6" data-testid="pending-candidates-count">
             You have {pendingCandidates.length} pending candidate{pendingCandidates.length > 1 ? "s" : ""} from
             previous sessions.
           </p>
@@ -456,12 +456,13 @@ export default function GenerateReview() {
             onEdit={handleEditCandidate}
             onReject={handleRejectCandidate}
             disabled={isProcessing}
+            testIdPrefix="pending-candidate"
           />
         </section>
       )}
 
       {/* Generation Form Section */}
-      <section className="mb-12">
+      <section className="mb-12" data-testid="generation-form-section">
         <h2 className="text-2xl font-semibold mb-4">Generate New Flashcards</h2>
         <div className="border rounded-lg p-6 bg-card">
           <GenerationForm onSubmit={handleGenerate} isLoading={isGenerating} />
@@ -470,9 +471,9 @@ export default function GenerateReview() {
 
       {/* New Candidates Section */}
       {newCandidates.length > 0 && (
-        <section className="mb-12">
+        <section className="mb-12" data-testid="new-candidates-section">
           <h2 className="text-2xl font-semibold mb-4">Newly Generated Candidates</h2>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-muted-foreground mb-6" data-testid="new-candidates-count">
             Review and accept or reject the {newCandidates.length} newly generated candidate
             {newCandidates.length > 1 ? "s" : ""}.
           </p>
@@ -486,6 +487,7 @@ export default function GenerateReview() {
             onEdit={handleEditCandidate}
             onReject={handleRejectCandidate}
             disabled={isProcessing}
+            testIdPrefix="new-candidate"
           />
         </section>
       )}

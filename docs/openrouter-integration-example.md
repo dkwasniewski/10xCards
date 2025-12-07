@@ -313,15 +313,7 @@ Add to `.env`:
 OPENROUTER_API_KEY=sk-or-v1-...
 ```
 
-### Optional Configuration
-
-```bash
-# Custom base URL (defaults to https://openrouter.ai/api/v1)
-OPENROUTER_API_URL=https://openrouter.ai/api/v1
-
-# Site URL for OpenRouter analytics
-SITE_URL=https://10xcards.app
-```
+Note: The OpenRouter API URL is hardcoded in the service as `https://openrouter.ai/api/v1` and doesn't need to be configured via environment variables.
 
 ## Migration from Mock to Real AI
 

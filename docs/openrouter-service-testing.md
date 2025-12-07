@@ -606,3 +606,5 @@ npm test openrouter.service.test.ts
 - **Rate limits**: Add delays between tests or use mock fetch
 - **TypeScript errors**: Ensure all types are imported correctly
 
+
+

@@ -17,4 +17,8 @@ export default defineConfig({
   adapter: node({
     mode: "standalone",
   }),
+  // Disable dev toolbar in E2E tests to prevent click interception
+  devToolbar: {
+    enabled: false,
+  },
 });

@@ -226,3 +226,5 @@ All protected pages rely on middleware for authentication:
 
 **Architecture**: Clean, secure, and maintainable
 
+
+

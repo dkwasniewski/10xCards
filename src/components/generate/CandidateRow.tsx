@@ -66,13 +66,14 @@ export function CandidateRow({
 
   return (
     <div
-      className={`flex items-start gap-4 border rounded-lg p-4 transition-colors ${
+      className={`flex items-start gap-3 lg:gap-4 border rounded-lg p-4 transition-colors ${
         isSelected ? "bg-accent border-primary" : "hover:bg-muted/50"
       } ${shouldShowExpand ? "cursor-pointer" : ""} ${disabled ? "opacity-50 pointer-events-none" : ""}`}
       onClick={handleRowClick}
       onKeyDown={shouldShowExpand ? handleKeyDown : undefined}
       role={shouldShowExpand ? "button" : undefined}
       tabIndex={shouldShowExpand ? 0 : undefined}
+      data-testid="candidate-row"
     >
       <div className="flex items-start pt-1">
         <Checkbox
@@ -81,10 +82,105 @@ export function CandidateRow({
           aria-label={`Select candidate: ${candidate.front}`}
           onClick={(e) => e.stopPropagation()}
           disabled={disabled}
+          data-testid="candidate-checkbox"
         />
       </div>
 
-      <div className="flex-1 grid grid-cols-12 gap-4 min-w-0">
+      {/* Mobile Layout - Stacked */}
+      <div className="flex-1 flex flex-col gap-3 min-w-0 lg:hidden">
+        <div className="flex items-start justify-between gap-2">
+          <Badge variant={candidate.status === "new" ? "default" : "secondary"}>
+            {candidate.status === "new" ? "New" : "Pending"}
+          </Badge>
+        </div>
+
+        <div>
+          <div className="text-xs font-medium text-muted-foreground mb-1">Front</div>
+          <p className="text-sm break-words" data-testid="candidate-front">
+            {frontText}
+          </p>
+        </div>
+
+        <div>
+          <div className="text-xs font-medium text-muted-foreground mb-1">Back</div>
+          <p className="text-sm text-muted-foreground break-words" data-testid="candidate-back">
+            {backText}
+          </p>
+        </div>
+
+        {shouldShowExpand && (
+          <button
+            className="text-xs text-primary hover:underline self-start"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsExpanded(!isExpanded);
+            }}
+          >
+            {isExpanded ? "Show less" : "Show more"}
+          </button>
+        )}
+
+        {candidate.prompt && (
+          <p className="text-xs text-muted-foreground" title={candidate.prompt}>
+            Prompt: {truncateText(candidate.prompt, 60)}
+          </p>
+        )}
+
+        {/* Mobile Action Buttons - Grid with labels */}
+        <div className="grid grid-cols-3 gap-2 pt-2 border-t">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAccept(candidate.id);
+            }}
+            disabled={disabled}
+            aria-label="Accept candidate"
+            title="Accept and add to your flashcards"
+            className="flex-col h-auto py-2 text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-500 dark:hover:bg-green-950"
+            data-testid="candidate-accept-button"
+          >
+            <Check className="h-4 w-4 mb-1" />
+            <span className="text-xs">Accept</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(candidate.id);
+            }}
+            disabled={disabled}
+            aria-label="Edit and accept candidate"
+            title="Edit and accept this candidate"
+            className="flex-col h-auto py-2"
+            data-testid="candidate-edit-button"
+          >
+            <Pencil className="h-4 w-4 mb-1" />
+            <span className="text-xs">Edit</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onReject(candidate.id);
+            }}
+            disabled={disabled}
+            aria-label="Reject candidate"
+            title="Reject this candidate"
+            className="flex-col h-auto py-2 text-destructive hover:bg-destructive/10"
+            data-testid="candidate-reject-button"
+          >
+            <X className="h-4 w-4 mb-1" />
+            <span className="text-xs">Reject</span>
+          </Button>
+        </div>
+      </div>
+
+      {/* Desktop Layout - Grid */}
+      <div className="hidden lg:flex flex-1 lg:grid lg:grid-cols-12 gap-4 min-w-0">
         <div className="col-span-1 flex items-start pt-1">
           <Badge variant={candidate.status === "new" ? "default" : "secondary"}>
             {candidate.status === "new" ? "New" : "Pending"}
@@ -92,11 +188,11 @@ export function CandidateRow({
         </div>
 
         <div className="col-span-4 min-w-0">
-          <p className="text-sm break-words">{frontText}</p>
+          <p className="text-sm break-words" data-testid="candidate-front">{frontText}</p>
         </div>
 
         <div className="col-span-5 min-w-0">
-          <p className="text-sm text-muted-foreground break-words">{backText}</p>
+          <p className="text-sm text-muted-foreground break-words" data-testid="candidate-back">{backText}</p>
           {shouldShowExpand && (
             <button
               className="text-xs text-primary hover:underline mt-1"
@@ -127,6 +223,7 @@ export function CandidateRow({
             disabled={disabled}
             title="Accept and add to your flashcards"
             className="text-green-600 hover:text-green-700 hover:bg-green-50 dark:text-green-500 dark:hover:bg-green-950"
+            data-testid="candidate-accept-button"
           >
             <Check className="h-4 w-4" />
           </Button>
@@ -140,6 +237,7 @@ export function CandidateRow({
             aria-label="Edit and accept candidate"
             disabled={disabled}
             title="Edit and accept this candidate"
+            data-testid="candidate-edit-button"
           >
             <Pencil className="h-4 w-4" />
           </Button>
@@ -154,6 +252,7 @@ export function CandidateRow({
             disabled={disabled}
             title="Reject this candidate"
             className="text-destructive hover:bg-destructive/10"
+            data-testid="candidate-reject-button"
           >
             <X className="h-4 w-4" />
           </Button>

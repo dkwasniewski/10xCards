@@ -213,3 +213,5 @@ The `generateMockCandidates()` function is still available but marked as depreca
 
 To use mock generation, simply call `generateMockCandidates(inputText)` directly instead of `generateCandidates(inputText, model)`.
 
+
+

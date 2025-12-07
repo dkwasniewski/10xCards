@@ -304,7 +304,7 @@ export default function MyFlashcards() {
       <PageHeader
         title="My Flashcards"
         action={
-          <Button onClick={handleCreateClick}>
+          <Button onClick={handleCreateClick} data-testid="new-flashcard-button" className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
             New Flashcard
           </Button>
@@ -333,6 +333,7 @@ export default function MyFlashcards() {
         isSearch={searchParams.search.length > 0}
         searchQuery={searchParams.search}
         onClearSearch={handleClearSearch}
+        data-testid="flashcards-list"
       />
 
       <Pagination pagination={pagination} onPageChange={handlePageChange} disabled={isLoading} />

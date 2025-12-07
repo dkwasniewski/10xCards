@@ -41,6 +41,11 @@ export function Header({ user }: HeaderProps) {
       // Parse the response to ensure it completed
       await response.json();
 
+      // Clear any user-specific data from localStorage
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("10xCards_lastSessionId");
+      }
+
       // Wait a brief moment for cookies to be cleared, then redirect
       await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -88,6 +93,7 @@ export function Header({ user }: HeaderProps) {
               <a
                 href="/flashcards"
                 className="text-sm font-medium transition-colors hover:text-primary"
+                data-testid="nav-my-flashcards"
               >
                 My Flashcards
               </a>
@@ -139,7 +145,7 @@ export function Header({ user }: HeaderProps) {
                   </a>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <a href="/flashcards" className="cursor-pointer">
+                  <a href="/flashcards" className="cursor-pointer" data-testid="dropdown-my-flashcards">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"

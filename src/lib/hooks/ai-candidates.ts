@@ -66,7 +66,9 @@ async function fetchCandidates(sessionId: string): Promise<CandidateDto[]> {
       throw new Error("Unauthorized");
     }
     if (response.status === 404) {
-      throw new Error("Session not found");
+      // Session not found - this is expected for new users or sessions from other users
+      // Return empty array instead of throwing error
+      return [];
     }
     throw new Error("Failed to fetch candidates");
   }
@@ -95,6 +97,18 @@ export function useCandidates(sessionId: string | null): UseCandidatesResult {
 
     try {
       const candidates = await fetchCandidates(sessionId);
+      
+      // If we got an empty array back (404 was handled), clear the invalid session
+      if (candidates.length === 0) {
+        // Clear localStorage if this session doesn't exist or doesn't belong to current user
+        if (typeof window !== "undefined") {
+          const storedSessionId = localStorage.getItem("10xCards_lastSessionId");
+          if (storedSessionId === sessionId) {
+            localStorage.removeItem("10xCards_lastSessionId");
+          }
+        }
+      }
+      
       const viewModels: CandidateViewModel[] = candidates.map((c) => ({
         id: c.id,
         front: c.front,

@@ -16,6 +16,7 @@ interface CandidateListProps {
   onEdit: (id: string) => void;
   onReject: (id: string) => void;
   disabled?: boolean;
+  testIdPrefix?: string;
 }
 
 /**
@@ -31,11 +32,12 @@ export function CandidateList({
   onEdit,
   onReject,
   disabled = false,
+  testIdPrefix = "candidate",
 }: CandidateListProps) {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-16">
+      <div className="flex items-center justify-center py-16" data-testid={`${testIdPrefix}-list-loading`}>
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         <span className="ml-3 text-muted-foreground">Loading candidates...</span>
       </div>
@@ -45,7 +47,7 @@ export function CandidateList({
   // Empty state
   if (candidates.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center">
+      <div className="flex flex-col items-center justify-center py-16 text-center" data-testid={`${testIdPrefix}-list-empty`}>
         <p className="text-muted-foreground">No candidates found</p>
       </div>
     );
@@ -56,15 +58,16 @@ export function CandidateList({
   const isIndeterminate = candidates.some((c) => selectedIds.has(c.id)) && !isAllSelected;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid={`${testIdPrefix}-list`}>
       <CandidateListHeader
         isAllSelected={isAllSelected}
         isIndeterminate={isIndeterminate}
         onSelectAll={onSelectAll}
         disabled={disabled || isLoading}
+        testIdPrefix={testIdPrefix}
       />
 
-      <div className="space-y-3">
+      <div className="space-y-3" data-testid={`${testIdPrefix}-rows-container`}>
         {candidates.map((candidate) => (
           <CandidateRow
             key={candidate.id}

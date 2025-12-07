@@ -16,6 +16,13 @@ A web application for rapid generation and management of educational flashcards,
 - **Frontend:** Astro 5, React 19, TypeScript 5, Tailwind CSS 4, Shadcn/ui
 - **Backend / Database:** Supabase Auth & Postgres (serverless, row-level security)
 - **AI Integration:** Openrouter.ai (LLM API)
+- **Testing:**
+  - **Unit Tests:** Vitest, @testing-library/react, @testing-library/user-event
+  - **Integration Tests:** Supertest (with Vitest runner), MSW (Mock Service Worker)
+  - **E2E Tests:** Playwright
+  - **Security:** ESLint security plugins, CodeQL, OWASP ZAP
+  - **Performance:** k6
+  - **Accessibility:** axe-core, Lighthouse
 - **CI/CD & Hosting:** GitHub Actions, DigitalOcean (Droplet / App Platform)
 - **Runtime:** Node.js 22.14.0 (see `.nvmrc`)
 
@@ -69,6 +76,9 @@ A web application for rapid generation and management of educational flashcards,
 - `npm run lint` — Run ESLint on all source files
 - `npm run lint:fix` — Auto-fix linting issues
 - `npm run format` — Format all files with Prettier
+- `npm run test` — Run unit tests with Vitest
+- `npm run test:coverage` — Run unit tests with coverage report
+- `npm run test:e2e` — Run end-to-end tests with Playwright
 
 ## Testing the OpenRouter Integration
 

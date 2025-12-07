@@ -3,7 +3,6 @@ import type { GetCandidatesResponseDto } from "../../../../types";
 import { sessionIdSchema } from "../../../../lib/schemas/ai-sessions.schemas";
 import { getAiSessionCandidates } from "../../../../lib/services/ai-sessions.service";
 import { errorResponse, ErrorMessages } from "../../../../lib/utils/api-error";
-import { DEFAULT_USER_ID } from "../../../../db/supabase.client";
 
 export const prerender = false;
 
@@ -15,7 +14,7 @@ export const prerender = false;
  *
  * Flow:
  * 1. Extract and validate sessionId from path params
- * 2. Verify user authentication (using DEFAULT_USER_ID for now)
+ * 2. Verify user authentication
  * 3. Fetch candidates via service layer (includes ownership check)
  * 4. Return candidates as JSON array
  *
@@ -33,12 +32,12 @@ export const GET: APIRoute = async ({ params, locals }) => {
     return errorResponse(500, ErrorMessages.SUPABASE_CLIENT_UNAVAILABLE);
   }
 
-  // For now, use DEFAULT_USER_ID. In production, this would be from auth:
-  // const { data: { user }, error: authError } = await supabase.auth.getUser();
-  // if (authError || !user) {
-  //   return errorResponse(401, ErrorMessages.UNAUTHORIZED);
-  // }
-  const userId = DEFAULT_USER_ID;
+  // Get authenticated user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return errorResponse(401, ErrorMessages.UNAUTHORIZED);
+  }
+  const userId = user.id;
 
   // 1. Validate sessionId path parameter
   const { sessionId } = params;

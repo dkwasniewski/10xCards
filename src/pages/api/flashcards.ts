@@ -4,7 +4,6 @@ import {
   bulkDeleteFlashcardsSchema,
   listFlashcardsQuerySchema,
 } from "../../lib/schemas/flashcards.schemas";
-import { DEFAULT_USER_ID } from "../../db/supabase.client";
 import { flashcardsService } from "../../lib/services/flashcards.service";
 import { errorResponse, handleApiError, ErrorMessages } from "../../lib/utils/api-error";
 
@@ -16,9 +15,25 @@ export const prerender = false;
  * Query parameters: search, page, limit, sort
  */
 export const GET: APIRoute = async ({ request, locals }) => {
-  // TODO: Get user ID from authentication when implemented
-  // For now, using DEFAULT_USER_ID for development
-  const userId = DEFAULT_USER_ID;
+  // Get Supabase client from locals (provided by middleware)
+  const supabase = locals.supabase;
+  if (!supabase) {
+    return await handleApiError(
+      500,
+      ErrorMessages.SUPABASE_CLIENT_UNAVAILABLE,
+      undefined,
+      undefined,
+      "GET /api/flashcards",
+      undefined
+    );
+  }
+
+  // Get authenticated user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return errorResponse(401, "Unauthorized");
+  }
+  const userId = user.id;
 
   // Extract and parse query parameters
   const url = new URL(request.url);
@@ -36,19 +51,6 @@ export const GET: APIRoute = async ({ request, locals }) => {
   }
 
   const query = parseResult.data;
-
-  // Get Supabase client from locals (provided by middleware)
-  const supabase = locals.supabase;
-  if (!supabase) {
-    return await handleApiError(
-      500,
-      ErrorMessages.SUPABASE_CLIENT_UNAVAILABLE,
-      undefined,
-      undefined,
-      "GET /api/flashcards",
-      userId
-    );
-  }
 
   try {
     // Call service to retrieve flashcards
@@ -70,8 +72,25 @@ export const GET: APIRoute = async ({ request, locals }) => {
  * Creates multiple flashcards in bulk.
  */
 export const POST: APIRoute = async ({ request, locals }) => {
-  // TODO: Get user ID from authentication when implemented
-  const userId = DEFAULT_USER_ID;
+  // Get Supabase client from locals (provided by middleware)
+  const supabase = locals.supabase;
+  if (!supabase) {
+    return await handleApiError(
+      500,
+      ErrorMessages.SUPABASE_CLIENT_UNAVAILABLE,
+      undefined,
+      undefined,
+      "POST /api/flashcards",
+      undefined
+    );
+  }
+
+  // Get authenticated user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return errorResponse(401, "Unauthorized");
+  }
+  const userId = user.id;
 
   let body: unknown;
   try {
@@ -87,11 +106,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const commands = parseResult.data;
 
-  // Get Supabase client from locals (provided by middleware)
-  const supabase = locals.supabase;
-
   try {
-    const created = await flashcardsService.createBulkFlashcards(userId, commands);
+    const created = await flashcardsService.createBulkFlashcards(supabase, userId, commands);
     const responseBody = { created };
     return new Response(JSON.stringify(responseBody), {
       status: 201,
@@ -109,8 +125,25 @@ export const POST: APIRoute = async ({ request, locals }) => {
  * Soft-deletes multiple flashcards in bulk (up to 100 at once).
  */
 export const DELETE: APIRoute = async ({ request, locals }) => {
-  // TODO: Get user ID from authentication when implemented
-  const userId = DEFAULT_USER_ID;
+  // Get Supabase client from locals (provided by middleware)
+  const supabase = locals.supabase;
+  if (!supabase) {
+    return await handleApiError(
+      500,
+      ErrorMessages.SUPABASE_CLIENT_UNAVAILABLE,
+      undefined,
+      undefined,
+      "DELETE /api/flashcards",
+      undefined
+    );
+  }
+
+  // Get authenticated user
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return errorResponse(401, "Unauthorized");
+  }
+  const userId = user.id;
 
   // Parse and validate request body
   let body: unknown;
@@ -126,19 +159,6 @@ export const DELETE: APIRoute = async ({ request, locals }) => {
   }
 
   const { ids } = parseResult.data;
-
-  // Get Supabase client from locals (provided by middleware)
-  const supabase = locals.supabase;
-  if (!supabase) {
-    return await handleApiError(
-      500,
-      ErrorMessages.SUPABASE_CLIENT_UNAVAILABLE,
-      undefined,
-      undefined,
-      "DELETE /api/flashcards",
-      userId
-    );
-  }
 
   try {
     // Call service to bulk-delete flashcards

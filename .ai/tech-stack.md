@@ -7,7 +7,7 @@ Below you’ll find my critical yet objective analysis of the proposed tech stac
 ## 1. Speed of MVP Delivery
 
 - **Frontend:**
-  - _Astro 5 + React 19 + TypeScript 5 + Tailwind 4 + shadcn/ui_ provides ready-made components, strong typing, and instant hot-reload. It’s an excellent choice for quickly launching a simple CRUD interface and forms.
+  - _Astro 5 + React 19 + TypeScript 5 + Tailwind 4 + shadcn/ui_ provides ready-made components, strong typing, and instant hot-reload. It's an excellent choice for quickly launching a simple CRUD interface and forms.
   - _Consideration:_ Astro is primarily a static site generator; if you require heavily dynamic views (CRUD, study sessions, route protection), you may encounter SSR/API configuration overhead.
 
 - **Backend/Database:**
@@ -15,6 +15,14 @@ Below you’ll find my critical yet objective analysis of the proposed tech stac
 
 - **AI Integration:**
   - _Openrouter.ai_ – simple HTTP calls without additional LLM infrastructure.
+
+- **Testing:**
+  - _Vitest + @testing-library/react_ – fast, Vite-native unit testing with React component testing utilities
+  - _Playwright_ – modern E2E testing with cross-browser support and visual regression capabilities
+  - _Supertest + MSW_ – API integration testing with service virtualization for external dependencies
+  - _k6_ – scriptable performance and load testing
+  - _axe-core + Lighthouse_ – automated accessibility testing
+  - _CodeQL + OWASP ZAP_ – security scanning and vulnerability detection
 
 - **CI/CD & Hosting:**
   - _GitHub Actions + DigitalOcean_ – quickly establish pipelines and deploy, though manual server or App Platform setup is required.
@@ -33,6 +41,7 @@ Below you’ll find my critical yet objective analysis of the proposed tech stac
 - **Supabase:** Free tier covers MVP; costs rise linearly with user count and query volume.
 - **DigitalOcean:** Low-traffic hosting costs tens of dollars per month; scales with server size.
 - Maintaining multiple frameworks (Astro + React + Tailwind + shadcn) incurs moderate cognitive overhead but offers design flexibility.
+- **Testing Tools:** Most testing tools are open-source and free (Vitest, Playwright, k6, axe-core). Some advanced features may require paid tiers (e.g., Percy/Chromatic for visual regression, BrowserStack for cross-browser testing).
 
 ## 4. Solution Complexity
 
@@ -51,12 +60,19 @@ Below you’ll find my critical yet objective analysis of the proposed tech stac
 - Store Openrouter.ai and Supabase keys securely in CI/CD environment variables.
 - If using Astro API routes, implement middleware to verify sessions on every endpoint.
 - Integrate SAST scanners (e.g., CodeQL) and automated security tests into GitHub Actions.
+- **Testing Security:** Comprehensive security testing stack includes:
+  - _ESLint security plugins_ – catch common vulnerabilities during development
+  - _CodeQL_ – static analysis for security vulnerabilities
+  - _OWASP ZAP_ – dynamic application security testing
+  - _npm audit + Snyk_ – dependency vulnerability scanning
+  - _Dependabot_ – automated dependency updates and security alerts
 
 ---
 
 **Summary:**
 
 - This stack enables rapid MVP delivery, thanks largely to Supabase and ready-made UI components.
-- In the long term, assess whether Astro’s complexity suits a fully dynamic app; simpler stacks (Next.js/React + Vite) may accelerate development and reduce costs.
+- In the long term, assess whether Astro's complexity suits a fully dynamic app; simpler stacks (Next.js/React + Vite) may accelerate development and reduce costs.
 - Supabase and DigitalOcean scale well but require thoughtful architecture and cost planning at scale.
 - Security fundamentals are solid; adhering to RLS, middleware checks, secret management, and CI/CD scanning is crucial.
+- **Testing Infrastructure:** The chosen testing stack (Vitest, Playwright, Supertest, MSW) provides comprehensive coverage with minimal setup overhead. Vitest's Vite-native architecture ensures fast test execution, while Playwright offers reliable cross-browser E2E testing. MSW enables hermetic integration tests by mocking external services. This combination supports the quality goals of 80% code coverage, <30s unit test runtime, and <5min E2E test runtime.

@@ -1,0 +1,11 @@
+# build output
+dist/
+
+# dependencies
+node_modules/
+
+
+# environment variables (keep .env.test accessible for e2e tests)
+.env
+.env.local
+.env.production

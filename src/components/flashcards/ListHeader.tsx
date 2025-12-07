@@ -15,7 +15,7 @@ interface ListHeaderProps {
  */
 export function ListHeader({ isAllSelected, isIndeterminate, onSelectAll, disabled = false }: ListHeaderProps) {
   return (
-    <div className="flex items-center gap-4 border-b pb-3 mb-4">
+    <div className="hidden lg:flex items-center gap-4 border-b pb-3 mb-4">
       <div className="flex items-center">
         <Checkbox
           checked={isAllSelected}

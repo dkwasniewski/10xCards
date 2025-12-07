@@ -161,10 +161,13 @@ export function FlashcardEditorDialog({ mode, isOpen, flashcard, onClose, onSave
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent
+        className="sm:max-w-[600px]"
+        data-testid={mode === "create" ? "create-flashcard-dialog" : "edit-flashcard-dialog"}
+      >
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{dialogTitle}</DialogTitle>
+            <DialogTitle data-testid="dialog-title">{dialogTitle}</DialogTitle>
             <DialogDescription>{dialogDescription}</DialogDescription>
           </DialogHeader>
 
@@ -180,6 +183,8 @@ export function FlashcardEditorDialog({ mode, isOpen, flashcard, onClose, onSave
                 placeholder="Enter the question or front of the card..."
                 className="min-h-[100px]"
                 disabled={isSubmitting}
+                data-testid="flashcard-front-input"
+                maxLength={200}
               />
               <div className="flex justify-between items-center">
                 <p className={`text-xs ${getFrontCharCountColor()}`}>{front.length}/200</p>
@@ -198,6 +203,8 @@ export function FlashcardEditorDialog({ mode, isOpen, flashcard, onClose, onSave
                 placeholder="Enter the answer or back of the card..."
                 className="min-h-[150px]"
                 disabled={isSubmitting}
+                data-testid="flashcard-back-input"
+                maxLength={500}
               />
               <div className="flex justify-between items-center">
                 <p className={`text-xs ${getBackCharCountColor()}`}>{back.length}/500</p>
@@ -207,11 +214,21 @@ export function FlashcardEditorDialog({ mode, isOpen, flashcard, onClose, onSave
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isSubmitting}
+              data-testid="dialog-cancel-button"
+            >
               Cancel
             </Button>
-            <Button type="submit" disabled={!canSave}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button
+              type="submit"
+              disabled={!canSave}
+              data-testid={mode === "create" ? "create-flashcard-submit" : "edit-flashcard-submit"}
+            >
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" data-testid="submit-loading-spinner" />}
               {submitButtonText}
             </Button>
           </DialogFooter>

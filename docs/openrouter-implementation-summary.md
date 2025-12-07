@@ -243,12 +243,7 @@ Required:
 OPENROUTER_API_KEY=sk-or-v1-...
 ```
 
-Optional:
-
-```bash
-OPENROUTER_API_URL=https://openrouter.ai/api/v1  # Default
-SITE_URL=https://10xcards.app                     # For analytics
-```
+Note: The OpenRouter API URL (`https://openrouter.ai/api/v1`) is hardcoded in the service as default and doesn't need to be configured via environment variables.
 
 ## Testing
 

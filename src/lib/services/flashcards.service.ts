@@ -11,9 +11,19 @@ import type { ListFlashcardsQuery } from "../schemas/flashcards.schemas";
 export class FlashcardsService {
   /**
    * Creates multiple flashcards in bulk.
+   * 
+   * @param supabase - Supabase client instance (from context.locals with user auth)
+   * @param userId - ID of the authenticated user
+   * @param commands - Array of flashcard creation commands
+   * @returns Array of created flashcards
+   * @throws Error if the database operation fails
    */
-  async createBulkFlashcards(userId: string, commands: BulkCreateFlashcardsCommand): Promise<FlashcardDto[]> {
-    const { data, error } = await supabaseClient
+  async createBulkFlashcards(
+    supabase: SupabaseClient,
+    userId: string,
+    commands: BulkCreateFlashcardsCommand
+  ): Promise<FlashcardDto[]> {
+    const { data, error } = await supabase
       .from("flashcards")
       .insert(commands.map((cmd) => ({ ...cmd, user_id: userId })))
       .select("*");

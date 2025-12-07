@@ -63,7 +63,7 @@ const DEFAULT_LOGGER: Logger = {
 /**
  * Zod schema for API key validation
  */
-const apiKeySchema = z.string().min(1, "API key cannot be empty");
+const apiKeySchema = z.string().trim().min(1, "API key cannot be empty");
 
 /**
  * Zod schema for chat options validation
@@ -488,35 +488,46 @@ export class OpenRouterService {
    * @returns Promise resolving to function result
    */
   async #retry<T>(fn: () => Promise<T>): Promise<T> {
-    return pRetry(fn, {
-      retries: this.#retryConfig.maxRetries,
-      minTimeout: this.#retryConfig.initialDelay,
-      maxTimeout: this.#retryConfig.maxDelay,
-      factor: this.#retryConfig.backoffMultiplier,
-      onFailedAttempt: (error) => {
-        // Only retry on rate limits and server errors
-        if (error instanceof OpenRouterRateLimitError || error instanceof OpenRouterServerError) {
-          this.#logger.warn("Retrying request after error", {
-            attempt: error.attemptNumber,
-            retriesLeft: error.retriesLeft,
-            error: error.message,
-          });
+    try {
+      return await pRetry(fn, {
+        retries: this.#retryConfig.maxRetries,
+        minTimeout: this.#retryConfig.initialDelay,
+        maxTimeout: this.#retryConfig.maxDelay,
+        factor: this.#retryConfig.backoffMultiplier,
+        onFailedAttempt: (error) => {
+          // Extract the actual error from p-retry's FailedAttemptError
+          const actualError = "error" in error ? error.error : error;
 
-          // Respect retry-after header for rate limits
-          if (error instanceof OpenRouterRateLimitError) {
-            const rateLimitError = error as OpenRouterRateLimitError;
-            if (rateLimitError.retryAfter) {
-              // p-retry doesn't support dynamic delays, but we log it
-              this.#logger.info("Rate limit retry-after", {
-                seconds: rateLimitError.retryAfter,
-              });
+          // Only retry on rate limits and server errors
+          if (actualError instanceof OpenRouterRateLimitError || actualError instanceof OpenRouterServerError) {
+            this.#logger.warn("Retrying request after error", {
+              attempt: error.attemptNumber,
+              retriesLeft: error.retriesLeft,
+              error: actualError.message,
+            });
+
+            // Respect retry-after header for rate limits
+            if (actualError instanceof OpenRouterRateLimitError) {
+              const rateLimitError = actualError as OpenRouterRateLimitError;
+              if (rateLimitError.retryAfter) {
+                // p-retry doesn't support dynamic delays, but we log it
+                this.#logger.info("Rate limit retry-after", {
+                  seconds: rateLimitError.retryAfter,
+                });
+              }
             }
+          } else {
+            // Don't retry other errors - abort immediately
+            throw error;
           }
-        } else {
-          // Don't retry other errors
-          throw error;
-        }
-      },
-    });
+        },
+      });
+    } catch (error) {
+      // If p-retry wraps the error, unwrap it
+      if (error && typeof error === "object" && "error" in error) {
+        throw error.error;
+      }
+      throw error;
+    }
   }
 }

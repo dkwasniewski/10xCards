@@ -122,4 +122,11 @@
   html {
     overflow-y: scroll;
   }
+
+  /* Prevent page jump when Radix Select/Dialog opens by preventing scroll lock */
+  body[data-scroll-locked] {
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+    overflow: visible !important;
+  }
 }

@@ -10,7 +10,6 @@ import {
   hashInputText,
 } from "../../lib/services/ai-sessions.service";
 import { logEvent } from "../../lib/services/event-log.service";
-import { DEFAULT_USER_ID } from "../../db/supabase.client";
 
 export const prerender = false;
 
@@ -56,7 +55,21 @@ function errorResponse(status: number, error: string, details?: Record<string, u
  */
 export const POST: APIRoute = async ({ request, locals }) => {
   const supabase = locals.supabase;
-  const userId = DEFAULT_USER_ID;
+  if (!supabase) {
+    return errorResponse(500, "Internal server error", {
+      message: "Supabase client unavailable",
+    });
+  }
+
+  // Get authenticated user
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return errorResponse(401, "Unauthorized");
+  }
+  const userId = user.id;
 
   // 1. Parse and Validate Input
   let body: unknown;

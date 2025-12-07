@@ -8,6 +8,7 @@ interface CandidateListHeaderProps {
   isIndeterminate: boolean;
   onSelectAll: (checked: boolean) => void;
   disabled?: boolean;
+  testIdPrefix?: string;
 }
 
 /**
@@ -18,9 +19,10 @@ export function CandidateListHeader({
   isIndeterminate,
   onSelectAll,
   disabled = false,
+  testIdPrefix = "candidate",
 }: CandidateListHeaderProps) {
   return (
-    <div className="flex items-center gap-4 border-b pb-3 mb-4">
+    <div className="hidden lg:flex items-center gap-4 border-b pb-3 mb-4" data-testid={`${testIdPrefix}-list-header`}>
       <div className="flex items-center">
         <Checkbox
           checked={isAllSelected}
@@ -28,6 +30,7 @@ export function CandidateListHeader({
           disabled={disabled}
           aria-label="Select all candidates on this page"
           className={isIndeterminate && !isAllSelected ? "data-[state=checked]:bg-primary" : ""}
+          data-testid={`${testIdPrefix}-select-all-checkbox`}
         />
       </div>
       <div className="flex-1 grid grid-cols-12 gap-4 text-sm font-medium text-muted-foreground">

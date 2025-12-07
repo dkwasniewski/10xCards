@@ -104,9 +104,9 @@ export function GenerationForm({ onSubmit, isLoading = false }: GenerationFormPr
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Text Input */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <Label htmlFor="input-text">Source Text</Label>
-          <span className={`text-xs font-medium ${getCharCountColor()}`}>
+          <span className={`text-xs font-medium ${getCharCountColor()}`} data-testid="char-count">
             {charCount.toLocaleString()} / {MAX_CHARS.toLocaleString()} characters
           </span>
         </div>
@@ -119,6 +119,7 @@ export function GenerationForm({ onSubmit, isLoading = false }: GenerationFormPr
           className={`min-h-[200px] resize-y ${errors.inputText ? "border-destructive" : ""}`}
           aria-invalid={!!errors.inputText}
           aria-describedby={errors.inputText ? "input-text-error" : undefined}
+          data-testid="source-text-input"
         />
         {errors.inputText && (
           <p id="input-text-error" className="text-sm text-destructive">
@@ -131,7 +132,7 @@ export function GenerationForm({ onSubmit, isLoading = false }: GenerationFormPr
           </p>
         )}
         {!errors.inputText && hasValidLength && (
-          <p className="text-sm text-green-600 dark:text-green-500">Ready to generate flashcards!</p>
+          <p className="text-sm text-green-600 dark:text-green-500" data-testid="ready-to-generate">Ready to generate flashcards!</p>
         )}
       </div>
 
@@ -144,12 +145,17 @@ export function GenerationForm({ onSubmit, isLoading = false }: GenerationFormPr
             className={errors.model ? "border-destructive" : ""}
             aria-invalid={!!errors.model}
             aria-describedby={errors.model ? "model-error" : undefined}
+            data-testid="model-select-trigger"
           >
             <SelectValue placeholder="Select a model" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent 
+            position="popper" 
+            sideOffset={4}
+            data-testid="model-select-content"
+          >
             {ALLOWED_MODELS.map((modelId) => (
-              <SelectItem key={modelId} value={modelId}>
+              <SelectItem key={modelId} value={modelId} data-testid={`model-option-${modelId}`}>
                 {formatModelName(modelId)}
               </SelectItem>
             ))}
@@ -166,10 +172,15 @@ export function GenerationForm({ onSubmit, isLoading = false }: GenerationFormPr
       </div>
 
       {/* Submit Button */}
-      <Button type="submit" disabled={isLoading || !hasValidLength} className="w-full">
+      <Button 
+        type="submit" 
+        disabled={isLoading || !hasValidLength} 
+        className="w-full"
+        data-testid="generate-flashcards-button"
+      >
         {isLoading ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" data-testid="loading-spinner" />
             Generating flashcards...
           </>
         ) : (

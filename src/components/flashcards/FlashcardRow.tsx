@@ -60,13 +60,15 @@ export function FlashcardRow({ flashcard, isSelected, onToggleSelection, onEdit,
 
   return (
     <div
-      className={`flex items-start gap-4 border rounded-lg p-4 transition-colors ${
+      className={`flex items-start gap-3 lg:gap-4 border rounded-lg p-4 transition-colors ${
         isSelected ? "bg-accent border-primary" : "hover:bg-muted/50"
       } ${shouldShowExpand ? "cursor-pointer" : ""}`}
       onClick={handleRowClick}
       onKeyDown={shouldShowExpand ? handleKeyDown : undefined}
       role={shouldShowExpand ? "button" : undefined}
       tabIndex={shouldShowExpand ? 0 : undefined}
+      data-testid="flashcard-row"
+      data-flashcard-id={flashcard.id}
     >
       <div className="flex items-start pt-1">
         <Checkbox
@@ -77,19 +79,91 @@ export function FlashcardRow({ flashcard, isSelected, onToggleSelection, onEdit,
         />
       </div>
 
-      <div className="flex-1 grid grid-cols-12 gap-4 min-w-0">
+      {/* Mobile Layout - Stacked */}
+      <div className="flex-1 flex flex-col gap-3 min-w-0 lg:hidden">
+        <div className="flex items-start gap-2">
+          <Badge variant={flashcard.source === "ai" ? "default" : "secondary"} data-testid="flashcard-source">
+            {flashcard.source === "ai" ? "AI" : "Manual"}
+          </Badge>
+          <span className="text-xs text-muted-foreground ml-auto" title={format(createdAt, "PPpp")}>
+            {timeAgo}
+          </span>
+        </div>
+
+        <div>
+          <div className="text-xs font-medium text-muted-foreground mb-1">Front</div>
+          <p className="text-sm break-words" data-testid="flashcard-front">
+            {frontText}
+          </p>
+        </div>
+
+        <div>
+          <div className="text-xs font-medium text-muted-foreground mb-1">Back</div>
+          <p className="text-sm text-muted-foreground break-words" data-testid="flashcard-back">
+            {backText}
+          </p>
+        </div>
+
+        {shouldShowExpand && (
+          <button
+            className="text-xs text-primary hover:underline self-start"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsExpanded(!isExpanded);
+            }}
+          >
+            {isExpanded ? "Show less" : "Show more"}
+          </button>
+        )}
+
+        <div className="flex gap-2 pt-2 border-t">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(flashcard);
+            }}
+            aria-label="Edit flashcard"
+            className="flex-1"
+          >
+            <Pencil className="h-4 w-4 mr-2" />
+            Edit
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(flashcard);
+            }}
+            aria-label="Delete flashcard"
+            className="flex-1"
+          >
+            <Trash2 className="h-4 w-4 mr-2 text-destructive" />
+            Delete
+          </Button>
+        </div>
+      </div>
+
+      {/* Desktop Layout - Grid */}
+      <div className="hidden lg:flex flex-1 lg:grid lg:grid-cols-12 gap-4 min-w-0">
         <div className="col-span-1 flex items-start pt-1">
-          <Badge variant={flashcard.source === "ai" ? "default" : "secondary"}>
+          <Badge variant={flashcard.source === "ai" ? "default" : "secondary"} data-testid="flashcard-source">
             {flashcard.source === "ai" ? "AI" : "Manual"}
           </Badge>
         </div>
 
         <div className="col-span-4 min-w-0">
-          <p className="text-sm break-words">{frontText}</p>
+          <p className="text-sm break-words" data-testid="flashcard-front">
+            {frontText}
+          </p>
         </div>
 
         <div className="col-span-5 min-w-0">
-          <p className="text-sm text-muted-foreground break-words">{backText}</p>
+          <p className="text-sm text-muted-foreground break-words" data-testid="flashcard-back">
+            {backText}
+          </p>
           {shouldShowExpand && (
             <button
               className="text-xs text-primary hover:underline mt-1"

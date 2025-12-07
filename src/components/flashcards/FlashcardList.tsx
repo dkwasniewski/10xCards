@@ -18,6 +18,7 @@ interface FlashcardListProps {
   isSearch?: boolean;
   searchQuery?: string;
   onClearSearch?: () => void;
+  "data-testid"?: string;
 }
 
 /**
@@ -34,11 +35,12 @@ export function FlashcardList({
   isSearch = false,
   searchQuery,
   onClearSearch,
+  "data-testid": dataTestId,
 }: FlashcardListProps) {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-16">
+      <div className="flex items-center justify-center py-16" data-testid="flashcards-loading">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         <span className="ml-3 text-muted-foreground">Loading flashcards...</span>
       </div>
@@ -55,7 +57,7 @@ export function FlashcardList({
   const isIndeterminate = flashcards.some((f) => selectedIds.has(f.id)) && !isAllSelected;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid={dataTestId}>
       <ListHeader
         isAllSelected={isAllSelected}
         isIndeterminate={isIndeterminate}
