@@ -56,11 +56,37 @@ const reactConfig = tseslint.config({
   },
 });
 
+const nodeConfig = tseslint.config({
+  files: ["scripts/**/*.{js,ts}", "*.config.js"],
+  languageOptions: {
+    globals: {
+      console: true,
+      process: true,
+      __dirname: true,
+      __filename: true,
+    },
+  },
+  rules: {
+    "no-console": "off",
+  },
+});
+
+const testConfig = tseslint.config({
+  files: ["e2e/**/*.ts", "test/**/*.ts", "**/tests/**/*.ts", "**/__tests__/**/*.{ts,tsx}"],
+  rules: {
+    "no-console": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+  },
+});
+
 export default tseslint.config(
   includeIgnoreFile(gitignorePath),
   baseConfig,
   jsxA11yConfig,
   reactConfig,
+  nodeConfig,
+  testConfig,
   eslintPluginAstro.configs["flat/recommended"],
   eslintPluginPrettier
 );

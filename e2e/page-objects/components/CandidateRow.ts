@@ -131,9 +131,7 @@ export class CandidateRow {
    * Wait for the row to disappear (after accept/reject)
    * The row is removed from DOM after API call completes, not just hidden
    */
-  async waitForDisappear(timeout: number = 10000) {
+  async waitForDisappear(timeout = 10000) {
     await this.row.waitFor({ state: "detached", timeout });
   }
 }
-
-

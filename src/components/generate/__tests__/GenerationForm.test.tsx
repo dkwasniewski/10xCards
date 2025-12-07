@@ -13,7 +13,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { GenerationForm } from "../GenerationForm";
-import { ALLOWED_MODELS, DEFAULT_MODEL } from "@/lib/services/ai.service";
+import { DEFAULT_MODEL } from "@/lib/services/ai.service";
 
 describe("GenerationForm", () => {
   // Mock props

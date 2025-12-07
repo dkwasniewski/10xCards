@@ -73,19 +73,19 @@ export class GenerationForm {
   async selectModel(modelId: string) {
     // Check if dropdown is already open
     const isOpen = await this.modelSelectContent.isVisible().catch(() => false);
-    
+
     // Open dropdown if not already open
     if (!isOpen) {
       await this.modelSelectTrigger.click();
       // Wait for the dropdown content to be visible
       await this.modelSelectContent.waitFor({ state: "visible", timeout: 5000 });
     }
-    
+
     // Wait for the specific option to be visible
     const option = this.page.getByTestId(`model-option-${modelId}`);
     await option.waitFor({ state: "visible", timeout: 5000 });
     await option.click();
-    
+
     // Wait for dropdown to close after selection
     await this.modelSelectContent.waitFor({ state: "hidden", timeout: 5000 }).catch(() => {});
   }
@@ -106,7 +106,7 @@ export class GenerationForm {
     await this.page.waitForFunction(
       (selector) => {
         const button = document.querySelector(selector);
-        return button && !button.hasAttribute('disabled');
+        return button && !button.hasAttribute("disabled");
       },
       `[data-testid="generate-flashcards-button"]`,
       { timeout: 10000 }
@@ -132,7 +132,7 @@ export class GenerationForm {
    * Wait for generation to complete
    * @param timeout - Maximum time to wait in milliseconds (default: 30000)
    */
-  async waitForGenerationComplete(timeout: number = 30000) {
+  async waitForGenerationComplete(timeout = 30000) {
     // Wait for loading spinner to appear first
     await this.loadingSpinner.waitFor({ state: "visible", timeout: 5000 }).catch(() => {
       // Spinner might not appear if generation is very fast
@@ -175,4 +175,3 @@ export class GenerationForm {
     return await this.container.isVisible();
   }
 }
-

@@ -17,4 +17,3 @@ export function renderWithProviders(ui: ReactElement, options?: Omit<RenderOptio
 // Re-export everything from @testing-library/react
 export * from "@testing-library/react";
 export { renderWithProviders as render };
-

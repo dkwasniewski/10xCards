@@ -47,7 +47,10 @@ export function CandidateList({
   // Empty state
   if (candidates.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center" data-testid={`${testIdPrefix}-list-empty`}>
+      <div
+        className="flex flex-col items-center justify-center py-16 text-center"
+        data-testid={`${testIdPrefix}-list-empty`}
+      >
         <p className="text-muted-foreground">No candidates found</p>
       </div>
     );
@@ -84,5 +87,3 @@ export function CandidateList({
     </div>
   );
 }
-
-

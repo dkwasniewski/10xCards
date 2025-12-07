@@ -6,15 +6,17 @@
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = "http://127.0.0.1:54321";
-const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
-const supabaseServiceKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
+const supabaseAnonKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
+const supabaseServiceKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
 
 async function testAuth() {
   console.log("🔍 Detailed Authentication Diagnostics\n");
   console.log("=".repeat(70));
 
   const args = process.argv.slice(2);
-  
+
   if (args.length < 2) {
     console.error("\n❌ Please provide email and password:");
     console.error("   node scripts/test-auth-detailed.js your@email.com yourpassword\n");
@@ -35,11 +37,11 @@ async function testAuth() {
     console.log("\n" + "=".repeat(70));
     console.log("STEP 1: Checking if user exists in database...");
     console.log("=".repeat(70));
-    
+
     const { data: users, error: userError } = await serviceClient
-      .from('auth.users')
-      .select('id, email, email_confirmed_at, confirmed_at, last_sign_in_at')
-      .eq('email', email);
+      .from("auth.users")
+      .select("id, email, email_confirmed_at, confirmed_at, last_sign_in_at")
+      .eq("email", email);
 
     if (userError) {
       console.log("⚠️  Could not query auth.users directly (expected in RLS environment)");
@@ -59,7 +61,7 @@ async function testAuth() {
     console.log("\n" + "=".repeat(70));
     console.log("STEP 2: Attempting login with anon client...");
     console.log("=".repeat(70));
-    
+
     const { data: loginData, error: loginError } = await anonClient.auth.signInWithPassword({
       email: email,
       password: password,
@@ -70,7 +72,7 @@ async function testAuth() {
       console.error("   Error message:", loginError.message);
       console.error("   Error status:", loginError.status);
       console.error("   Error name:", loginError.name);
-      
+
       if (loginError.message.includes("Invalid login credentials")) {
         console.log("\n🔍 DIAGNOSIS:");
         console.log("   The credentials are incorrect. This could mean:");
@@ -79,7 +81,7 @@ async function testAuth() {
         console.log("   3. The user was deleted or reset");
         console.log("   4. Database was reset and user needs to re-register");
       }
-      
+
       if (loginError.message.includes("Email not confirmed")) {
         console.log("\n🔍 DIAGNOSIS:");
         console.log("   The email needs to be confirmed.");
@@ -90,7 +92,7 @@ async function testAuth() {
       console.log("\n💡 SUGGESTION:");
       console.log("   Try resetting the password or creating a new user:");
       console.log(`   node scripts/create-test-user.js ${email} NewPassword123!`);
-      
+
       return;
     }
 
@@ -131,10 +133,7 @@ async function testAuth() {
 
     // Test flashcards SELECT
     console.log("\n📖 Testing flashcards SELECT...");
-    const { data: flashcards, error: flashcardsError } = await anonClient
-      .from("flashcards")
-      .select("*")
-      .limit(1);
+    const { data: flashcards, error: flashcardsError } = await anonClient.from("flashcards").select("*").limit(1);
 
     if (flashcardsError) {
       console.error("❌ Flashcards select FAILED:", flashcardsError.message);
@@ -145,7 +144,6 @@ async function testAuth() {
     console.log("\n" + "=".repeat(70));
     console.log("✅ DIAGNOSTICS COMPLETE");
     console.log("=".repeat(70));
-
   } catch (error) {
     console.error("\n💥 UNEXPECTED ERROR:");
     console.error(error);
@@ -153,4 +151,3 @@ async function testAuth() {
 }
 
 testAuth();
-

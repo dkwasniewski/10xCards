@@ -1,5 +1,4 @@
 import type { SupabaseClient } from "../../db/supabase.client";
-import { supabaseClient } from "../../db/supabase.client";
 import type {
   BulkCreateFlashcardsCommand,
   FlashcardDto,
@@ -11,7 +10,7 @@ import type { ListFlashcardsQuery } from "../schemas/flashcards.schemas";
 export class FlashcardsService {
   /**
    * Creates multiple flashcards in bulk.
-   * 
+   *
    * @param supabase - Supabase client instance (from context.locals with user auth)
    * @param userId - ID of the authenticated user
    * @param commands - Array of flashcard creation commands

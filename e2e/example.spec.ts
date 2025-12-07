@@ -31,4 +31,3 @@ test.describe("Homepage", () => {
 //   await page.goto('/');
 //   await expect(page).toHaveScreenshot('homepage.png');
 // });
-

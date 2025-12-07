@@ -5,7 +5,8 @@
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = "http://127.0.0.1:54321";
-const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
+const supabaseAnonKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
 
 async function test() {
   const args = process.argv.slice(2);
@@ -24,15 +25,25 @@ async function test() {
       detectSessionInUrl: false,
       storage: {
         getItem: () => null,
-        setItem: () => {},
-        removeItem: () => {},
+        setItem: () => {
+          // Intentionally empty
+        },
+        removeItem: () => {
+          // Intentionally empty
+        },
       },
     },
   });
 
   console.log("🧪 Testing with fresh client (no session storage)");
   console.log("Email:", email);
-  console.log("Password chars:", password.split('').map((c, i) => `[${i}:${c}]`).join(' '));
+  console.log(
+    "Password chars:",
+    password
+      .split("")
+      .map((c, i) => `[${i}:${c}]`)
+      .join(" ")
+  );
   console.log("");
 
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -50,4 +61,3 @@ async function test() {
 }
 
 test();
-

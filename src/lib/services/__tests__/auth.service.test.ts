@@ -9,7 +9,7 @@ import type { SupabaseClient } from "../../../db/supabase.client";
  */
 
 // Mock Supabase client type
-type MockSupabaseClient = {
+interface MockSupabaseClient {
   auth: {
     signUp: ReturnType<typeof vi.fn>;
     signInWithPassword: ReturnType<typeof vi.fn>;
@@ -17,7 +17,7 @@ type MockSupabaseClient = {
     resetPasswordForEmail: ReturnType<typeof vi.fn>;
     updateUser: ReturnType<typeof vi.fn>;
   };
-};
+}
 
 describe("AuthService", () => {
   let mockSupabase: MockSupabaseClient;

@@ -154,7 +154,7 @@ export class FlashcardsList {
   /**
    * Wait for a new flashcard to appear at the top
    */
-  async waitForNewFlashcard(expectedFront: string, timeout: number = 5000) {
+  async waitForNewFlashcard(expectedFront: string, timeout = 5000) {
     await this.page.waitForFunction(
       ({ frontText }) => {
         const firstRow = document.querySelector('[data-testid="flashcard-row"]');

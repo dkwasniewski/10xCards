@@ -20,4 +20,3 @@ export class BasePage {
     await this.page.screenshot({ path: `screenshots/${name}.png` });
   }
 }
-

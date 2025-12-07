@@ -15,7 +15,7 @@ export class CandidatesList {
   readonly emptyState: Locator;
   readonly testIdPrefix: string;
 
-  constructor(page: Page, testIdPrefix: string = "candidate") {
+  constructor(page: Page, testIdPrefix = "candidate") {
     this.page = page;
     this.testIdPrefix = testIdPrefix;
     this.container = page.getByTestId(`${testIdPrefix}-list`);
@@ -186,7 +186,7 @@ export class CandidatesList {
    * @param minCount - Minimum number of candidates expected
    * @param timeout - Maximum time to wait in milliseconds
    */
-  async waitForCandidates(minCount: number = 1, timeout: number = 5000) {
+  async waitForCandidates(minCount = 1, timeout = 5000) {
     await this.page.waitForFunction(
       ({ testIdPrefix, min }) => {
         const container = document.querySelector(`[data-testid="${testIdPrefix}-list"]`);
@@ -213,5 +213,3 @@ export class CandidatesList {
     await this.container.waitFor({ state: "visible" });
   }
 }
-
-

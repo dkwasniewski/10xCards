@@ -29,7 +29,10 @@ export const GET: APIRoute = async ({ request, locals }) => {
   }
 
   // Get authenticated user
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
   if (authError || !user) {
     return errorResponse(401, "Unauthorized");
   }
@@ -86,7 +89,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   // Get authenticated user
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
   if (authError || !user) {
     return errorResponse(401, "Unauthorized");
   }
@@ -139,7 +145,10 @@ export const DELETE: APIRoute = async ({ request, locals }) => {
   }
 
   // Get authenticated user
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
   if (authError || !user) {
     return errorResponse(401, "Unauthorized");
   }

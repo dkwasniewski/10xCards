@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 
 import { forgotPasswordSchema } from "../../lib/schemas/auth.schemas";
 import { authService } from "../../lib/services/auth.service";
-import { errorResponse, ErrorMessages, handleApiError } from "../../lib/utils/api-error";
+import { errorResponse, ErrorMessages } from "../../lib/utils/api-error";
 
 /**
  * POST /api/forgot-password
@@ -83,4 +83,3 @@ export const POST: APIRoute = async ({ request, locals }) => {
     );
   }
 };
-

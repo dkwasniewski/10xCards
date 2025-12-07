@@ -104,4 +104,3 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return await handleApiError(500, "Login failed. Please try again", error, locals.supabase, "POST /api/login");
   }
 };
-

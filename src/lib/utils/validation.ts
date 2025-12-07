@@ -45,4 +45,3 @@ export function validateStrongPassword(password: string): string | undefined {
   if (!/[!@#$%^&*]/.test(password)) return "Password must contain at least one special character (!@#$%^&*)";
   return undefined;
 }
-

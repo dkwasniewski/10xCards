@@ -163,8 +163,12 @@ export function CandidateEditorDialog({ isOpen, candidate, onClose, onSave }: Ca
 
             {candidate?.prompt && (
               <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">Original Prompt</label>
-                <p className="text-sm text-muted-foreground italic">{candidate.prompt}</p>
+                <label htmlFor="original-prompt" className="text-sm font-medium text-muted-foreground">
+                  Original Prompt
+                </label>
+                <p id="original-prompt" className="text-sm text-muted-foreground italic">
+                  {candidate.prompt}
+                </p>
               </div>
             )}
           </div>
@@ -183,4 +187,3 @@ export function CandidateEditorDialog({ isOpen, candidate, onClose, onSave }: Ca
     </Dialog>
   );
 }
-

@@ -1,7 +1,6 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
 
-import { authService } from "../../lib/services/auth.service";
 import { logEvent } from "../../lib/services/event-log.service";
 import { errorResponse, ErrorMessages, handleApiError } from "../../lib/utils/api-error";
 

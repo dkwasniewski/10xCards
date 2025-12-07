@@ -5,13 +5,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ALLOWED_MODELS, DEFAULT_MODEL } from "@/lib/services/ai.service";
 
 const MIN_CHARS = 1000;
@@ -132,7 +126,9 @@ export function GenerationForm({ onSubmit, isLoading = false }: GenerationFormPr
           </p>
         )}
         {!errors.inputText && hasValidLength && (
-          <p className="text-sm text-green-600 dark:text-green-500" data-testid="ready-to-generate">Ready to generate flashcards!</p>
+          <p className="text-sm text-green-600 dark:text-green-500" data-testid="ready-to-generate">
+            Ready to generate flashcards!
+          </p>
         )}
       </div>
 
@@ -149,11 +145,7 @@ export function GenerationForm({ onSubmit, isLoading = false }: GenerationFormPr
           >
             <SelectValue placeholder="Select a model" />
           </SelectTrigger>
-          <SelectContent 
-            position="popper" 
-            sideOffset={4}
-            data-testid="model-select-content"
-          >
+          <SelectContent position="popper" sideOffset={4} data-testid="model-select-content">
             {ALLOWED_MODELS.map((modelId) => (
               <SelectItem key={modelId} value={modelId} data-testid={`model-option-${modelId}`}>
                 {formatModelName(modelId)}
@@ -172,9 +164,9 @@ export function GenerationForm({ onSubmit, isLoading = false }: GenerationFormPr
       </div>
 
       {/* Submit Button */}
-      <Button 
-        type="submit" 
-        disabled={isLoading || !hasValidLength} 
+      <Button
+        type="submit"
+        disabled={isLoading || !hasValidLength}
         className="w-full"
         data-testid="generate-flashcards-button"
       >
@@ -190,5 +182,3 @@ export function GenerationForm({ onSubmit, isLoading = false }: GenerationFormPr
     </form>
   );
 }
-
-

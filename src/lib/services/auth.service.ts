@@ -39,7 +39,7 @@ class AuthService {
 
     return {
       id: data.user.id,
-      email: data.user.email!,
+      email: data.user.email || "",
       created_at: data.user.created_at,
     };
   }

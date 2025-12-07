@@ -199,4 +199,3 @@ export class FlashcardEditorDialog {
     return (await this.getBackCharCount()) >= 500;
   }
 }
-

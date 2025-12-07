@@ -55,13 +55,13 @@ test.describe("Generate Flashcards", () => {
     // Verify character count element exists and shows initial state
     await expect(generatePage.generationForm.charCount).toBeVisible();
     await expect(generatePage.generationForm.charCount).toContainText("0 / 10,000 characters");
-    
+
     // Fill with some text
     await generatePage.generationForm.fillSourceText(SAMPLE_TEXT_1000_CHARS);
-    
+
     // Wait for React state to update
     await page.waitForTimeout(300);
-    
+
     // Verify character count updates
     const charCount = await generatePage.generationForm.charCount.textContent();
     expect(charCount).not.toContain("0 / 10,000");
@@ -78,16 +78,16 @@ test.describe("Generate Flashcards", () => {
     // Verify the form elements are present
     await expect(generatePage.generationForm.sourceTextInput).toBeVisible();
     await expect(generatePage.generationForm.modelSelectTrigger).toBeVisible();
-    
+
     // Fill with sufficient text (>= 1000 characters)
     await generatePage.generationForm.fillSourceText(SAMPLE_TEXT_1000_CHARS);
-    
+
     // Wait for React state to update
     await page.waitForTimeout(300);
-    
+
     // Verify button becomes enabled
     await expect(generatePage.generationForm.generateButton).toBeEnabled();
-    
+
     // Verify ready message appears
     await expect(generatePage.generationForm.readyToGenerateMessage).toBeVisible();
   });
@@ -98,7 +98,7 @@ test.describe("Generate Flashcards", () => {
 
     // Fill the form
     await generatePage.generationForm.fillSourceText(SAMPLE_TEXT_1000_CHARS);
-    
+
     // Wait for React state to update
     await page.waitForTimeout(300);
 
@@ -267,7 +267,6 @@ test.describe("Generate Flashcards", () => {
 
     // Accept first candidate
     const firstCandidate = generatePage.newCandidatesList.getFirstRow();
-    const frontText = await firstCandidate.getFrontText();
     await firstCandidate.accept();
 
     // Navigate to My Flashcards
@@ -297,10 +296,10 @@ test.describe("Generate Flashcards", () => {
     // Try selecting different models
     await generatePage.generationForm.selectModel("openai/gpt-3.5-turbo");
     await page.waitForTimeout(300);
-    
+
     // Verify button is still enabled after first selection
     await expect(generatePage.generationForm.generateButton).toBeEnabled();
-    
+
     // Select a different model
     await generatePage.generationForm.selectModel("anthropic/claude-3-haiku");
     await page.waitForTimeout(300);
@@ -344,4 +343,3 @@ test.describe("Generate Flashcards", () => {
     expect(triggerText).toContain("gpt-4o-mini");
   });
 });
-

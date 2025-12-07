@@ -25,7 +25,10 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
   }
 
   // Get authenticated user
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
   if (authError || !user) {
     return errorResponse(401, "Unauthorized");
   }
@@ -104,7 +107,10 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
   }
 
   // Get authenticated user
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
   if (authError || !user) {
     return errorResponse(401, "Unauthorized");
   }

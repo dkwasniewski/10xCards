@@ -101,4 +101,3 @@ export class Header {
     return (await this.userMenuButton.textContent()) || "";
   }
 }
-

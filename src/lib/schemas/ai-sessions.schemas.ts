@@ -9,4 +9,3 @@ export const sessionIdSchema = z.string().uuid({
 });
 
 export type SessionId = z.infer<typeof sessionIdSchema>;
-

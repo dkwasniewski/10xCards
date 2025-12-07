@@ -131,17 +131,17 @@ export async function generateFlashcards(inputText: string, model: string): Prom
     }
 
     console.log(`Received ${candidates.length} flashcards from AI. Validating...`);
-    
+
     // Validate each candidate has required fields and add default prompt if missing
     const validatedCandidates: CandidateCreateDto[] = [];
     const invalidCandidates: unknown[] = [];
-    
+
     for (const c of candidates) {
       // Check if front and back are valid strings
       if (c.front && typeof c.front === "string" && c.back && typeof c.back === "string") {
         // If prompt is missing or invalid, generate a default one
         const prompt = c.prompt && typeof c.prompt === "string" ? c.prompt : "Flashcard generated from input text";
-        
+
         validatedCandidates.push({
           front: c.front.trim(),
           back: c.back.trim(),
@@ -153,11 +153,17 @@ export async function generateFlashcards(inputText: string, model: string): Prom
     }
 
     if (invalidCandidates.length > 0) {
-      console.warn(`Filtered out ${invalidCandidates.length} invalid flashcards:`, JSON.stringify(invalidCandidates, null, 2));
+      console.warn(
+        `Filtered out ${invalidCandidates.length} invalid flashcards:`,
+        JSON.stringify(invalidCandidates, null, 2)
+      );
     }
 
     if (validatedCandidates.length === 0) {
-      console.error("All flashcards failed validation. Sample invalid flashcard:", JSON.stringify(candidates[0], null, 2));
+      console.error(
+        "All flashcards failed validation. Sample invalid flashcard:",
+        JSON.stringify(candidates[0], null, 2)
+      );
       throw new Error("No valid flashcards in AI response after validation");
     }
 

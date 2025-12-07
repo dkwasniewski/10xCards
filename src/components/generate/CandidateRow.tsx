@@ -188,11 +188,15 @@ export function CandidateRow({
         </div>
 
         <div className="col-span-4 min-w-0">
-          <p className="text-sm break-words" data-testid="candidate-front">{frontText}</p>
+          <p className="text-sm break-words" data-testid="candidate-front">
+            {frontText}
+          </p>
         </div>
 
         <div className="col-span-5 min-w-0">
-          <p className="text-sm text-muted-foreground break-words" data-testid="candidate-back">{backText}</p>
+          <p className="text-sm text-muted-foreground break-words" data-testid="candidate-back">
+            {backText}
+          </p>
           {shouldShowExpand && (
             <button
               className="text-xs text-primary hover:underline mt-1"
@@ -261,4 +265,3 @@ export function CandidateRow({
     </div>
   );
 }
-

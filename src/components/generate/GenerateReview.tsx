@@ -2,13 +2,8 @@
 
 import * as React from "react";
 import { toast, Toaster } from "sonner";
-import {
-  useCandidates,
-  useGeneration,
-  useCandidateActions,
-  type CandidateViewModel,
-} from "@/lib/hooks/ai-candidates";
-import type { CandidateCreateDto, CandidateActionCommand, CandidateDto } from "@/types";
+import { useCandidates, useGeneration, useCandidateActions, type CandidateViewModel } from "@/lib/hooks/ai-candidates";
+import type { CandidateActionCommand } from "@/types";
 import { PageHeader } from "@/components/flashcards/PageHeader";
 import { BulkActionBar } from "@/components/flashcards/BulkActionBar";
 import { GenerationForm } from "./GenerationForm";
@@ -108,21 +103,31 @@ export default function GenerateReview() {
         // We need to fetch them from the server to get the real UUIDs
         // Since we just changed the session ID, the useCandidates hook will automatically refetch
         // But we need to manually trigger it since the state update might not have propagated yet
-        
+
         // Fetch the newly generated candidates with real IDs
         try {
           const response = await fetch(`/api/ai-sessions/${newSessionId}/candidates`);
           if (response.ok) {
             const candidates = await response.json();
-            const viewModels: CandidateViewModel[] = candidates.map((c: any) => ({
-              id: c.id,
-              front: c.front,
-              back: c.back,
-              prompt: c.prompt,
-              aiSessionId: newSessionId,
-              created_at: new Date().toISOString(),
-              status: "new" as const,
-            }));
+            const viewModels: CandidateViewModel[] = candidates.map(
+              (c: {
+                id: string;
+                front: string;
+                back: string;
+                prompt: string;
+                status: string;
+                created_at: string;
+                updated_at: string;
+              }) => ({
+                id: c.id,
+                front: c.front,
+                back: c.back,
+                prompt: c.prompt,
+                aiSessionId: newSessionId,
+                created_at: new Date().toISOString(),
+                status: "new" as const,
+              })
+            );
             setNewCandidates(viewModels);
           }
         } catch (fetchError) {
@@ -239,19 +244,30 @@ export default function GenerateReview() {
       };
 
       const result = await processActions(currentSessionId, command);
-      toast.success(`${result.accepted.length} candidate${result.accepted.length > 1 ? "s" : ""} added to your flashcards!`);
+      toast.success(
+        `${result.accepted.length} candidate${result.accepted.length > 1 ? "s" : ""} added to your flashcards!`
+      );
 
       // Refresh to get updated state from server
       await refreshPending();
     } catch (error) {
       console.error("Failed to accept candidates:", error);
       toast.error("Failed to accept candidates - rolled back");
-      
+
       // Rollback: restore the candidates
       setNewCandidates((prev) => [...prev, ...selectedNewCandidates]);
       await refreshPending();
     }
-  }, [currentSessionId, totalSelected, pendingSelection, newSelection, processActions, handleClearSelection, refreshPending, newCandidates]);
+  }, [
+    currentSessionId,
+    totalSelected,
+    pendingSelection,
+    newSelection,
+    processActions,
+    handleClearSelection,
+    refreshPending,
+    newCandidates,
+  ]);
 
   // Bulk reject handler
   const handleBulkReject = React.useCallback(async () => {
@@ -285,12 +301,21 @@ export default function GenerateReview() {
     } catch (error) {
       console.error("Failed to reject candidates:", error);
       toast.error("Failed to reject candidates - rolled back");
-      
+
       // Rollback: restore the candidates
       setNewCandidates((prev) => [...prev, ...selectedNewCandidates]);
       await refreshPending();
     }
-  }, [currentSessionId, totalSelected, pendingSelection, newSelection, processActions, handleClearSelection, refreshPending, newCandidates]);
+  }, [
+    currentSessionId,
+    totalSelected,
+    pendingSelection,
+    newSelection,
+    processActions,
+    handleClearSelection,
+    refreshPending,
+    newCandidates,
+  ]);
 
   // Individual candidate action handlers
   const handleAcceptCandidate = React.useCallback(
@@ -304,7 +329,7 @@ export default function GenerateReview() {
       if (removedFromPending || removedFromNew) {
         // Remove from lists optimistically
         setNewCandidates((prev) => prev.filter((c) => c.id !== id));
-        
+
         try {
           const command: CandidateActionCommand = {
             actions: [{ candidate_id: id, action: "accept" }],
@@ -318,7 +343,7 @@ export default function GenerateReview() {
         } catch (error) {
           console.error("Failed to accept candidate:", error);
           toast.error("Failed to accept candidate - rolled back");
-          
+
           // Rollback: restore the candidate
           if (removedFromNew) {
             setNewCandidates((prev) => [...prev, removedFromNew]);
@@ -380,13 +405,13 @@ export default function GenerateReview() {
       } catch (error) {
         console.error("Failed to update candidate:", error);
         toast.error("Failed to update candidate - rolled back");
-        
+
         // Rollback: restore the candidate
         if (removedFromNew) {
           setNewCandidates((prev) => [...prev, removedFromNew]);
         }
         await refreshPending();
-        
+
         throw error; // Re-throw to let dialog handle it
       }
     },
@@ -404,7 +429,7 @@ export default function GenerateReview() {
       if (removedFromPending || removedFromNew) {
         // Remove from lists optimistically
         setNewCandidates((prev) => prev.filter((c) => c.id !== id));
-        
+
         try {
           const command: CandidateActionCommand = {
             actions: [{ candidate_id: id, action: "reject" }],
@@ -418,7 +443,7 @@ export default function GenerateReview() {
         } catch (error) {
           console.error("Failed to reject candidate:", error);
           toast.error("Failed to reject candidate - rolled back");
-          
+
           // Rollback: restore the candidate
           if (removedFromNew) {
             setNewCandidates((prev) => [...prev, removedFromNew]);
@@ -443,8 +468,8 @@ export default function GenerateReview() {
         <section className="mb-12" data-testid="pending-candidates-section">
           <h2 className="text-2xl font-semibold mb-4">Pending Candidates</h2>
           <p className="text-muted-foreground mb-6" data-testid="pending-candidates-count">
-            You have {pendingCandidates.length} pending candidate{pendingCandidates.length > 1 ? "s" : ""} from
-            previous sessions.
+            You have {pendingCandidates.length} pending candidate{pendingCandidates.length > 1 ? "s" : ""} from previous
+            sessions.
           </p>
           <CandidateList
             candidates={pendingCandidates}
@@ -514,4 +539,3 @@ export default function GenerateReview() {
     </div>
   );
 }
-

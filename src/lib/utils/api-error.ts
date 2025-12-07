@@ -107,4 +107,3 @@ export const ErrorMessages = {
   INVALID_JSON: "Invalid JSON body",
   SUPABASE_CLIENT_UNAVAILABLE: "Supabase client not available",
 } as const;
-

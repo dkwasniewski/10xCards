@@ -84,10 +84,7 @@ export function Header({ user }: HeaderProps) {
           {/* Navigation Links (only show when authenticated) */}
           {user && (
             <nav className="hidden md:flex items-center gap-6">
-              <a
-                href="/generate"
-                className="text-sm font-medium transition-colors hover:text-primary"
-              >
+              <a href="/generate" className="text-sm font-medium transition-colors hover:text-primary">
                 Generate
               </a>
               <a
@@ -109,9 +106,7 @@ export function Header({ user }: HeaderProps) {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
                   <div className="flex h-full w-full items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
-                    <span className="text-sm font-medium">
-                      {user.email.charAt(0).toUpperCase()}
-                    </span>
+                    <span className="text-sm font-medium">{user.email.charAt(0).toUpperCase()}</span>
                   </div>
                 </Button>
               </DropdownMenuTrigger>
@@ -119,9 +114,7 @@ export function Header({ user }: HeaderProps) {
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">Account</p>
-                    <p className="text-xs leading-none text-muted-foreground truncate">
-                      {user.email}
-                    </p>
+                    <p className="text-xs leading-none text-muted-foreground truncate">{user.email}</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -205,5 +198,3 @@ export function Header({ user }: HeaderProps) {
     </header>
   );
 }
-
-

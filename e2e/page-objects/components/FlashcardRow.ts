@@ -27,7 +27,10 @@ export class FlashcardRow {
     this.frontText = this.row.getByTestId("flashcard-front").locator("visible=true").first();
     this.backText = this.row.getByTestId("flashcard-back").locator("visible=true").first();
     this.editButton = this.row.getByRole("button", { name: /edit/i }).locator("visible=true").first();
-    this.deleteButton = this.row.getByRole("button", { name: /delete/i }).locator("visible=true").first();
+    this.deleteButton = this.row
+      .getByRole("button", { name: /delete/i })
+      .locator("visible=true")
+      .first();
     this.expandButton = this.row.getByRole("button", { name: /show more|show less/i });
   }
 

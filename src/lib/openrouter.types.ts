@@ -97,14 +97,14 @@ export interface ChatChunk {
   id: string;
   created: number;
   model: string;
-  choices: Array<{
+  choices: {
     delta: {
       role?: MessageRole;
       content?: string;
     };
     index: number;
     finish_reason?: string;
-  }>;
+  }[];
 }
 
 /**
@@ -127,7 +127,7 @@ export interface ModelMeta {
 export interface MessageContext {
   system?: string;
   user: string;
-  history?: Array<{ role: "user" | "assistant"; content: string }>;
+  history?: { role: "user" | "assistant"; content: string }[];
 }
 
 /**
@@ -251,6 +251,3 @@ export class OpenRouterSchemaError extends OpenRouterError {
     this.name = "OpenRouterSchemaError";
   }
 }
-
-
-

@@ -6,7 +6,8 @@
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = "http://127.0.0.1:54321";
-const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
+const supabaseAnonKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
 
 async function testLogin() {
   console.log("🧪 Testing Login Flow with RLS\n");
@@ -16,7 +17,7 @@ async function testLogin() {
 
   // Get credentials from command line
   const args = process.argv.slice(2);
-  
+
   if (args.length < 2) {
     console.error("\n❌ Please provide email and password:");
     console.error("   node scripts/test-login-flow.js your@email.com yourpassword\n");
@@ -28,7 +29,7 @@ async function testLogin() {
   try {
     console.log("\n1️⃣  Attempting login...");
     console.log(`   Email: ${testEmail}`);
-    
+
     const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
       email: testEmail,
       password: testPassword,
@@ -47,7 +48,7 @@ async function testLogin() {
 
     // Now test if we can write to event_logs
     console.log("\n2️⃣  Testing event_logs INSERT with RLS...");
-    
+
     const { data: eventData, error: eventError } = await supabase
       .from("event_logs")
       .insert({
@@ -64,7 +65,7 @@ async function testLogin() {
       console.error("   Error code:", eventError.code);
       console.error("   Error details:", eventError.details);
       console.error("   Error hint:", eventError.hint);
-      
+
       console.log("\n🔍 This is likely your login issue!");
       console.log("   The login succeeds, but event logging fails due to RLS.");
       console.log("\n💡 Solution: Check if RLS policies are properly configured for event_logs");
@@ -117,11 +118,9 @@ async function testLogin() {
 
     console.log("\n" + "=".repeat(60));
     console.log("✅ All RLS tests completed!");
-    
   } catch (error) {
     console.error("\n💥 Unexpected error:", error);
   }
 }
 
 testLogin();
-

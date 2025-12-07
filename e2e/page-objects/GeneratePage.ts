@@ -120,7 +120,7 @@ export class GeneratePage extends BasePage {
    * @param minCount - Minimum number of candidates expected
    * @param timeout - Maximum time to wait in milliseconds
    */
-  async waitForNewCandidates(minCount: number = 1, timeout: number = 30000) {
+  async waitForNewCandidates(minCount = 1, timeout = 30000) {
     // Wait for the section to appear
     await this.newCandidatesSection.waitFor({ state: "visible", timeout });
 
@@ -134,11 +134,7 @@ export class GeneratePage extends BasePage {
    * @param modelId - Model ID (e.g., "openai/gpt-4o-mini")
    * @param waitForResults - Whether to wait for generation to complete
    */
-  async generateFlashcards(
-    text: string,
-    modelId: string,
-    waitForResults: boolean = true
-  ) {
+  async generateFlashcards(text: string, modelId: string, waitForResults = true) {
     await this.generationForm.generateFlashcards(text, modelId);
 
     if (waitForResults) {
@@ -208,5 +204,3 @@ export class GeneratePage extends BasePage {
     await this.header.logout();
   }
 }
-
-

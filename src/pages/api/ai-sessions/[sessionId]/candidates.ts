@@ -33,7 +33,10 @@ export const GET: APIRoute = async ({ params, locals }) => {
   }
 
   // Get authenticated user
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
   if (authError || !user) {
     return errorResponse(401, ErrorMessages.UNAUTHORIZED);
   }
@@ -51,11 +54,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
 
   // 2. Fetch candidates from service layer
   try {
-    const candidates: GetCandidatesResponseDto = await getAiSessionCandidates(
-      supabase,
-      validationResult.data,
-      userId
-    );
+    const candidates: GetCandidatesResponseDto = await getAiSessionCandidates(supabase, validationResult.data, userId);
 
     // 3. Return successful response with cache-control headers
     return new Response(JSON.stringify(candidates), {
@@ -76,4 +75,3 @@ export const GET: APIRoute = async ({ params, locals }) => {
     return errorResponse(500, ErrorMessages.INTERNAL_SERVER_ERROR);
   }
 };
-

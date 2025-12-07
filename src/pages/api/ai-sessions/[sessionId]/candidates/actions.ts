@@ -41,7 +41,10 @@ export const POST: APIRoute = async ({ request, params, locals }) => {
   }
 
   // Get authenticated user
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
   if (authError || !user) {
     return errorResponse(401, "Unauthorized");
   }
@@ -143,4 +146,3 @@ export const POST: APIRoute = async ({ request, params, locals }) => {
     headers: { "Content-Type": "application/json" },
   });
 };
-

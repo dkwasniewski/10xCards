@@ -30,7 +30,6 @@ export function LoginForm({ redirectTo = "/generate", initialError = null, initi
     register,
     handleSubmit,
     formState: { errors },
-    clearErrors,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     mode: "onBlur",
@@ -158,7 +157,7 @@ export function LoginForm({ redirectTo = "/generate", initialError = null, initi
 
       {/* Register Link */}
       <div className="text-center text-sm">
-        <span className="text-muted-foreground">Don't have an account? </span>
+        <span className="text-muted-foreground">Don&apos;t have an account? </span>
         <a href="/register" className="text-primary hover:underline font-medium">
           Sign up
         </a>

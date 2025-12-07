@@ -213,8 +213,7 @@ export function useFlashcards(): UseFlashcardsResult {
     };
 
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.searchParams.search, state.searchParams.page, state.searchParams.limit, state.searchParams.sort]);
+  }, [state.searchParams]);
 
   /**
    * Update search query and reset to page 1

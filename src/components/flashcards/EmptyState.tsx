@@ -45,9 +45,7 @@ export function EmptyState({ isSearch, searchQuery, onClearSearch, onCreateClick
       <p className="text-muted-foreground mb-6 max-w-sm">
         You haven&apos;t created any flashcards yet. Create your first flashcard to get started.
       </p>
-      {onCreateClick && (
-        <Button onClick={onCreateClick}>Create your first flashcard</Button>
-      )}
+      {onCreateClick && <Button onClick={onCreateClick}>Create your first flashcard</Button>}
     </div>
   );
 }

@@ -97,7 +97,7 @@ export function useCandidates(sessionId: string | null): UseCandidatesResult {
 
     try {
       const candidates = await fetchCandidates(sessionId);
-      
+
       // If we got an empty array back (404 was handled), clear the invalid session
       if (candidates.length === 0) {
         // Clear localStorage if this session doesn't exist or doesn't belong to current user
@@ -108,7 +108,7 @@ export function useCandidates(sessionId: string | null): UseCandidatesResult {
           }
         }
       }
-      
+
       const viewModels: CandidateViewModel[] = candidates.map((c) => ({
         id: c.id,
         front: c.front,
@@ -249,5 +249,3 @@ export function useCandidateActions(): UseCandidateActionsResult {
     processActions,
   };
 }
-
-
