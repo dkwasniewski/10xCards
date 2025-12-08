@@ -18,12 +18,8 @@ A web application for rapid generation and management of educational flashcards,
 - **AI Integration:** Openrouter.ai (LLM API)
 - **Testing:**
   - **Unit Tests:** Vitest, @testing-library/react, @testing-library/user-event
-  - **Integration Tests:** Supertest (with Vitest runner), MSW (Mock Service Worker)
   - **E2E Tests:** Playwright
-  - **Security:** ESLint security plugins, CodeQL, OWASP ZAP
-  - **Performance:** k6
-  - **Accessibility:** axe-core, Lighthouse
-- **CI/CD & Hosting:** GitHub Actions, DigitalOcean (Droplet / App Platform)
+- **CI/CD & Hosting:** GitHub Actions
 - **Runtime:** Node.js 22.14.0 (see `.nvmrc`)
 
 ## Getting Started Locally
@@ -69,36 +65,30 @@ A web application for rapid generation and management of educational flashcards,
 
 ## Available Scripts
 
+### Development
+
 - `npm run dev` — Start the Astro development server
+- `npm run dev:e2e` — Start the Astro development server in test mode
 - `npm run build` — Build the production site
 - `npm run preview` — Preview the production build
 - `npm run astro` — Run the Astro CLI
+
+### Code Quality
+
 - `npm run lint` — Run ESLint on all source files
 - `npm run lint:fix` — Auto-fix linting issues
 - `npm run format` — Format all files with Prettier
+
+### Testing
+
 - `npm run test` — Run unit tests with Vitest
+- `npm run test:watch` — Run unit tests in watch mode
+- `npm run test:ui` — Run unit tests with Vitest UI
 - `npm run test:coverage` — Run unit tests with coverage report
 - `npm run test:e2e` — Run end-to-end tests with Playwright
-
-## Testing the OpenRouter Integration
-
-After setting up the environment and starting the dev server, you can test the AI flashcard generation:
-
-### Quick Test
-
-```bash
-./test-quick.sh
-```
-
-### Full Test Suite
-
-```bash
-./test-openrouter-integration.sh
-```
-
-### Manual cURL Examples
-
-See [CURL_EXAMPLES.md](CURL_EXAMPLES.md) for detailed cURL examples and testing scenarios.
+- `npm run test:e2e:ui` — Run E2E tests with Playwright UI
+- `npm run test:e2e:debug` — Run E2E tests in debug mode
+- `npm run test:e2e:report` — Show Playwright test report
 
 ## Project Scope
 
@@ -127,4 +117,4 @@ See [CURL_EXAMPLES.md](CURL_EXAMPLES.md) for detailed cURL examples and testing 
 
 ## License
 
-This project is released under the [MIT License](LICENSE).
+This project is currently unlicensed. All rights reserved.
