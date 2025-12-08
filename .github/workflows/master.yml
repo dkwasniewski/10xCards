@@ -121,6 +121,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name=10xcards
+          wranglerVersion: "4.53.0"
 
   # Job 5: Deployment Status Comment (runs only if deployment succeeds)
   deployment-status:
