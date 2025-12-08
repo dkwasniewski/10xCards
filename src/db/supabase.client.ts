@@ -5,7 +5,7 @@ import type { SupabaseClient as SupabaseClientType } from "@supabase/supabase-js
 import type { Database } from "./database.types";
 
 // Helper function to get environment variables
-function getEnvVar(key: string): string {
+function getEnvVar(key: string): string | undefined {
   // Try import.meta.env first (works in dev and build time)
   if (import.meta.env[key]) {
     return import.meta.env[key];
@@ -16,15 +16,29 @@ function getEnvVar(key: string): string {
     return process.env[key];
   }
 
-  throw new Error(`Missing environment variable: ${key}`);
+  return undefined;
 }
 
-// Get environment variables - works in both dev and Cloudflare Pages
-const supabaseUrl = getEnvVar("SUPABASE_URL");
-const supabaseAnonKey = getEnvVar("SUPABASE_KEY");
+// Lazy initialization of singleton client
+let _supabaseClient: SupabaseClientType<Database> | null = null;
 
 // Singleton client for non-SSR contexts (kept for backward compatibility)
-export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
+// This is lazily initialized to avoid errors when environment variables aren't available at module load time
+export const supabaseClient = new Proxy({} as SupabaseClientType<Database>, {
+  get(target, prop) {
+    if (!_supabaseClient) {
+      const supabaseUrl = getEnvVar("SUPABASE_URL");
+      const supabaseAnonKey = getEnvVar("SUPABASE_KEY");
+
+      if (!supabaseUrl || !supabaseAnonKey) {
+        throw new Error("Missing Supabase environment variables. Please set SUPABASE_URL and SUPABASE_KEY.");
+      }
+
+      _supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
+    }
+    return (_supabaseClient as Record<string, unknown>)[prop as string];
+  },
+});
 
 export type SupabaseClient = SupabaseClientType<Database>;
 
