@@ -1,4 +1,4 @@
-import { Page, Locator } from "@playwright/test";
+import { Page, Locator, expect } from "@playwright/test";
 
 /**
  * Generation Form Component
@@ -43,6 +43,22 @@ export class GenerationForm {
     await this.sourceTextInput.fill(text);
     // Trigger blur to ensure React onChange fires
     await this.sourceTextInput.blur();
+  }
+
+  /**
+   * Fill source text and wait for form to be ready
+   * This is a more reliable method that waits for React state to update
+   */
+  async fillSourceTextAndWaitForReady(text: string) {
+    await this.fillSourceText(text);
+    
+    // Wait for the ready message to appear, which indicates React has processed the input
+    // and the button should be enabled (if text is valid)
+    if (text.length >= 1000) {
+      await expect(this.readyToGenerateMessage).toBeVisible({ timeout: 5000 });
+      // Also wait for button to be enabled
+      await expect(this.generateButton).toBeEnabled({ timeout: 5000 });
+    }
   }
 
   /**
@@ -101,16 +117,13 @@ export class GenerationForm {
    * Click the generate button
    */
   async clickGenerate() {
-    // Wait for button to be enabled before clicking
+    // Wait for button to be visible and enabled
     await this.generateButton.waitFor({ state: "visible" });
-    await this.page.waitForFunction(
-      (selector) => {
-        const button = document.querySelector(selector);
-        return button && !button.hasAttribute("disabled");
-      },
-      `[data-testid="generate-flashcards-button"]`,
-      { timeout: 10000 }
-    );
+    
+    // Use Playwright's built-in enabled check with retry logic
+    // This is more reliable than waitForFunction as it uses Playwright's auto-waiting
+    await expect(this.generateButton).toBeEnabled({ timeout: 15000 });
+    
     await this.generateButton.click();
   }
 
@@ -119,6 +132,14 @@ export class GenerationForm {
    */
   async isGenerateButtonEnabled(): Promise<boolean> {
     return await this.generateButton.isEnabled();
+  }
+
+  /**
+   * Wait for the generate button to be in a specific state
+   * Uses data-state attribute for more reliable state checking
+   */
+  async waitForButtonState(state: "ready" | "loading" | "disabled", timeout = 5000) {
+    await expect(this.generateButton).toHaveAttribute("data-state", state, { timeout });
   }
 
   /**

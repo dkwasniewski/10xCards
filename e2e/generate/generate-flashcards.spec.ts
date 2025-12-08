@@ -59,12 +59,11 @@ test.describe("Generate Flashcards", () => {
     // Fill with some text
     await generatePage.generationForm.fillSourceText(SAMPLE_TEXT_1000_CHARS);
 
-    // Wait for React state to update
-    await page.waitForTimeout(300);
+    // Wait for character count to update by checking the content
+    await expect(generatePage.generationForm.charCount).not.toContainText("0 / 10,000", { timeout: 3000 });
 
     // Verify character count updates
     const charCount = await generatePage.generationForm.charCount.textContent();
-    expect(charCount).not.toContain("0 / 10,000");
     expect(charCount).toMatch(/1,\d{3}/); // Should show 1,XXX characters
   });
 
@@ -79,13 +78,10 @@ test.describe("Generate Flashcards", () => {
     await expect(generatePage.generationForm.sourceTextInput).toBeVisible();
     await expect(generatePage.generationForm.modelSelectTrigger).toBeVisible();
 
-    // Fill with sufficient text (>= 1000 characters)
-    await generatePage.generationForm.fillSourceText(SAMPLE_TEXT_1000_CHARS);
+    // Fill with sufficient text (>= 1000 characters) and wait for ready state
+    await generatePage.generationForm.fillSourceTextAndWaitForReady(SAMPLE_TEXT_1000_CHARS);
 
-    // Wait for React state to update
-    await page.waitForTimeout(300);
-
-    // Verify button becomes enabled
+    // Verify button becomes enabled (already checked in fillSourceTextAndWaitForReady, but double-check)
     await expect(generatePage.generationForm.generateButton).toBeEnabled();
 
     // Verify ready message appears
@@ -96,11 +92,8 @@ test.describe("Generate Flashcards", () => {
     const generatePage = new GeneratePage(page);
     await generatePage.waitForPageLoad();
 
-    // Fill the form
-    await generatePage.generationForm.fillSourceText(SAMPLE_TEXT_1000_CHARS);
-
-    // Wait for React state to update
-    await page.waitForTimeout(300);
+    // Fill the form and wait for ready state
+    await generatePage.generationForm.fillSourceTextAndWaitForReady(SAMPLE_TEXT_1000_CHARS);
 
     await generatePage.generationForm.selectModel("openai/gpt-4o-mini");
 
@@ -125,9 +118,8 @@ test.describe("Generate Flashcards", () => {
     const generatePage = new GeneratePage(page);
     await generatePage.waitForPageLoad();
 
-    // Generate flashcards
-    await generatePage.generationForm.fillSourceText(SAMPLE_TEXT_1000_CHARS);
-    await page.waitForTimeout(300);
+    // Generate flashcards - use the more robust method
+    await generatePage.generationForm.fillSourceTextAndWaitForReady(SAMPLE_TEXT_1000_CHARS);
     await generatePage.generationForm.selectModel("openai/gpt-4o-mini");
     await generatePage.generationForm.clickGenerate();
     await generatePage.generationForm.waitForGenerationComplete(40000);
@@ -153,9 +145,8 @@ test.describe("Generate Flashcards", () => {
     const generatePage = new GeneratePage(page);
     await generatePage.waitForPageLoad();
 
-    // Generate flashcards
-    await generatePage.generationForm.fillSourceText(SAMPLE_TEXT_1000_CHARS);
-    await page.waitForTimeout(300);
+    // Generate flashcards - use the more robust method
+    await generatePage.generationForm.fillSourceTextAndWaitForReady(SAMPLE_TEXT_1000_CHARS);
     await generatePage.generationForm.selectModel("openai/gpt-4o-mini");
     await generatePage.generationForm.clickGenerate();
     await generatePage.generationForm.waitForGenerationComplete(40000);
@@ -180,9 +171,8 @@ test.describe("Generate Flashcards", () => {
     const generatePage = new GeneratePage(page);
     await generatePage.waitForPageLoad();
 
-    // Generate flashcards
-    await generatePage.generationForm.fillSourceText(SAMPLE_TEXT_1000_CHARS);
-    await page.waitForTimeout(300);
+    // Generate flashcards - use the more robust method
+    await generatePage.generationForm.fillSourceTextAndWaitForReady(SAMPLE_TEXT_1000_CHARS);
     await generatePage.generationForm.selectModel("openai/gpt-4o-mini");
     await generatePage.generationForm.clickGenerate();
     await generatePage.generationForm.waitForGenerationComplete(40000);
@@ -207,9 +197,8 @@ test.describe("Generate Flashcards", () => {
     const generatePage = new GeneratePage(page);
     await generatePage.waitForPageLoad();
 
-    // Generate flashcards
-    await generatePage.generationForm.fillSourceText(SAMPLE_TEXT_1000_CHARS);
-    await page.waitForTimeout(300);
+    // Generate flashcards - use the more robust method
+    await generatePage.generationForm.fillSourceTextAndWaitForReady(SAMPLE_TEXT_1000_CHARS);
     await generatePage.generationForm.selectModel("openai/gpt-4o-mini");
     await generatePage.generationForm.clickGenerate();
     await generatePage.generationForm.waitForGenerationComplete(40000);
@@ -234,9 +223,8 @@ test.describe("Generate Flashcards", () => {
     const generatePage = new GeneratePage(page);
     await generatePage.waitForPageLoad();
 
-    // Generate flashcards
-    await generatePage.generationForm.fillSourceText(SAMPLE_TEXT_1000_CHARS);
-    await page.waitForTimeout(300);
+    // Generate flashcards - use the more robust method
+    await generatePage.generationForm.fillSourceTextAndWaitForReady(SAMPLE_TEXT_1000_CHARS);
     await generatePage.generationForm.selectModel("openai/gpt-4o-mini");
     await generatePage.generationForm.clickGenerate();
     await generatePage.generationForm.waitForGenerationComplete(40000);
@@ -257,9 +245,8 @@ test.describe("Generate Flashcards", () => {
     const generatePage = new GeneratePage(page);
     await generatePage.waitForPageLoad();
 
-    // Generate flashcards
-    await generatePage.generationForm.fillSourceText(SAMPLE_TEXT_1000_CHARS);
-    await page.waitForTimeout(300);
+    // Generate flashcards - use the more robust method
+    await generatePage.generationForm.fillSourceTextAndWaitForReady(SAMPLE_TEXT_1000_CHARS);
     await generatePage.generationForm.selectModel("openai/gpt-4o-mini");
     await generatePage.generationForm.clickGenerate();
     await generatePage.generationForm.waitForGenerationComplete(40000);
@@ -284,13 +271,10 @@ test.describe("Generate Flashcards", () => {
     const generatePage = new GeneratePage(page);
     await generatePage.waitForPageLoad();
 
-    // Fill text
-    await generatePage.generationForm.fillSourceText(SAMPLE_TEXT_1000_CHARS);
+    // Fill text and wait for ready state
+    await generatePage.generationForm.fillSourceTextAndWaitForReady(SAMPLE_TEXT_1000_CHARS);
 
-    // Wait for React state to update
-    await page.waitForTimeout(300);
-
-    // Verify button becomes enabled (proves onChange fired)
+    // Verify button becomes enabled (already checked in fillSourceTextAndWaitForReady)
     await expect(generatePage.generationForm.generateButton).toBeEnabled();
 
     // Try selecting different models

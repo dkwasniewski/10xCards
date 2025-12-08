@@ -169,6 +169,7 @@ export function GenerationForm({ onSubmit, isLoading = false }: GenerationFormPr
         disabled={isLoading || !hasValidLength}
         className="w-full"
         data-testid="generate-flashcards-button"
+        data-state={isLoading ? "loading" : hasValidLength ? "ready" : "disabled"}
       >
         {isLoading ? (
           <>
