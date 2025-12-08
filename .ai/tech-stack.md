@@ -25,21 +25,21 @@ Below you’ll find my critical yet objective analysis of the proposed tech stac
   - _CodeQL + OWASP ZAP_ – security scanning and vulnerability detection
 
 - **CI/CD & Hosting:**
-  - _GitHub Actions + DigitalOcean_ – quickly establish pipelines and deploy, though manual server or App Platform setup is required.
+  - _GitHub Actions + Cloudflare Pages_ – automated pipelines with zero-config deployments, global CDN, and built-in DDoS protection.
 
 ## 2. Scalability
 
 - Supabase’s serverless Postgres and Edge functions auto-scale effectively for authentication and data storage.
-- Astro/React front-end can be hosted statically (CDN) or on DigitalOcean App Platform, enabling straightforward horizontal scaling.
+- Astro/React front-end hosted on Cloudflare Pages utilizes a global edge network, ensuring low latency and high availability worldwide without manual region management.
 - As you grow (hundreds of thousands of users), consider:
   - Database optimization (sharding, indexing, caching)
-  - Splitting the AI proxy into microservices or edge functions
-  - Managing multiple servers on DigitalOcean or migrating to a fully managed platform (e.g., Vercel, Netlify)
+  - Leveraging Cloudflare Workers for edge logic to reduce backend load
+  - Upgrading Cloudflare plan for higher limits and advanced security features
 
 ## 3. Maintenance & Development Costs
 
 - **Supabase:** Free tier covers MVP; costs rise linearly with user count and query volume.
-- **DigitalOcean:** Low-traffic hosting costs tens of dollars per month; scales with server size.
+- **Cloudflare:** Generous free tier for Pages and Workers; extremely low cost for high traffic compared to traditional VPS.
 - Maintaining multiple frameworks (Astro + React + Tailwind + shadcn) incurs moderate cognitive overhead but offers design flexibility.
 - **Testing Tools:** Most testing tools are open-source and free (Vitest, Playwright, k6, axe-core). Some advanced features may require paid tiers (e.g., Percy/Chromatic for visual regression, BrowserStack for cross-browser testing).
 
@@ -73,6 +73,6 @@ Below you’ll find my critical yet objective analysis of the proposed tech stac
 
 - This stack enables rapid MVP delivery, thanks largely to Supabase and ready-made UI components.
 - In the long term, assess whether Astro's complexity suits a fully dynamic app; simpler stacks (Next.js/React + Vite) may accelerate development and reduce costs.
-- Supabase and DigitalOcean scale well but require thoughtful architecture and cost planning at scale.
+- Supabase and Cloudflare scale well but require thoughtful architecture and cost planning at scale.
 - Security fundamentals are solid; adhering to RLS, middleware checks, secret management, and CI/CD scanning is crucial.
 - **Testing Infrastructure:** The chosen testing stack (Vitest, Playwright, Supertest, MSW) provides comprehensive coverage with minimal setup overhead. Vitest's Vite-native architecture ensures fast test execution, while Playwright offers reliable cross-browser E2E testing. MSW enables hermetic integration tests by mocking external services. This combination supports the quality goals of 80% code coverage, <30s unit test runtime, and <5min E2E test runtime.

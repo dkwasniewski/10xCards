@@ -124,3 +124,10 @@ Manually creating high-quality flashcards is time-consuming and discourages use 
 - 75% of AI-generated flashcards are accepted by users (tracked in logs).
 - 75% of all created flashcards originate from AI generation.
 - Analysis and logging of count of generations vs. acceptances vs. manual creations.
+
+## 7. Technical Constraints & Architecture
+
+- **Hosting:** The application frontend and server-side logic (Astro SSR/Edge) must be hosted on **Cloudflare Pages**.
+- **Backend:** Supabase is used for Authentication, Database, and real-time events.
+- **AI Service:** OpenRouter.ai is used for LLM interactions.
+- **Edge Compatibility:** All server-side code must be compatible with Cloudflare Workers runtime (Edge) limitations.

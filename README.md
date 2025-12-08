@@ -7,9 +7,10 @@ A web application for rapid generation and management of educational flashcards,
 1. [Tech Stack](#tech-stack)
 2. [Getting Started Locally](#getting-started-locally)
 3. [Available Scripts](#available-scripts)
-4. [Project Scope](#project-scope)
-5. [Project Status](#project-status)
-6. [License](#license)
+4. [Deployment](#deployment)
+5. [Project Scope](#project-scope)
+6. [Project Status](#project-status)
+7. [License](#license)
 
 ## Tech Stack
 
@@ -19,8 +20,9 @@ A web application for rapid generation and management of educational flashcards,
 - **Testing:**
   - **Unit Tests:** Vitest, @testing-library/react, @testing-library/user-event
   - **E2E Tests:** Playwright
-- **CI/CD & Hosting:** GitHub Actions
+- **CI/CD & Hosting:** GitHub Actions + Cloudflare Pages
 - **Runtime:** Node.js 22.14.0 (see `.nvmrc`)
+- **Adapter:** @astrojs/cloudflare (SSR support)
 
 ## Getting Started Locally
 
@@ -89,6 +91,28 @@ A web application for rapid generation and management of educational flashcards,
 - `npm run test:e2e:ui` — Run E2E tests with Playwright UI
 - `npm run test:e2e:debug` — Run E2E tests in debug mode
 - `npm run test:e2e:report` — Show Playwright test report
+
+## Deployment
+
+The application is configured for deployment to **Cloudflare Pages** with automated CI/CD via GitHub Actions.
+
+### Quick Start
+
+1. Create a Cloudflare Pages project
+2. Generate a Cloudflare API token
+3. Configure GitHub Secrets (see `docs/cloudflare-quick-start.md`)
+4. Push to `master` branch to trigger deployment
+
+### Documentation
+
+- **Quick Start Guide**: `docs/cloudflare-quick-start.md` - 15-minute setup guide
+- **Full Deployment Guide**: `docs/cloudflare-deployment.md` - Comprehensive documentation
+- **Changes Summary**: `DEPLOYMENT_CHANGES.md` - Technical details of deployment setup
+
+### CI/CD Workflows
+
+- **Pull Requests** (`.github/workflows/pull-request.yml`): Lint, unit tests, E2E tests
+- **Master Branch** (`.github/workflows/master.yml`): Lint, unit tests, build, deploy to Cloudflare Pages
 
 ## Project Scope
 
