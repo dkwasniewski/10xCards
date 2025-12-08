@@ -69,7 +69,21 @@ async function fetchFlashcards(params: SearchParams): Promise<ListFlashcardsResp
       window.location.href = "/";
       throw new Error("Unauthorized");
     }
-    throw new Error("Failed to fetch flashcards");
+
+    // Try to get error details from response
+    let errorMessage = "Failed to fetch flashcards";
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.message || errorMessage;
+      // eslint-disable-next-line no-console
+      console.error("API Error:", errorData);
+    } catch {
+      // If parsing fails, use default message
+      // eslint-disable-next-line no-console
+      console.error("Failed to parse error response");
+    }
+
+    throw new Error(errorMessage);
   }
 
   return await response.json();
@@ -196,6 +210,14 @@ export function useFlashcards(): UseFlashcardsResult {
 
       try {
         const result = await fetchFlashcards(state.searchParams);
+
+        // eslint-disable-next-line no-console
+        console.log("Flashcards fetched successfully:", {
+          count: result.data.length,
+          total: result.pagination.total,
+          page: result.pagination.page,
+        });
+
         setState((prev) => ({
           ...prev,
           flashcards: result.data,
@@ -205,6 +227,8 @@ export function useFlashcards(): UseFlashcardsResult {
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to fetch flashcards:", error);
+        // eslint-disable-next-line no-console
+        console.error("Search params:", state.searchParams);
         setState((prev) => ({
           ...prev,
           error: error instanceof Error ? error.message : "Failed to load flashcards",

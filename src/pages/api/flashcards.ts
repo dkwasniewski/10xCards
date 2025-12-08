@@ -59,6 +59,12 @@ export const GET: APIRoute = async ({ request, locals }) => {
     // Call service to retrieve flashcards
     const result = await flashcardsService.listFlashcards(supabase, userId, query);
 
+    // Log for debugging empty results
+    if (result.data.length === 0) {
+      // eslint-disable-next-line no-console
+      console.log("No flashcards found for user:", userId, "Query:", query);
+    }
+
     return new Response(JSON.stringify(result), {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -66,6 +72,10 @@ export const GET: APIRoute = async ({ request, locals }) => {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error("Failed to list flashcards:", error);
+    // eslint-disable-next-line no-console
+    console.error("Query params:", query);
+    // eslint-disable-next-line no-console
+    console.error("User ID:", userId);
     return await handleApiError(500, "Failed to retrieve flashcards", error, supabase, "GET /api/flashcards", userId);
   }
 };
