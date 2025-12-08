@@ -83,9 +83,9 @@ export function createSupabaseServerInstance(
   // This ensures that getItem can read cookies that were just set via setItem
   const cookieCache = new Map<string, string>();
 
-  // Use provided env vars or fall back to module-level vars
-  const url = envUrl || supabaseUrl;
-  const key = envKey || supabaseAnonKey;
+  // Use provided env vars or fall back to getEnvVar
+  const url = envUrl || getEnvVar("SUPABASE_URL");
+  const key = envKey || getEnvVar("SUPABASE_KEY");
 
   if (!url || !key) {
     throw new Error("Missing Supabase environment variables in createSupabaseServerInstance");
