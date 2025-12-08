@@ -17,8 +17,11 @@ A quick reference for setting up Cloudflare Pages deployment for 10xCards.
 1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com)
 2. Navigate to **Workers & Pages** → **Create application** → **Pages**
 3. Choose **Direct Upload** (GitHub Actions will handle deployment)
-4. Enter project name (e.g., `10xcards`)
+4. Enter project name (e.g., `10xcards`) - **Remember this name!**
 5. Click **Create project**
+6. Skip the initial upload - GitHub Actions will deploy
+
+**Important:** Write down the exact project name you chose. You'll need it in the next steps.
 
 ### 2. Generate API Token (2 minutes)
 
@@ -40,18 +43,20 @@ A quick reference for setting up Cloudflare Pages deployment for 10xCards.
 
 1. Go to your GitHub repository
 2. Navigate to **Settings** → **Secrets and variables** → **Actions**
-3. Click **New repository secret** or **Environments** → **production** → **Add secret**
-4. Add the following secrets:
+3. Click **Environments** (in left sidebar) → **production** → **Add secret**
+4. Add each secret one by one:
 
-```
-CLOUDFLARE_API_TOKEN=<your-api-token>
-CLOUDFLARE_ACCOUNT_ID=<your-account-id>
-CLOUDFLARE_PROJECT_NAME=10xcards
-SUPABASE_URL=<your-supabase-url>
-SUPABASE_KEY=<your-supabase-key>
-OPENROUTER_API_KEY=<your-openrouter-key>
-PUBLIC_SITE_URL=https://10xcards.pages.dev
-```
+| Secret Name               | Where to Find It                                 | Example Value                |
+| ------------------------- | ------------------------------------------------ | ---------------------------- |
+| `CLOUDFLARE_API_TOKEN`    | From step 2 (API token you generated)            | `abc123...`                  |
+| `CLOUDFLARE_ACCOUNT_ID`   | From step 3 (in Cloudflare dashboard)            | `1234567890abcdef`           |
+| `CLOUDFLARE_PROJECT_NAME` | **From step 1** (exact project name you created) | `10xcards`                   |
+| `SUPABASE_URL`            | Your Supabase project settings                   | `https://xxx.supabase.co`    |
+| `SUPABASE_KEY`            | Your Supabase project API settings               | `eyJhbGc...`                 |
+| `OPENROUTER_API_KEY`      | Your OpenRouter dashboard                        | `sk-or-v1-...`               |
+| `PUBLIC_SITE_URL`         | Your Pages URL (project-name.pages.dev)          | `https://10xcards.pages.dev` |
+
+**⚠️ Important:** `CLOUDFLARE_PROJECT_NAME` must exactly match the project name from step 1!
 
 ### 5. Configure Cloudflare Environment Variables (3 minutes)
 
@@ -91,17 +96,42 @@ After deployment completes:
 
 ## Quick Troubleshooting
 
+### "Project not found" Error
+
+**Error:** `Project not found. The specified project name does not match any of your existing projects.`
+
+**Solution:**
+
+1. Go to Cloudflare Dashboard → Workers & Pages
+2. Find your actual project name (it might be different than you think!)
+3. Update the `CLOUDFLARE_PROJECT_NAME` secret in GitHub with the **exact** name
+4. Common issues:
+   - Case sensitivity: `10xCards` vs `10xcards`
+   - Hyphens: `10x-cards` vs `10xcards`
+   - Typos in the secret value
+
+**How to verify your project name:**
+
+```bash
+# If you have the API token set locally:
+export CLOUDFLARE_API_TOKEN="your-token"
+./scripts/list-cloudflare-projects.sh
+```
+
 ### Build Failed
+
 - Check GitHub Actions logs
 - Verify all secrets are set
 - Run `npm run build` locally
 
 ### Deployment Failed
+
 - Verify `CLOUDFLARE_API_TOKEN` is correct
 - Verify `CLOUDFLARE_ACCOUNT_ID` is correct
 - Verify `CLOUDFLARE_PROJECT_NAME` matches your project
 
 ### Site Not Working
+
 - Check Cloudflare Pages logs
 - Verify environment variables in Cloudflare
 - Check Supabase and OpenRouter keys are valid
@@ -139,10 +169,10 @@ npm run lint
 ## Support
 
 For detailed information, see:
+
 - `docs/cloudflare-deployment.md` - Full deployment guide
 - `DEPLOYMENT_CHANGES.md` - Summary of changes made
 
 ---
 
 **Total Setup Time**: ~15-20 minutes
-
