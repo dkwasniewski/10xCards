@@ -69,6 +69,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     );
   } catch (error) {
     // Log unexpected errors but still return success to prevent enumeration
+    // eslint-disable-next-line no-console
     console.error("Forgot password error:", error);
 
     // Return success even on error to prevent email enumeration

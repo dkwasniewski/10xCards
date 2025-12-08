@@ -64,6 +64,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
 
     if (error) {
+      // eslint-disable-next-line no-console
       console.error("Session establishment error:", error);
       return new Response(
         JSON.stringify({
@@ -90,8 +91,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    console.log("Session established for user:", data.user?.id);
-
     // 5. Return success
     return new Response(
       JSON.stringify({
@@ -103,6 +102,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
     );
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Session establishment exception:", error);
     return new Response(
       JSON.stringify({

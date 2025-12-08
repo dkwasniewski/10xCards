@@ -17,12 +17,10 @@ const __dirname = dirname(__filename);
 const projectRoot = resolve(__dirname, "..");
 const envTestPath = resolve(projectRoot, ".env.test");
 const envLocalPath = resolve(projectRoot, ".env.local");
-const envLocalBackupPath = resolve(projectRoot, ".env.local.backup");
 
-// Backup existing .env.local if it exists
+// Check if .env.local already exists (shouldn't in clean setup)
 if (existsSync(envLocalPath)) {
-  console.log("Backing up existing .env.local to .env.local.backup");
-  copyFileSync(envLocalPath, envLocalBackupPath);
+  console.warn("Warning: .env.local already exists. It will be overwritten for E2E testing.");
 }
 
 // Copy .env.test to .env.local (Astro loads .env.local with higher priority than .env)
@@ -41,20 +39,14 @@ const astro = spawn("npm", ["run", "dev"], {
   shell: true,
 });
 
-// Cleanup function to restore original .env.local
+// Cleanup function to remove temporary .env.local
 const cleanup = () => {
   console.log("\nCleaning up E2E environment...");
 
-  // Remove the test .env.local
+  // Remove the temporary .env.local created for testing
   if (existsSync(envLocalPath)) {
+    console.log("Removing temporary .env.local");
     unlinkSync(envLocalPath);
-  }
-
-  // Restore backup if it existed
-  if (existsSync(envLocalBackupPath)) {
-    console.log("Restoring original .env.local from backup");
-    copyFileSync(envLocalBackupPath, envLocalPath);
-    unlinkSync(envLocalBackupPath);
   }
 };
 

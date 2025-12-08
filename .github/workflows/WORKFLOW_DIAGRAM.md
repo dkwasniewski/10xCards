@@ -176,7 +176,7 @@ graph TD
     C --> E[Build]
     D --> E
     E --> F[Success]
-    
+
     B -.-> |Failure| G[Stop Workflow]
     C -.-> |Failure| G
     D -.-> |Failure| G
@@ -273,23 +273,23 @@ Push to master
 
 ## Key Metrics
 
-| Metric | Value |
-|--------|-------|
-| **Total Jobs** | 4 |
-| **Parallel Jobs** | 2 (Unit + E2E) |
-| **Sequential Jobs** | 2 (Lint → Build) |
-| **Total Runtime** | ~10-15 minutes |
+| Metric                | Value                         |
+| --------------------- | ----------------------------- |
+| **Total Jobs**        | 4                             |
+| **Parallel Jobs**     | 2 (Unit + E2E)                |
+| **Sequential Jobs**   | 2 (Lint → Build)              |
+| **Total Runtime**     | ~10-15 minutes                |
 | **Optimized Runtime** | Yes (8 min saved via caching) |
-| **Artifact Size** | ~30-70 MB total |
-| **Retention Cost** | Negligible (GitHub Free) |
-| **CI Minutes/Run** | ~15 minutes |
-| **Runs/Month** | ~133 on free tier |
+| **Artifact Size**     | ~30-70 MB total               |
+| **Retention Cost**    | Negligible (GitHub Free)      |
+| **CI Minutes/Run**    | ~15 minutes                   |
+| **Runs/Month**        | ~133 on free tier             |
 
 ## Trigger Comparison
 
-| Trigger Type | When | Use Case |
-|-------------|------|----------|
-| **Push to master** | Automatic | Normal development flow |
+| Trigger Type                   | When      | Use Case                  |
+| ------------------------------ | --------- | ------------------------- |
+| **Push to master**             | Automatic | Normal development flow   |
 | **Manual (workflow_dispatch)** | On-demand | Testing, debugging, demos |
 
 ## Environment Isolation
@@ -326,10 +326,10 @@ Job: Build
 ---
 
 **Legend**:
+
 - ✅ Success
 - ❌ Failure
 - ▓ Running
 - ──► Flow
 - ├─► Step
 - └─► Final step
-

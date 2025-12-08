@@ -131,11 +131,13 @@ export default function GenerateReview() {
             setNewCandidates(viewModels);
           }
         } catch (fetchError) {
+          // eslint-disable-next-line no-console
           console.error("Failed to fetch generated candidates:", fetchError);
           // Fallback: refresh pending which will show them there
           await refreshPending();
         }
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error("Generation failed:", error);
         // Error toast is handled by the hook
       }
@@ -251,6 +253,7 @@ export default function GenerateReview() {
       // Refresh to get updated state from server
       await refreshPending();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Failed to accept candidates:", error);
       toast.error("Failed to accept candidates - rolled back");
 
@@ -299,6 +302,7 @@ export default function GenerateReview() {
       // Refresh to get updated state from server
       await refreshPending();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Failed to reject candidates:", error);
       toast.error("Failed to reject candidates - rolled back");
 
@@ -341,6 +345,7 @@ export default function GenerateReview() {
           // Refresh to get updated state from server
           await refreshPending();
         } catch (error) {
+          // eslint-disable-next-line no-console
           console.error("Failed to accept candidate:", error);
           toast.error("Failed to accept candidate - rolled back");
 
@@ -403,6 +408,7 @@ export default function GenerateReview() {
         // Refresh to get updated state from server
         await refreshPending();
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error("Failed to update candidate:", error);
         toast.error("Failed to update candidate - rolled back");
 
@@ -441,6 +447,7 @@ export default function GenerateReview() {
           // Refresh to get updated state from server
           await refreshPending();
         } catch (error) {
+          // eslint-disable-next-line no-console
           console.error("Failed to reject candidate:", error);
           toast.error("Failed to reject candidate - rolled back");
 

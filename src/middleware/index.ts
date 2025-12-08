@@ -65,12 +65,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
     } = await supabase.auth.getSession();
 
     if (sessionError) {
+      // eslint-disable-next-line no-console
       console.error("Session error:", sessionError);
     }
 
     session = sessionData;
     user = sessionData?.user ?? null;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Middleware auth error:", error);
     // Continue with null user/session on error
   }

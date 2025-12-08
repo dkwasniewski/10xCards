@@ -116,6 +116,7 @@ export async function generateFlashcards(inputText: string, model: string): Prom
     try {
       parsed = JSON.parse(content);
     } catch (parseError) {
+      // eslint-disable-next-line no-console
       console.error("Failed to parse AI response. Raw content:", content);
       throw new Error(
         `Failed to parse AI response: ${parseError instanceof Error ? parseError.message : "Unknown error"}`
@@ -126,11 +127,10 @@ export async function generateFlashcards(inputText: string, model: string): Prom
     let candidates = parsed.flashcards;
 
     if (!Array.isArray(candidates) || candidates.length === 0) {
+      // eslint-disable-next-line no-console
       console.error("AI response structure:", JSON.stringify(parsed, null, 2));
       throw new Error("AI response did not contain valid flashcards array");
     }
-
-    console.log(`Received ${candidates.length} flashcards from AI. Validating...`);
 
     // Validate each candidate has required fields and add default prompt if missing
     const validatedCandidates: CandidateCreateDto[] = [];
@@ -153,6 +153,7 @@ export async function generateFlashcards(inputText: string, model: string): Prom
     }
 
     if (invalidCandidates.length > 0) {
+      // eslint-disable-next-line no-console
       console.warn(
         `Filtered out ${invalidCandidates.length} invalid flashcards:`,
         JSON.stringify(invalidCandidates, null, 2)
@@ -160,6 +161,7 @@ export async function generateFlashcards(inputText: string, model: string): Prom
     }
 
     if (validatedCandidates.length === 0) {
+      // eslint-disable-next-line no-console
       console.error(
         "All flashcards failed validation. Sample invalid flashcard:",
         JSON.stringify(candidates[0], null, 2)
@@ -167,7 +169,6 @@ export async function generateFlashcards(inputText: string, model: string): Prom
       throw new Error("No valid flashcards in AI response after validation");
     }
 
-    console.log(`Successfully validated ${validatedCandidates.length} flashcards`);
     candidates = validatedCandidates;
 
     const duration = Date.now() - startTime;

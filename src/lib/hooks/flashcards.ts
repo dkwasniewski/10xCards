@@ -203,6 +203,7 @@ export function useFlashcards(): UseFlashcardsResult {
           isLoading: false,
         }));
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error("Failed to fetch flashcards:", error);
         setState((prev) => ({
           ...prev,
@@ -257,6 +258,7 @@ export function useFlashcards(): UseFlashcardsResult {
         isLoading: false,
       }));
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Failed to fetch flashcards:", error);
       setState((prev) => ({
         ...prev,
@@ -275,6 +277,7 @@ export function useFlashcards(): UseFlashcardsResult {
         await updateFlashcardApi(id, command);
         await refetch(); // Refetch to get updated data
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error("Failed to update flashcard:", error);
         throw error; // Re-throw to allow component to handle
       }
@@ -291,6 +294,7 @@ export function useFlashcards(): UseFlashcardsResult {
         await deleteFlashcardApi(id);
         await refetch(); // Refetch to get updated list
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error("Failed to delete flashcard:", error);
         throw error; // Re-throw to allow component to handle
       }
@@ -308,6 +312,7 @@ export function useFlashcards(): UseFlashcardsResult {
         await refetch(); // Refetch to get updated list
         return result.deletedCount;
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error("Failed to bulk delete flashcards:", error);
         throw error; // Re-throw to allow component to handle
       }

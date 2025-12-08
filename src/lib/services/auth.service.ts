@@ -93,6 +93,7 @@ class AuthService {
 
     if (error) {
       // Log error but don't throw - logout should always succeed client-side
+      // eslint-disable-next-line no-console
       console.error("Logout error:", error);
     }
   }
@@ -113,6 +114,7 @@ class AuthService {
     // Don't throw error to prevent email enumeration
     // Just log it server-side
     if (error) {
+      // eslint-disable-next-line no-console
       console.error("Password reset request error:", error);
     }
   }

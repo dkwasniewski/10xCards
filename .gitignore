@@ -15,9 +15,6 @@ pnpm-debug.log*
 .env
 .env.test
 .env.local
-.env.remote
-.env.remote.backup
-.env.production
 
 # macOS-specific files
 .DS_Store

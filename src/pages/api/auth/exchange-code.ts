@@ -59,6 +59,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
+      // eslint-disable-next-line no-console
       console.error("Code exchange error:", error);
       return new Response(
         JSON.stringify({
@@ -85,8 +86,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    console.log("Code exchange successful, session established");
-
     // Return success - the session is automatically set in cookies
     return new Response(
       JSON.stringify({
@@ -98,6 +97,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
     );
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Unexpected error in code exchange:", error);
     return new Response(
       JSON.stringify({
