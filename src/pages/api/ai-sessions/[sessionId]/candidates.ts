@@ -71,6 +71,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
     }
 
     // Log and return 500 for unexpected errors
+    // eslint-disable-next-line no-console
     console.error("Error fetching AI session candidates:", error);
     return errorResponse(500, ErrorMessages.INTERNAL_SERVER_ERROR);
   }

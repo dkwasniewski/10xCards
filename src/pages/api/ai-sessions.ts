@@ -116,6 +116,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     duration = result.duration;
   } catch (error) {
     // Log the full error for debugging
+    // eslint-disable-next-line no-console
     console.error("Flashcard generation error:", error);
 
     // Log failure event
@@ -132,6 +133,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       errorMessage = error.message;
       // Check if there's a raw property with more details
       if ("raw" in error && typeof error.raw === "object" && error.raw !== null) {
+        // eslint-disable-next-line no-console
         console.error("Raw error details:", JSON.stringify(error.raw, null, 2));
       }
     }

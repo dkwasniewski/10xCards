@@ -101,6 +101,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     // Log unexpected errors
+    // eslint-disable-next-line no-console
     console.error("Registration error:", error);
     return await handleApiError(
       500,

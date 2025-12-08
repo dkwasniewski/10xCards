@@ -77,19 +77,18 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
     } = await supabase.auth.getSession();
 
     if (sessionError || !session) {
+      // eslint-disable-next-line no-console
       console.error("No active session for password reset:", sessionError);
       return errorResponse(401, "No active session. Please use the reset link from your email");
     }
 
-    console.log("Password reset for user:", session.user.id);
-
     // 5. Update password directly (bypass service to avoid potential hanging)
-    console.log("Updating password...");
     const { error: updateError } = await supabase.auth.updateUser({
       password: new_password,
     });
 
     if (updateError) {
+      // eslint-disable-next-line no-console
       console.error("Password update error:", updateError);
 
       // Handle specific error cases
@@ -104,10 +103,8 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
       // Generic error
       return errorResponse(400, updateError.message || "Failed to update password");
     }
-    console.log("Password updated successfully");
 
     // 6. Log password reset event
-    console.log("Logging password reset event...");
     try {
       await Promise.race([
         logEvent(supabase, {
@@ -117,23 +114,20 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
         }),
         new Promise((_, reject) => setTimeout(() => reject(new Error("Event logging timeout")), 5000)),
       ]);
-      console.log("Event logged");
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error("Event logging error (non-fatal):", err);
       // Don't fail the request if logging fails
     }
 
     // 7. Clear session cookies to sign out user
     // They need to log in with their new password
-    console.log("Clearing session cookies...");
 
     // Get the storage key prefix used by Supabase
     // Format: sb-<project-ref>-auth-token
     const supabaseUrl = import.meta.env.SUPABASE_URL;
     const projectRef = supabaseUrl.split("//")[1]?.split(".")[0] || "127-0-0-1-54321";
     const storageKey = `sb-${projectRef}-auth-token`;
-
-    console.log("Supabase storage key:", storageKey);
 
     // Delete all possible Supabase auth cookie names
     const cookieNames = [
@@ -145,19 +139,14 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
       "sb-auth-token",
     ];
 
-    let deletedCount = 0;
     cookieNames.forEach((cookieName) => {
       // Always try to delete, even if has() returns false
       try {
         cookies.delete(cookieName, { path: "/" });
-        console.log("Deleted cookie:", cookieName);
-        deletedCount++;
-      } catch (err) {
-        console.log("Could not delete cookie:", cookieName, err);
+      } catch {
+        // Silently ignore cookie deletion errors
       }
     });
-
-    console.log(`Password reset complete - deleted ${deletedCount} cookies`);
 
     return new Response(
       JSON.stringify({
@@ -182,6 +171,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
     }
 
     // Log unexpected errors
+    // eslint-disable-next-line no-console
     console.error("Password reset error:", error);
     return await handleApiError(
       500,

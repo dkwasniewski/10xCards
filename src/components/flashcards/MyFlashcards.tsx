@@ -169,6 +169,7 @@ export default function MyFlashcards() {
         await updateFlashcard(id, command);
         toast.success("Flashcard updated successfully");
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error("Failed to update flashcard:", error);
         toast.error("Failed to update flashcard");
         throw error; // Re-throw to let dialog handle it
@@ -201,6 +202,7 @@ export default function MyFlashcards() {
         // Refetch to update the list
         await refetch();
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error("Failed to create flashcard:", error);
         toast.error("Failed to create flashcard");
         throw error; // Re-throw to let dialog handle it
@@ -236,6 +238,7 @@ export default function MyFlashcards() {
           updatePage(pagination.page - 1);
         }
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error("Failed to delete flashcard:", error);
         toast.error("Failed to delete flashcard");
         setDeleteState((prev) => ({ ...prev, isDeleting: false }));
@@ -283,6 +286,7 @@ export default function MyFlashcards() {
         updatePage(pagination.page - 1);
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Failed to bulk delete flashcards:", error);
       toast.error("Failed to delete flashcards");
       setBulkDeleteState((prev) => ({ ...prev, isDeleting: false }));

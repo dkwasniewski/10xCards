@@ -52,6 +52,7 @@ export function Header({ user }: HeaderProps) {
       // Redirect to home page after successful logout
       window.location.href = "/";
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Logout error:", error);
       setIsLoggingOut(false);
     }

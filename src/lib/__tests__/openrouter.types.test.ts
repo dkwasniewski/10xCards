@@ -220,4 +220,3 @@ describe("openrouter.types - Error Classes", () => {
     });
   });
 });
-

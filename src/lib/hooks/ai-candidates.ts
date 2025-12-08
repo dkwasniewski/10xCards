@@ -120,6 +120,7 @@ export function useCandidates(sessionId: string | null): UseCandidatesResult {
       }));
       setData(viewModels);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error("Failed to fetch candidates:", err);
       setError(err instanceof Error ? err.message : "Failed to load candidates");
     } finally {
@@ -177,6 +178,7 @@ export function useGeneration(): UseGenerationResult {
         candidates: result.candidates,
       };
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error("Failed to generate candidates:", err);
       const errorMessage = err instanceof Error ? err.message : "Failed to generate candidates";
       setError(errorMessage);
@@ -232,6 +234,7 @@ export function useCandidateActions(): UseCandidateActionsResult {
         const result: CandidateActionResponseDto = await response.json();
         return result;
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error("Failed to process candidate actions:", err);
         const errorMessage = err instanceof Error ? err.message : "Failed to process actions";
         setError(errorMessage);
