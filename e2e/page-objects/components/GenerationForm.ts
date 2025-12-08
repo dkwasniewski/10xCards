@@ -51,7 +51,7 @@ export class GenerationForm {
    */
   async fillSourceTextAndWaitForReady(text: string) {
     await this.fillSourceText(text);
-    
+
     // Wait for the ready message to appear, which indicates React has processed the input
     // and the button should be enabled (if text is valid)
     if (text.length >= 1000) {
@@ -119,11 +119,11 @@ export class GenerationForm {
   async clickGenerate() {
     // Wait for button to be visible and enabled
     await this.generateButton.waitFor({ state: "visible" });
-    
+
     // Use Playwright's built-in enabled check with retry logic
     // This is more reliable than waitForFunction as it uses Playwright's auto-waiting
     await expect(this.generateButton).toBeEnabled({ timeout: 15000 });
-    
+
     await this.generateButton.click();
   }
 
