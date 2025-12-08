@@ -132,22 +132,6 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Download unit test coverage
-        uses: actions/download-artifact@v6
-        with:
-          name: unit-test-coverage
-          path: coverage/
-
-      - name: Parse coverage summary
-        id: coverage
-        run: |
-          if [ -f coverage/coverage-summary.json ]; then
-            COVERAGE=$(node -pe "JSON.parse(require('fs').readFileSync('coverage/coverage-summary.json')).total.lines.pct")
-            echo "percentage=$COVERAGE" >> $GITHUB_OUTPUT
-          else
-            echo "percentage=N/A" >> $GITHUB_OUTPUT
-          fi
-
       - name: Create deployment summary
         run: |
           echo "## 🚀 Deployment Successful" >> $GITHUB_STEP_SUMMARY
