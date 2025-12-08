@@ -60,18 +60,25 @@ function parseCookieHeader(cookieHeader: string): { name: string; value: string 
  * @param context - Object containing request headers and Astro cookies
  * @returns Configured Supabase client for SSR
  */
-export function createSupabaseServerInstance(context: { headers: Headers; cookies: AstroCookies }): SupabaseClient {
+export function createSupabaseServerInstance(
+  context: { headers: Headers; cookies: AstroCookies },
+  envUrl?: string,
+  envKey?: string
+): SupabaseClient {
   // Local cache for cookies that have been set during this request
   // This ensures that getItem can read cookies that were just set via setItem
   const cookieCache = new Map<string, string>();
 
-  // Ensure we have the environment variables
-  if (!supabaseUrl || !supabaseAnonKey) {
+  // Use provided env vars or fall back to module-level vars
+  const url = envUrl || supabaseUrl;
+  const key = envKey || supabaseAnonKey;
+
+  if (!url || !key) {
     throw new Error('Missing Supabase environment variables in createSupabaseServerInstance');
   }
 
   // Create a client with custom storage that uses Astro cookies
-  return createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  return createClient<Database>(url, key, {
     auth: {
       flowType: "pkce",
       autoRefreshToken: false, // Disable auto-refresh to prevent network requests that can hang

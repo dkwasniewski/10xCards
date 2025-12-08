@@ -40,11 +40,20 @@ const PUBLIC_PATHS = [
 export const onRequest = defineMiddleware(async (context, next) => {
   const pathname = context.url.pathname;
 
+  // Get environment variables from Cloudflare runtime if available
+  const runtime = context.locals.runtime as any;
+  const envUrl = runtime?.env?.SUPABASE_URL;
+  const envKey = runtime?.env?.SUPABASE_KEY;
+
   // Create request-scoped Supabase client with cookie handling
-  const supabase = createSupabaseServerInstance({
-    headers: context.request.headers,
-    cookies: context.cookies,
-  });
+  const supabase = createSupabaseServerInstance(
+    {
+      headers: context.request.headers,
+      cookies: context.cookies,
+    },
+    envUrl,
+    envKey
+  );
 
   // Add Supabase client to context (always needed)
   context.locals.supabase = supabase;
