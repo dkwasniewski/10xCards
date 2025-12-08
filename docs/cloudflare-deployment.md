@@ -129,6 +129,17 @@ If the build fails in GitHub Actions:
 3. Test the build locally: `npm run build`
 4. Check for TypeScript or linting errors: `npm run lint`
 
+**Common Issue: "Cannot find module '@astrojs/cloudflare'"**
+
+This happens if `@astrojs/cloudflare` is in `devDependencies` instead of `dependencies`. The adapter must be in `dependencies` because it's required at build time in CI/CD.
+
+**Fix:**
+```bash
+npm install @astrojs/cloudflare --save-prod
+```
+
+Or manually move it from `devDependencies` to `dependencies` in `package.json`.
+
 ### Deployment Failures
 
 If deployment fails:

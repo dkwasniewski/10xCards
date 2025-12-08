@@ -7,11 +7,13 @@ This document summarizes all changes made to adapt the 10xCards project for Clou
 ### 1. Dependencies
 
 **Added:**
-- `@astrojs/cloudflare` (v9.4.3) - Cloudflare adapter for Astro SSR
+- `@astrojs/cloudflare` (v12.6.12) - Cloudflare adapter for Astro SSR
+
+**Important:** This package is in `dependencies` (not `devDependencies`) because it's required at build time in CI/CD environments.
 
 **Command to install:**
 ```bash
-npm install @astrojs/cloudflare --save-dev
+npm install @astrojs/cloudflare
 ```
 
 ### 2. Configuration Files
