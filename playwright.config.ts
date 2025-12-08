@@ -56,7 +56,9 @@ export default defineConfig({
 
   // Run your local dev server before starting the tests
   webServer: {
-    command: "node scripts/dev-e2e.js",
+    // In CI, use direct astro dev command (env vars already set in workflow)
+    // Locally, use dev-e2e.js script to copy .env.test to .env.local
+    command: process.env.CI ? "npm run dev" : "node scripts/dev-e2e.js",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,

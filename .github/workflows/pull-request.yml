@@ -69,6 +69,7 @@ jobs:
     environment: integration
     env:
       CI: true
+      E2E_TEST: true
       # Secrets from 'integration' environment
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
