@@ -120,7 +120,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=10xCards
+          command: pages deploy dist --project-name=${{ secrets.CLOUDFLARE_PROJECT_NAME }}
 
   # Job 5: Deployment Status Comment (runs only if deployment succeeds)
   deployment-status:
@@ -164,4 +164,3 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Deployment URL:** ${{ secrets.PUBLIC_SITE_URL }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Workflow Run:** https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
-

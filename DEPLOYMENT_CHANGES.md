@@ -7,11 +7,13 @@ This document summarizes all changes made to adapt the 10xCards project for Clou
 ### 1. Dependencies
 
 **Added:**
+
 - `@astrojs/cloudflare` (v12.6.12) - Cloudflare adapter for Astro SSR
 
 **Important:** This package is in `dependencies` (not `devDependencies`) because it's required at build time in CI/CD environments.
 
 **Command to install:**
+
 ```bash
 npm install @astrojs/cloudflare
 ```
@@ -21,10 +23,12 @@ npm install @astrojs/cloudflare
 #### `astro.config.mjs`
 
 **Changed:**
+
 - Replaced `@astrojs/node` adapter with `@astrojs/cloudflare`
 - Enabled platform proxy for local development
 
 **Before:**
+
 ```javascript
 import node from "@astrojs/node";
 
@@ -37,6 +41,7 @@ export default defineConfig({
 ```
 
 **After:**
+
 ```javascript
 import cloudflare from "@astrojs/cloudflare";
 
@@ -57,6 +62,7 @@ export default defineConfig({
 Created a new CI/CD workflow for deploying to Cloudflare Pages on push to `master` branch.
 
 **Features:**
+
 - ✅ Code linting with ESLint
 - ✅ Unit tests with coverage reporting
 - ✅ Production build
@@ -65,6 +71,7 @@ Created a new CI/CD workflow for deploying to Cloudflare Pages on push to `maste
 - ❌ No E2E tests (only in PR workflow)
 
 **Jobs:**
+
 1. `lint` - Runs ESLint
 2. `unit-tests` - Runs Vitest with coverage (parallel with build)
 3. `build` - Builds the application (parallel with unit-tests)
@@ -72,6 +79,7 @@ Created a new CI/CD workflow for deploying to Cloudflare Pages on push to `maste
 5. `deployment-status` - Creates deployment summary (after deploy)
 
 **Required Secrets (Production Environment):**
+
 - `CLOUDFLARE_API_TOKEN` - Cloudflare API token
 - `CLOUDFLARE_ACCOUNT_ID` - Cloudflare account ID
 - `CLOUDFLARE_PROJECT_NAME` - Cloudflare Pages project name
@@ -83,6 +91,7 @@ Created a new CI/CD workflow for deploying to Cloudflare Pages on push to `maste
 #### Updated: `.github/workflows/pull-request.yml`
 
 **Updated all GitHub Actions to latest major versions:**
+
 - `actions/checkout@v4` → `actions/checkout@v6`
 - `actions/setup-node@v4` → `actions/setup-node@v6`
 - `actions/upload-artifact@v4` → `actions/upload-artifact@v5`
@@ -94,6 +103,7 @@ Created a new CI/CD workflow for deploying to Cloudflare Pages on push to `maste
 #### New File: `docs/cloudflare-deployment.md`
 
 Comprehensive deployment guide covering:
+
 - Prerequisites and setup
 - Required GitHub secrets
 - Cloudflare configuration steps
@@ -111,9 +121,11 @@ Comprehensive deployment guide covering:
 The application requires the following environment variables:
 
 ### Build-time (GitHub Actions)
+
 - `NODE_ENV=production`
 
 ### Runtime (Cloudflare Pages + GitHub Secrets)
+
 - `SUPABASE_URL` - Supabase project URL
 - `SUPABASE_KEY` - Supabase anon key
 - `OPENROUTER_API_KEY` - OpenRouter API key
@@ -122,11 +134,13 @@ The application requires the following environment variables:
 ## Deployment Flow
 
 ### Pull Request Flow (`.github/workflows/pull-request.yml`)
+
 ```
 PR opened/updated → lint → [unit-tests, e2e-tests] → status-comment
 ```
 
 ### Master Branch Flow (`.github/workflows/master.yml`)
+
 ```
 Push to master → lint → [unit-tests, build] → deploy → deployment-status
 ```
@@ -134,6 +148,7 @@ Push to master → lint → [unit-tests, build] → deploy → deployment-status
 ## Action Versions Validation
 
 All GitHub Actions have been validated:
+
 - ✅ `actions/checkout@v6` - Latest major version
 - ✅ `actions/setup-node@v6` - Latest major version
 - ✅ `actions/upload-artifact@v5` - Latest major version
@@ -186,6 +201,7 @@ If deployment fails or issues occur:
    - Click "Rollback to this deployment"
 
 2. **Git Rollback**
+
    ```bash
    git revert <commit-hash>
    git push origin master
@@ -206,6 +222,7 @@ If deployment fails or issues occur:
 ## Performance Considerations
 
 Cloudflare Pages provides:
+
 - Global CDN with edge caching
 - HTTP/3 and QUIC support
 - Automatic Brotli compression
@@ -225,10 +242,12 @@ No additional configuration needed for basic optimization.
 ## Cost Implications
 
 ### Cloudflare Pages
+
 - **Free Tier**: 500 builds/month, unlimited requests
 - **Paid Tier**: $20/month for unlimited builds
 
 ### Estimated Monthly Costs
+
 - Cloudflare Pages: $0-20/month
 - Supabase: $0-25/month (free tier for MVP)
 - OpenRouter: Variable based on usage
@@ -247,4 +266,3 @@ Total estimated: **$0-50/month** for small-to-medium traffic
 **Date**: December 8, 2025  
 **Author**: AI Assistant  
 **Status**: ✅ Ready for deployment
-

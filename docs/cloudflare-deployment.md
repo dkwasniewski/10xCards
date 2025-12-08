@@ -27,15 +27,15 @@ Configure the following secrets in your GitHub repository under Settings → Sec
 
 Create a `production` environment in GitHub and add these secrets:
 
-| Secret Name | Description | Example |
-|------------|-------------|---------|
-| `CLOUDFLARE_API_TOKEN` | Cloudflare API token with Pages permissions | `abc123...` |
-| `CLOUDFLARE_ACCOUNT_ID` | Your Cloudflare account ID | `1234567890abcdef` |
-| `CLOUDFLARE_PROJECT_NAME` | Name of your Cloudflare Pages project | `10xcards` |
-| `SUPABASE_URL` | Your Supabase project URL | `https://xxx.supabase.co` |
-| `SUPABASE_KEY` | Your Supabase anon/public key | `eyJhbGc...` |
-| `OPENROUTER_API_KEY` | Your OpenRouter API key | `sk-or-v1-...` |
-| `PUBLIC_SITE_URL` | Your production site URL | `https://10xcards.pages.dev` |
+| Secret Name               | Description                                 | Example                      |
+| ------------------------- | ------------------------------------------- | ---------------------------- |
+| `CLOUDFLARE_API_TOKEN`    | Cloudflare API token with Pages permissions | `abc123...`                  |
+| `CLOUDFLARE_ACCOUNT_ID`   | Your Cloudflare account ID                  | `1234567890abcdef`           |
+| `CLOUDFLARE_PROJECT_NAME` | Name of your Cloudflare Pages project       | `10xcards`                   |
+| `SUPABASE_URL`            | Your Supabase project URL                   | `https://xxx.supabase.co`    |
+| `SUPABASE_KEY`            | Your Supabase anon/public key               | `eyJhbGc...`                 |
+| `OPENROUTER_API_KEY`      | Your OpenRouter API key                     | `sk-or-v1-...`               |
+| `PUBLIC_SITE_URL`         | Your production site URL                    | `https://10xcards.pages.dev` |
 
 ## Cloudflare Configuration
 
@@ -72,12 +72,12 @@ Configure runtime environment variables in Cloudflare Pages:
 1. Go to your Pages project → **Settings** → **Environment variables**
 2. Add the following variables for **Production**:
 
-| Variable Name | Value | Notes |
-|--------------|-------|-------|
-| `SUPABASE_URL` | Your Supabase URL | Same as GitHub secret |
-| `SUPABASE_KEY` | Your Supabase key | Same as GitHub secret |
+| Variable Name        | Value               | Notes                 |
+| -------------------- | ------------------- | --------------------- |
+| `SUPABASE_URL`       | Your Supabase URL   | Same as GitHub secret |
+| `SUPABASE_KEY`       | Your Supabase key   | Same as GitHub secret |
 | `OPENROUTER_API_KEY` | Your OpenRouter key | Same as GitHub secret |
-| `PUBLIC_SITE_URL` | Your site URL | Same as GitHub secret |
+| `PUBLIC_SITE_URL`    | Your site URL       | Same as GitHub secret |
 
 > **Note**: While GitHub Actions passes these as build-time variables, Cloudflare Pages also needs them configured for runtime access.
 
@@ -134,6 +134,7 @@ If the build fails in GitHub Actions:
 This happens if `@astrojs/cloudflare` is in `devDependencies` instead of `dependencies`. The adapter must be in `dependencies` because it's required at build time in CI/CD.
 
 **Fix:**
+
 ```bash
 npm install @astrojs/cloudflare --save-prod
 ```
@@ -211,9 +212,9 @@ export default defineConfig({
   // ... other config
   server: {
     headers: {
-      "Content-Security-Policy": "default-src 'self'; ..."
-    }
-  }
+      "Content-Security-Policy": "default-src 'self'; ...",
+    },
+  },
 });
 ```
 
@@ -255,4 +256,3 @@ For issues:
 - [Astro Cloudflare Adapter](https://docs.astro.build/en/guides/integrations-guide/cloudflare/)
 - [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/)
 - [GitHub Actions Documentation](https://docs.github.com/actions)
-
