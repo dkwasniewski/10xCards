@@ -3,6 +3,7 @@ import type { APIRoute } from "astro";
 import { forgotPasswordSchema } from "../../lib/schemas/auth.schemas";
 import { authService } from "../../lib/services/auth.service";
 import { errorResponse, ErrorMessages } from "../../lib/utils/api-error";
+import { getEnv } from "../../lib/utils";
 
 /**
  * POST /api/forgot-password
@@ -50,13 +51,19 @@ export const POST: APIRoute = async ({ request, locals }) => {
       return errorResponse(500, ErrorMessages.SUPABASE_CLIENT_UNAVAILABLE);
     }
 
-    // 4. Request password reset
+    // 4. Get site URL from environment
+    const siteUrl = getEnv("PUBLIC_SITE_URL", locals.runtime);
+    if (!siteUrl) {
+      return errorResponse(500, "Site URL not configured");
+    }
+
+    // 5. Request password reset
     // The redirect URL will be where users are sent after clicking the reset link
-    const redirectUrl = `${import.meta.env.PUBLIC_SITE_URL}/reset-password`;
+    const redirectUrl = `${siteUrl}/reset-password`;
 
     await authService.requestPasswordReset(supabase, email, redirectUrl);
 
-    // 5. Always return success to prevent email enumeration
+    // 6. Always return success to prevent email enumeration
     // Don't reveal whether the email exists in the system
     return new Response(
       JSON.stringify({

@@ -13,15 +13,21 @@ class AuthService {
    * @param supabase - Supabase client instance
    * @param email - User's email address
    * @param password - User's password
+   * @param siteUrl - Base URL of the site for email redirect
    * @returns User data (id, email, created_at)
    * @throws Error if registration fails or email already exists
    */
-  async register(supabase: SupabaseClient, email: string, password: string): Promise<RegisterResponseDto> {
+  async register(
+    supabase: SupabaseClient,
+    email: string,
+    password: string,
+    siteUrl: string
+  ): Promise<RegisterResponseDto> {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${import.meta.env.PUBLIC_SITE_URL}/verify-email`,
+        emailRedirectTo: `${siteUrl}/verify-email`,
       },
     });
 

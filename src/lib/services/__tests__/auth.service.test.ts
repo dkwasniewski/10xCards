@@ -53,7 +53,12 @@ describe("AuthService", () => {
         });
 
         // Act
-        const result = await authService.register(mockSupabase as unknown as SupabaseClient, email, password);
+        const result = await authService.register(
+          mockSupabase as unknown as SupabaseClient,
+          email,
+          password,
+          "https://example.com"
+        );
 
         // Assert
         expect(result).toEqual({
@@ -79,14 +84,14 @@ describe("AuthService", () => {
         });
 
         // Act
-        await authService.register(mockSupabase as unknown as SupabaseClient, email, password);
+        await authService.register(mockSupabase as unknown as SupabaseClient, email, password, "https://example.com");
 
         // Assert
         expect(mockSupabase.auth.signUp).toHaveBeenCalledWith({
           email,
           password,
           options: {
-            emailRedirectTo: expect.stringContaining("/verify-email"),
+            emailRedirectTo: "https://example.com/verify-email",
           },
         });
         expect(mockSupabase.auth.signUp).toHaveBeenCalledTimes(1);
@@ -106,12 +111,17 @@ describe("AuthService", () => {
         });
 
         // Act
-        await authService.register(mockSupabase as unknown as SupabaseClient, "user@example.com", "Password123!");
+        await authService.register(
+          mockSupabase as unknown as SupabaseClient,
+          "user@example.com",
+          "Password123!",
+          "https://example.com"
+        );
 
         // Assert
         const callArgs = mockSupabase.auth.signUp.mock.calls[0][0];
         expect(callArgs.options?.emailRedirectTo).toBeDefined();
-        expect(callArgs.options?.emailRedirectTo).toContain("/verify-email");
+        expect(callArgs.options?.emailRedirectTo).toBe("https://example.com/verify-email");
       });
     });
 
@@ -125,7 +135,12 @@ describe("AuthService", () => {
 
         // Act & Assert
         await expect(
-          authService.register(mockSupabase as unknown as SupabaseClient, "existing@example.com", "Password123!")
+          authService.register(
+            mockSupabase as unknown as SupabaseClient,
+            "existing@example.com",
+            "Password123!",
+            "https://example.com"
+          )
         ).rejects.toThrow("An account with this email already exists");
       });
 
@@ -138,7 +153,12 @@ describe("AuthService", () => {
 
         // Act & Assert
         await expect(
-          authService.register(mockSupabase as unknown as SupabaseClient, "existing@example.com", "Password123!")
+          authService.register(
+            mockSupabase as unknown as SupabaseClient,
+            "existing@example.com",
+            "Password123!",
+            "https://example.com"
+          )
         ).rejects.toThrow("An account with this email already exists");
       });
 
@@ -152,7 +172,12 @@ describe("AuthService", () => {
 
         // Act & Assert
         await expect(
-          authService.register(mockSupabase as unknown as SupabaseClient, "user@example.com", "Password123!")
+          authService.register(
+            mockSupabase as unknown as SupabaseClient,
+            "user@example.com",
+            "Password123!",
+            "https://example.com"
+          )
         ).rejects.toThrow("Database connection failed");
       });
 
@@ -165,7 +190,12 @@ describe("AuthService", () => {
 
         // Act & Assert
         await expect(
-          authService.register(mockSupabase as unknown as SupabaseClient, "user@example.com", "Password123!")
+          authService.register(
+            mockSupabase as unknown as SupabaseClient,
+            "user@example.com",
+            "Password123!",
+            "https://example.com"
+          )
         ).rejects.toThrow("Failed to create user account");
       });
     });

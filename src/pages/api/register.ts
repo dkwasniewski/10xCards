@@ -4,6 +4,7 @@ import { registerSchema } from "../../lib/schemas/auth.schemas";
 import { authService } from "../../lib/services/auth.service";
 import { logEvent } from "../../lib/services/event-log.service";
 import { errorResponse, ErrorMessages, handleApiError } from "../../lib/utils/api-error";
+import { getEnv } from "../../lib/utils";
 
 /**
  * POST /api/register
@@ -61,10 +62,16 @@ export const POST: APIRoute = async ({ request, locals }) => {
       return errorResponse(500, ErrorMessages.SUPABASE_CLIENT_UNAVAILABLE);
     }
 
-    // 4. Attempt registration
-    const result = await authService.register(supabase, email, password);
+    // 4. Get site URL from environment
+    const siteUrl = getEnv("PUBLIC_SITE_URL", locals.runtime);
+    if (!siteUrl) {
+      return errorResponse(500, "Site URL not configured");
+    }
 
-    // 5. Log successful registration event
+    // 5. Attempt registration
+    const result = await authService.register(supabase, email, password, siteUrl);
+
+    // 6. Log successful registration event
     // Note: User is created but not yet confirmed, so we can log the event
     await logEvent(supabase, {
       userId: result.id,
@@ -72,7 +79,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       eventSource: "manual",
     });
 
-    // 6. Return success response with informative message
+    // 7. Return success response with informative message
     return new Response(
       JSON.stringify({
         ...result,
