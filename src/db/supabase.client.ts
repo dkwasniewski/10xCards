@@ -10,18 +10,18 @@ function getEnvVar(key: string): string {
   if (import.meta.env[key]) {
     return import.meta.env[key];
   }
-  
+
   // Try process.env (works in Node.js environments)
-  if (typeof process !== 'undefined' && process.env && process.env[key]) {
+  if (typeof process !== "undefined" && process.env && process.env[key]) {
     return process.env[key];
   }
-  
+
   throw new Error(`Missing environment variable: ${key}`);
 }
 
 // Get environment variables - works in both dev and Cloudflare Pages
-const supabaseUrl = getEnvVar('SUPABASE_URL');
-const supabaseAnonKey = getEnvVar('SUPABASE_KEY');
+const supabaseUrl = getEnvVar("SUPABASE_URL");
+const supabaseAnonKey = getEnvVar("SUPABASE_KEY");
 
 // Singleton client for non-SSR contexts (kept for backward compatibility)
 export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
@@ -74,7 +74,7 @@ export function createSupabaseServerInstance(
   const key = envKey || supabaseAnonKey;
 
   if (!url || !key) {
-    throw new Error('Missing Supabase environment variables in createSupabaseServerInstance');
+    throw new Error("Missing Supabase environment variables in createSupabaseServerInstance");
   }
 
   // Create a client with custom storage that uses Astro cookies
