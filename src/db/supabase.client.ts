@@ -4,8 +4,24 @@ import type { SupabaseClient as SupabaseClientType } from "@supabase/supabase-js
 
 import type { Database } from "./database.types";
 
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
+// Helper function to get environment variables
+function getEnvVar(key: string): string {
+  // Try import.meta.env first (works in dev and build time)
+  if (import.meta.env[key]) {
+    return import.meta.env[key];
+  }
+  
+  // Try process.env (works in Node.js environments)
+  if (typeof process !== 'undefined' && process.env && process.env[key]) {
+    return process.env[key];
+  }
+  
+  throw new Error(`Missing environment variable: ${key}`);
+}
+
+// Get environment variables - works in both dev and Cloudflare Pages
+const supabaseUrl = getEnvVar('SUPABASE_URL');
+const supabaseAnonKey = getEnvVar('SUPABASE_KEY');
 
 // Singleton client for non-SSR contexts (kept for backward compatibility)
 export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
@@ -48,6 +64,11 @@ export function createSupabaseServerInstance(context: { headers: Headers; cookie
   // Local cache for cookies that have been set during this request
   // This ensures that getItem can read cookies that were just set via setItem
   const cookieCache = new Map<string, string>();
+
+  // Ensure we have the environment variables
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase environment variables in createSupabaseServerInstance');
+  }
 
   // Create a client with custom storage that uses Astro cookies
   return createClient<Database>(supabaseUrl, supabaseAnonKey, {
