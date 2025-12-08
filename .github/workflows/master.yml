@@ -119,7 +119,7 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          accountId: db4ab28b9652d14b4aff49fb644fea83
           command: pages deploy dist --project-name=cards
 
   # Job 5: Deployment Status Comment (runs only if deployment succeeds)
