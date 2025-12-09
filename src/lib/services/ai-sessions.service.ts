@@ -24,8 +24,9 @@ interface CreateGenerationSessionResult {
 export async function hashInputText(text: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(text.trim());
-  // Explicitly use globalThis.crypto to ensure Web Crypto API is used in Cloudflare Workers
-  const hashBuffer = await globalThis.crypto.subtle.digest("SHA-256", data);
+  // Use crypto from globalThis and call digest with proper binding
+  const crypto = globalThis.crypto;
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
