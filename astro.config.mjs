@@ -13,9 +13,15 @@ export default defineConfig({
   server: { port: 3000 },
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      alias: {
+        // Prevent Node.js polyfills in Cloudflare Workers environment
+        // Map to empty module to avoid bundling Node.js crypto
+        "node:crypto": new globalThis.URL("./src/lib/utils/empty.ts", import.meta.url).pathname,
+      },
+    },
   },
   adapter: cloudflare({
-    mode: "directory",
     platformProxy: {
       enabled: true,
     },

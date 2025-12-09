@@ -7,7 +7,6 @@ import {
   storeCandidates,
   updateGenerationDuration,
   generateCandidates,
-  hashInputText,
 } from "../../lib/services/ai-sessions.service";
 import { logEvent } from "../../lib/services/event-log.service";
 
@@ -90,10 +89,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const { input_text, model = DEFAULT_MODEL } = parseResult.data as CreateGenerationSessionCommand;
 
-  // 2. Hash input text for duplicate detection
-  const inputTextHash = hashInputText(input_text);
+  // 2. Create Generation Session Record (hash is computed inside createGenerationSession)
   // 3. Create Generation Session Record
   let sessionId: string;
+  let inputTextHash: string;
   try {
     const session = await createGenerationSession(supabase, {
       userId,
@@ -101,6 +100,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       model,
     });
     sessionId = session.sessionId;
+    inputTextHash = session.inputTextHash;
   } catch {
     return errorResponse(500, "Internal server error", {
       message: "Failed to create generation session. Please try again.",

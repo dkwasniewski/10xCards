@@ -48,17 +48,53 @@ export class GenerationForm {
   /**
    * Fill source text and wait for form to be ready
    * This is a more reliable method that waits for React state to update
+   * Includes retry logic to handle race conditions
    */
-  async fillSourceTextAndWaitForReady(text: string) {
-    await this.fillSourceText(text);
+  async fillSourceTextAndWaitForReady(text: string, maxRetries = 3) {
+    let lastError: Error | undefined;
 
-    // Wait for the ready message to appear, which indicates React has processed the input
-    // and the button should be enabled (if text is valid)
-    if (text.length >= 1000) {
-      await expect(this.readyToGenerateMessage).toBeVisible({ timeout: 5000 });
-      // Also wait for button to be enabled
-      await expect(this.generateButton).toBeEnabled({ timeout: 5000 });
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        // Clear first and wait for it to be empty
+        await this.sourceTextInput.clear();
+        await expect(this.sourceTextInput).toHaveValue("", { timeout: 2000 });
+
+        // Fill the text
+        await this.sourceTextInput.fill(text);
+
+        // Verify the text was actually filled by checking the input value
+        await expect(this.sourceTextInput).toHaveValue(text, { timeout: 5000 });
+
+        // Trigger blur to ensure React onChange fires
+        await this.sourceTextInput.blur();
+
+        // Wait for React to process the change and update the UI
+        if (text.length >= 1000) {
+          // Wait for character count to update
+          await expect(this.charCount).not.toContainText("0 / 10,000", { timeout: 5000 });
+
+          // Wait for the ready message to appear, which indicates React has processed the input
+          await expect(this.readyToGenerateMessage).toBeVisible({ timeout: 5000 });
+
+          // Also wait for button to be enabled
+          await expect(this.generateButton).toBeEnabled({ timeout: 5000 });
+        }
+
+        // If we got here, everything succeeded
+        return;
+      } catch (error) {
+        lastError = error as Error;
+        console.log(`Attempt ${attempt}/${maxRetries} to fill source text failed:`, error);
+
+        // If this isn't the last attempt, wait a bit before retrying
+        if (attempt < maxRetries) {
+          await this.page.waitForTimeout(1000);
+        }
+      }
     }
+
+    // If we exhausted all retries, throw the last error
+    throw new Error(`Failed to fill source text after ${maxRetries} attempts. Last error: ${lastError?.message}`);
   }
 
   /**

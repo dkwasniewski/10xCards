@@ -1,6 +1,5 @@
 import type { SupabaseClient } from "../../db/supabase.client";
 import type { CandidateCreateDto, CandidateDto, CandidateActionCommand, CandidateActionResponseDto } from "../../types";
-import crypto from "node:crypto";
 import { generateFlashcards } from "./ai.service";
 
 interface CreateGenerationSessionParams {
@@ -16,13 +15,19 @@ interface CreateGenerationSessionResult {
 }
 
 /**
- * Generates MD5 hash of input text for duplicate detection.
+ * Generates SHA-256 hash of input text for duplicate detection.
+ * Uses Web Crypto API for compatibility with Cloudflare Workers/Pages.
  *
  * @param text - The input text to hash
- * @returns MD5 hash string
+ * @returns SHA-256 hash string (hex encoded)
  */
-export function hashInputText(text: string): string {
-  return crypto.createHash("md5").update(text.trim()).digest("hex");
+export async function hashInputText(text: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text.trim());
+  // Explicitly use globalThis.crypto to ensure Web Crypto API is used in Cloudflare Workers
+  const hashBuffer = await globalThis.crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 /**
@@ -37,7 +42,7 @@ export async function createGenerationSession(
   supabase: SupabaseClient,
   params: CreateGenerationSessionParams
 ): Promise<CreateGenerationSessionResult> {
-  const inputTextHash = hashInputText(params.inputText);
+  const inputTextHash = await hashInputText(params.inputText);
 
   const { data, error } = await supabase
     .from("ai_generation_sessions")
