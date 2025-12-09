@@ -10,8 +10,6 @@ import type { CandidateCreateDto } from "../../types";
 import { OpenRouterService } from "./openrouter.service";
 import type { ResponseFormat } from "../openrouter.types";
 
-const OPENROUTER_API_KEY = import.meta.env.OPENROUTER_API_KEY;
-
 export const ALLOWED_MODELS = [
   "openai/gpt-4o-mini",
   "openai/gpt-4",
@@ -64,17 +62,22 @@ const FLASHCARD_RESPONSE_FORMAT: ResponseFormat = {
  *
  * @param inputText - The source text to generate flashcards from (1000-10000 chars)
  * @param model - The AI model to use (must be from ALLOWED_MODELS)
+ * @param apiKey - The OpenRouter API key (required for runtime access in Cloudflare)
  * @returns Object containing generated candidates and generation duration in milliseconds
  * @throws Error if AI generation fails or response is invalid
  */
-export async function generateFlashcards(inputText: string, model: string): Promise<GenerateFlashcardsResult> {
+export async function generateFlashcards(
+  inputText: string,
+  model: string,
+  apiKey: string
+): Promise<GenerateFlashcardsResult> {
   // Validate model is allowed
   if (!ALLOWED_MODELS.includes(model)) {
     throw new Error(`Model "${model}" is not allowed. Allowed models: ${ALLOWED_MODELS.join(", ")}`);
   }
 
   // Validate API key is available
-  if (!OPENROUTER_API_KEY) {
+  if (!apiKey) {
     throw new Error("OPENROUTER_API_KEY environment variable is not set");
   }
 
@@ -82,7 +85,7 @@ export async function generateFlashcards(inputText: string, model: string): Prom
 
   // Initialize OpenRouter service
   const openRouterService = new OpenRouterService({
-    apiKey: OPENROUTER_API_KEY,
+    apiKey,
   });
 
   // Build messages using the helper

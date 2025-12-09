@@ -108,10 +108,19 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   // 4. Generate Flashcard Candidates using OpenRouter AI
+  // Get API key from Cloudflare runtime environment
+  const openRouterApiKey = locals.runtime?.env?.OPENROUTER_API_KEY || import.meta.env.OPENROUTER_API_KEY;
+
+  if (!openRouterApiKey) {
+    return errorResponse(500, "Internal server error", {
+      message: "OpenRouter API key is not configured",
+    });
+  }
+
   let candidates;
   let duration;
   try {
-    const result = await generateCandidates(input_text, model);
+    const result = await generateCandidates(input_text, model, openRouterApiKey);
     candidates = result.candidates;
     duration = result.duration;
   } catch (error) {

@@ -177,14 +177,16 @@ export async function getAiSessionCandidates(
  *
  * @param inputText - The source text to generate flashcards from (1000-10000 chars)
  * @param model - The AI model to use for generation
+ * @param apiKey - The OpenRouter API key (required for runtime access in Cloudflare)
  * @returns Promise resolving to object with candidates array and generation duration
  * @throws Error if AI generation fails or response is invalid
  */
 export async function generateCandidates(
   inputText: string,
-  model: string
+  model: string,
+  apiKey: string
 ): Promise<{ candidates: CandidateCreateDto[]; duration: number }> {
-  return await generateFlashcards(inputText, model);
+  return await generateFlashcards(inputText, model, apiKey);
 }
 
 /**
