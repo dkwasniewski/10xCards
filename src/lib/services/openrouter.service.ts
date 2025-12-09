@@ -119,8 +119,9 @@ export class OpenRouterService {
     // Set logger
     this.#logger = options.logger || DEFAULT_LOGGER;
 
-    // Set fetch implementation
-    this.#fetchImpl = options.fetchImpl || fetch;
+    // Set fetch implementation with proper binding for Cloudflare Workers
+    // Wrap fetch to preserve 'this' context and avoid "Illegal invocation" errors
+    this.#fetchImpl = options.fetchImpl || ((url: string | URL | Request, init?: RequestInit) => fetch(url, init));
 
     // Set retry configuration
     this.#retryConfig = options.retryConfig || DEFAULT_RETRY_CONFIG;
