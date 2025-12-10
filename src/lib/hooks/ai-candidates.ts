@@ -17,7 +17,7 @@ export interface CandidateViewModel {
   id: string;
   front: string;
   back: string;
-  prompt: string;
+  prompt: string | null;
   aiSessionId: string;
   created_at: string;
   status: "pending" | "new";
@@ -58,45 +58,72 @@ export interface UseCandidateActionsResult {
  * Fetch candidates for a specific AI session
  */
 async function fetchCandidates(sessionId: string): Promise<CandidateDto[]> {
-  const response = await fetch(`/api/ai-sessions/${sessionId}/candidates`);
+  const url = `/api/ai-sessions/${sessionId}/candidates`;
+  // eslint-disable-next-line no-console
+  console.log("[fetchCandidates] About to fetch:", url);
+
+  const response = await fetch(url);
+  // eslint-disable-next-line no-console
+  console.log("[fetchCandidates] Response received. Status:", response.status);
 
   if (!response.ok) {
     if (response.status === 401) {
+      // eslint-disable-next-line no-console
+      console.error("[fetchCandidates] 401 Unauthorized - redirecting");
       window.location.href = "/";
       throw new Error("Unauthorized");
     }
     if (response.status === 404) {
+      // eslint-disable-next-line no-console
+      console.warn("[fetchCandidates] 404 Not Found - returning empty array");
       // Session not found - this is expected for new users or sessions from other users
       // Return empty array instead of throwing error
       return [];
     }
+    // eslint-disable-next-line no-console
+    console.error("[fetchCandidates] Error response status:", response.status);
     throw new Error("Failed to fetch candidates");
   }
 
-  return await response.json();
+  const data = await response.json();
+  // eslint-disable-next-line no-console
+  console.log("[fetchCandidates] Parsed response data:", data);
+  return data;
 }
 
 /**
  * Custom hook to fetch and manage candidates for a specific session
  */
 export function useCandidates(sessionId: string | null): UseCandidatesResult {
+  // eslint-disable-next-line no-console
+  console.log("[useCandidates] Hook called with sessionId:", sessionId);
+
   const [data, setData] = useState<CandidateViewModel[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
+    // eslint-disable-next-line no-console
+    console.log("[useCandidates.refresh] Called with sessionId:", sessionId);
+
     if (!sessionId) {
+      // eslint-disable-next-line no-console
+      console.log("[useCandidates.refresh] No sessionId, skipping fetch");
       setData([]);
       setIsLoading(false);
       setError(null);
       return;
     }
 
+    // eslint-disable-next-line no-console
+    console.log("[useCandidates.refresh] Starting fetch for sessionId:", sessionId);
     setIsLoading(true);
     setError(null);
 
     try {
       const candidates = await fetchCandidates(sessionId);
+      // eslint-disable-next-line no-console
+      console.log("[useCandidates.refresh] Received candidates:", candidates.length);
 
       // If we got an empty array back (404 was handled), clear the invalid session
       if (candidates.length === 0) {
@@ -129,8 +156,13 @@ export function useCandidates(sessionId: string | null): UseCandidatesResult {
   }, [sessionId]);
 
   useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log("[useCandidates.useEffect] Running effect, calling refresh()");
     refresh();
   }, [refresh]);
+
+  // eslint-disable-next-line no-console
+  console.log("[useCandidates] Returning state:", { dataLength: data.length, isLoading, error });
 
   return {
     data,

@@ -22,11 +22,19 @@ const MAX_SELECTION = 100;
  * - Bulk actions on candidates (accept/reject)
  */
 export default function GenerateReview() {
+  // eslint-disable-next-line no-console
+  console.log("[GenerateReview] Component rendering");
+
   // Get last session ID from localStorage
   const [currentSessionId, setCurrentSessionId] = React.useState<string | null>(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem(SESSION_STORAGE_KEY);
+      const sessionId = localStorage.getItem(SESSION_STORAGE_KEY);
+      // eslint-disable-next-line no-console
+      console.log("[GenerateReview] Loaded sessionId from localStorage:", sessionId);
+      return sessionId;
     }
+    // eslint-disable-next-line no-console
+    console.log("[GenerateReview] Window not available (SSR)");
     return null;
   });
 
