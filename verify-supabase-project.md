@@ -69,3 +69,4 @@ If this is the case, you need to run migrations on BOTH projects.
 2. If missing, **run migrations** on that project
 3. **Redeploy** your Cloudflare Pages app
 4. **Test** the My Flashcards page again
+

@@ -114,10 +114,21 @@ The application is configured for deployment to **Cloudflare Pages** with automa
 - **Pull Requests** (`.github/workflows/pull-request.yml`): Lint, unit tests, E2E tests
 - **Master Branch** (`.github/workflows/master.yml`): Lint, unit tests, build, deploy to Cloudflare Pages
 
+## User Flow
+
+### For New Visitors
+- Landing page at `/` provides product overview with features and CTAs
+- Users can sign up via `/register` or sign in via `/login`
+
+### For Authenticated Users
+- Root path `/` redirects to `/generate` (main generation workflow)
+- Full access to Generate, My Flashcards, and account management features
+
 ## Project Scope
 
 ### In Scope (MVP)
 
+- Landing page with product overview and CTAs
 - Email/password authentication with Supabase Auth
 - Password reset via one-time links
 - AI-powered flashcard generation from pasted text (1,000–10,000 characters)

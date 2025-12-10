@@ -380,3 +380,4 @@ This comprehensive test suite provides:
 
 The tests follow Vitest best practices and cover all critical paths, edge cases, and business rules for the authentication module.
 
+

@@ -41,9 +41,9 @@ Manually creating high-quality flashcards is time-consuming and discourages use 
 
 ## 5. User Stories
 
-- **ID: US-001**  
-  **Title:** Registration, Login & Security  
-  **Description:** A new user registers using email and password, confirms their email, and logs in. No one else can access the UI.  
+- **ID: US-001**
+  **Title:** Registration, Login & Security
+  **Description:** A new user registers using email and password, confirms their email, and logs in. No one else can access the UI.
   **Acceptance Criteria:**
   - User can sign up with a valid email and strong password.
   - They receive an email confirmation link (separate feature from password-reset).
@@ -51,7 +51,7 @@ Manually creating high-quality flashcards is time-consuming and discourages use 
   - Only authenticated users can view, edit, or delete their own flashcards.
   - Users cannot access or share other users' flashcards.
   - Users not authenticated cannot enter pages other than login/registration pages
-  - **CLARIFIED**: Landing page `/` acts as smart router - redirects to `/auth/login` (unauthenticated) or `/generate` (authenticated)
+  - **UPDATED**: Landing page `/` displays product overview with features, visual examples, and CTAs for unauthenticated users. Authenticated users are redirected from `/` to `/generate`.
 
 - **ID: US-002**  
   **Title:** Password Reset  

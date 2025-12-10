@@ -7,6 +7,7 @@
 export { BasePage } from "./BasePage";
 
 // Pages
+export { LandingPage } from "./LandingPage";
 export { LoginPage } from "./LoginPage";
 export { MyFlashcardsPage } from "./MyFlashcardsPage";
 export { GeneratePage } from "./GeneratePage";

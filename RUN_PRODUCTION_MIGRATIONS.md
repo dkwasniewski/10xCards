@@ -79,3 +79,4 @@ To avoid this confusion in the future, you can point your local development to t
 2. Restart your dev server
 
 This way, local and production use the same database (but be careful with test data!).
+

@@ -186,3 +186,4 @@ The implementation handles this by:
 - `src/lib/services/auth.service.ts` - Auth service methods
 - `src/lib/schemas/auth.schemas.ts` - Validation schemas
 
+

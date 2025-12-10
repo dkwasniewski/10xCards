@@ -97,3 +97,4 @@ NOTIFY pgrst, 'reload schema';
 - The GitHub Secrets are used during **build time** by GitHub Actions
 - The Cloudflare environment variables are used at **runtime** by your application
 - Both need to be set and point to the same Supabase project
+

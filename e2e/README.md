@@ -7,7 +7,7 @@ End-to-end tests for 10xCards application using Playwright.
 ```
 e2e/
 ├── global-teardown.ts          # Database cleanup after all tests
-├── example.spec.ts             # Example/basic tests
+├── landing-page.spec.ts        # Landing page tests (unauthenticated)
 ├── flashcards/                 # Flashcard feature tests
 │   └── create-flashcard.spec.ts
 ├── generate/                   # AI generation feature tests
@@ -15,6 +15,7 @@ e2e/
 │   └── TEST_SCENARIO_GUIDE.md
 └── page-objects/               # Page Object Model classes
     ├── BasePage.ts
+    ├── LandingPage.ts          # Public landing page
     ├── LoginPage.ts
     ├── MyFlashcardsPage.ts
     ├── GeneratePage.ts
@@ -150,6 +151,15 @@ const data = await firstRow.getData();
 
 ## Test Categories
 
+### Public Pages
+
+- **Landing Page** (`landing-page.spec.ts`)
+  - Hero section and CTAs
+  - Feature cards display
+  - How it works section
+  - Navigation to register/login
+  - Responsive layout (mobile/tablet/desktop)
+
 ### Functional Tests
 
 - User flows (login, create, edit, delete)
@@ -272,3 +282,4 @@ Tests run on CI with:
 ---
 
 **Happy Testing! 🎉**
+

@@ -1,14 +1,233 @@
 ---
+import Layout from "@/layouts/Layout.astro";
+import { Button } from "@/components/ui/button";
+
 export const prerender = false;
 
-// Root path redirects based on authentication status:
-// - Logged out → /login
-// - Logged in → /generate
+// Root path behavior:
+// - Authenticated users → redirect to /generate
+// - Unauthenticated users → show landing page
 const session = Astro.locals.session;
 
 if (session) {
   return Astro.redirect("/generate");
-} else {
-  return Astro.redirect("/login");
 }
 ---
+
+<Layout title="10xCards - Create Flashcards Effortlessly with AI">
+  <main class="flex flex-col">
+    <!-- Hero Section -->
+    <section class="container px-4 py-16 md:py-24 lg:py-32">
+      <div class="flex flex-col items-center text-center space-y-8 max-w-4xl mx-auto">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+          Create Flashcards Effortlessly with AI
+        </h1>
+        <p class="text-xl md:text-2xl text-muted-foreground max-w-2xl">
+          Transform any text into study-ready flashcards in seconds. AI generates, you review, then master your
+          material.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 pt-4">
+          <Button size="lg" asChild>
+            <a href="/register">Get Started Free</a>
+          </Button>
+          <Button size="lg" variant="outline" asChild>
+            <a href="/login">Sign In</a>
+          </Button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visual Example Section -->
+    <section class="container px-4 py-12 md:py-16">
+      <div class="max-w-4xl mx-auto">
+        <div class="relative">
+          <!-- Mock Flashcard Cards -->
+          <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
+            <!-- Card 1 -->
+            <div
+              class="w-full md:w-80 bg-card border rounded-lg shadow-lg p-6 space-y-4 transform md:-rotate-2 hover:rotate-0 transition-transform"
+            >
+              <div class="space-y-2">
+                <div class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Front</div>
+                <p class="text-lg font-medium">What is photosynthesis?</p>
+              </div>
+              <div class="border-t pt-4 space-y-2">
+                <div class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Back</div>
+                <p class="text-sm text-muted-foreground">
+                  The process by which plants convert light energy into chemical energy stored in glucose.
+                </p>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div
+              class="w-full md:w-80 bg-card border rounded-lg shadow-lg p-6 space-y-4 transform md:rotate-2 hover:rotate-0 transition-transform"
+            >
+              <div class="space-y-2">
+                <div class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Front</div>
+                <p class="text-lg font-medium">Define mitosis</p>
+              </div>
+              <div class="border-t pt-4 space-y-2">
+                <div class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Back</div>
+                <p class="text-sm text-muted-foreground">
+                  Cell division process that produces two identical daughter cells from a single parent cell.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="container px-4 py-12 md:py-20 bg-muted/50">
+      <div class="max-w-6xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
+          Everything you need to create flashcards efficiently
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Feature 1: AI Generation -->
+          <div class="flex flex-col items-center text-center space-y-4 p-6">
+            <div class="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="text-primary"
+              >
+                <path
+                  d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
+                ></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold">AI-Powered Generation</h3>
+            <p class="text-muted-foreground">
+              Paste your notes or textbook content. AI instantly generates high-quality flashcard candidates from any
+              text.
+            </p>
+          </div>
+
+          <!-- Feature 2: Smart Review -->
+          <div class="flex flex-col items-center text-center space-y-4 p-6">
+            <div class="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="text-primary"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold">Smart Review & Editing</h3>
+            <p class="text-muted-foreground">
+              Review and edit AI-generated suggestions before adding them to your library. Keep full control over
+              quality.
+            </p>
+          </div>
+
+          <!-- Feature 3: Organized Library -->
+          <div class="flex flex-col items-center text-center space-y-4 p-6">
+            <div class="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="text-primary"
+              >
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold">Organized Library</h3>
+            <p class="text-muted-foreground">
+              Search, manage, and organize all your flashcards in one place. Edit or delete cards anytime.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="container px-4 py-12 md:py-20">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">How it works</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4">
+          <!-- Step 1 -->
+          <div class="flex flex-col items-center text-center space-y-4">
+            <div
+              class="h-16 w-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold"
+            >
+              1
+            </div>
+            <h3 class="text-xl font-semibold">Paste Your Text</h3>
+            <p class="text-muted-foreground">
+              Add your study material, notes, or textbook content (1,000-10,000 characters).
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="flex flex-col items-center text-center space-y-4">
+            <div
+              class="h-16 w-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold"
+            >
+              2
+            </div>
+            <h3 class="text-xl font-semibold">Review AI Suggestions</h3>
+            <p class="text-muted-foreground">
+              AI generates flashcards instantly. Review, edit, or reject suggestions to ensure quality.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="flex flex-col items-center text-center space-y-4">
+            <div
+              class="h-16 w-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold"
+            >
+              3
+            </div>
+            <h3 class="text-xl font-semibold">Manage Your Library</h3>
+            <p class="text-muted-foreground">
+              Access your flashcard library anytime. Search, edit, and organize your study materials.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="container px-4 py-12 md:py-20 bg-muted/50">
+      <div class="max-w-3xl mx-auto text-center space-y-8">
+        <h2 class="text-3xl md:text-4xl font-bold">Ready to supercharge your studying?</h2>
+        <p class="text-xl text-muted-foreground">Join students who are creating flashcards effortlessly with AI.</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+          <Button size="lg" asChild>
+            <a href="/register">Get Started Free</a>
+          </Button>
+          <Button size="lg" variant="outline" asChild>
+            <a href="/login">Sign In</a>
+          </Button>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

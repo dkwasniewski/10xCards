@@ -121,3 +121,4 @@ await expect(firstCandidate.locator('[data-testid="candidate-back"]')).toBeVisib
 - The `new-candidates-section` only appears after successful generation
 
 
+

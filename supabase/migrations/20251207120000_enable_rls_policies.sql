@@ -250,3 +250,4 @@ create policy reviews_delete_block_anon on reviews
 -- SELECT count(*) FROM reviews; -- Should only return current user's reviews
 -- ============================================================================
 
+

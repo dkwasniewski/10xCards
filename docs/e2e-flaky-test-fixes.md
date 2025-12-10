@@ -246,3 +246,4 @@ Consider these additional improvements if flakiness persists:
 3. Add performance monitoring to detect slow React updates
 4. Consider using Playwright's `page.waitForLoadState('networkidle')` for complex state updates
 5. Add visual regression testing to catch UI state issues earlier
+

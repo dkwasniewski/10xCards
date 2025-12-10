@@ -123,3 +123,4 @@ create policy event_logs_delete_block_anon on event_logs
 -- Authentication flows (login, register, logout) should now work correctly.
 -- ============================================================================
 
+
