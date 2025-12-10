@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { LoadingCards } from "@/components/ui/loading-cards";
 import { Button } from "@/components/ui/button";
 import { PasswordInput } from "./PasswordInput";
 import { PasswordStrengthIndicator } from "./PasswordStrengthIndicator";
@@ -172,7 +172,7 @@ export function ResetPasswordForm({ sessionEstablished = false, pageError = null
         <Button type="submit" disabled={isLoading} className="w-full">
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <LoadingCards size={16} className="mr-2" />
               Resetting password...
             </>
           ) : (

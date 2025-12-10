@@ -1,7 +1,7 @@
 // src/components/generate/CandidateEditorDialog.tsx
 
 import * as React from "react";
-import { Loader2 } from "lucide-react";
+import { LoadingCards } from "@/components/ui/loading-cards";
 import {
   Dialog,
   DialogContent,
@@ -178,7 +178,7 @@ export function CandidateEditorDialog({ isOpen, candidate, onClose, onSave }: Ca
               Cancel
             </Button>
             <Button type="submit" disabled={!canSave}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isSubmitting && <LoadingCards size={16} className="mr-2" />}
               Save & Accept
             </Button>
           </DialogFooter>

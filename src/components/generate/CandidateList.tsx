@@ -1,7 +1,7 @@
 // src/components/generate/CandidateList.tsx
 
 import * as React from "react";
-import { Loader2 } from "lucide-react";
+import { LoadingCards } from "@/components/ui/loading-cards";
 import { CandidateRow } from "./CandidateRow";
 import { CandidateListHeader } from "./CandidateListHeader";
 import type { CandidateViewModel } from "@/lib/hooks/ai-candidates";
@@ -38,7 +38,7 @@ export function CandidateList({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-16" data-testid={`${testIdPrefix}-list-loading`}>
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <LoadingCards size={64} />
         <span className="ml-3 text-muted-foreground">Loading candidates...</span>
       </div>
     );

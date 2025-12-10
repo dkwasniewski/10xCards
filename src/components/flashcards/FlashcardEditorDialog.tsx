@@ -1,7 +1,7 @@
 // src/components/flashcards/FlashcardEditorDialog.tsx
 
 import * as React from "react";
-import { Loader2 } from "lucide-react";
+import { LoadingCards } from "@/components/ui/loading-cards";
 import {
   Dialog,
   DialogContent,
@@ -228,7 +228,7 @@ export function FlashcardEditorDialog({ mode, isOpen, flashcard, onClose, onSave
               disabled={!canSave}
               data-testid={mode === "create" ? "create-flashcard-submit" : "edit-flashcard-submit"}
             >
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" data-testid="submit-loading-spinner" />}
+              {isSubmitting && <LoadingCards size={16} className="mr-2" />}
               {submitButtonText}
             </Button>
           </DialogFooter>

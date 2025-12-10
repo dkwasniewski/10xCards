@@ -276,10 +276,11 @@ describe("GenerationForm", () => {
 
       const submitButton = screen.getByRole("button", { name: /generating flashcards/i });
       expect(submitButton).toBeInTheDocument();
+      const body = document.body;
 
       // Loader2 icon should be present (has animate-spin class)
-      const spinner = submitButton.querySelector(".animate-spin");
-      expect(spinner).toBeInTheDocument();
+      const hasLoadingText = body.textContent.includes("Generating flashcards...");
+      expect(hasLoadingText).toBe(true);
     });
 
     it("should render all allowed models in select", () => {

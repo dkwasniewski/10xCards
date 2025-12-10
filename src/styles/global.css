@@ -117,10 +117,13 @@
   body {
     @apply bg-background text-foreground;
   }
-  
-  /* Prevent layout shift when dropdown opens by maintaining scrollbar space */
-  html {
-    overflow-y: scroll;
+
+  /* Container utility for centering content */
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1280px;
   }
 
   /* Prevent page jump when Radix Select/Dialog opens by preventing scroll lock */
@@ -128,5 +131,49 @@
     margin-right: 0px !important;
     margin-left: 0px !important;
     overflow: visible !important;
+  }
+}
+
+/* Loading Cards Animation */
+@layer utilities {
+  @keyframes loading-card-back {
+    0%, 100% {
+      transform: rotate(-12deg);
+    }
+    50% {
+      transform: rotate(0deg);
+    }
+  }
+
+  @keyframes loading-card-middle {
+    0%, 100% {
+      transform: rotate(-6deg);
+    }
+    50% {
+      transform: rotate(0deg);
+    }
+  }
+
+  @keyframes loading-card-front {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  .animate-loading-card-back {
+    animation: loading-card-back 1.5s ease-in-out infinite;
+    transform-origin: top left;
+  }
+
+  .animate-loading-card-middle {
+    animation: loading-card-middle 1.5s ease-in-out infinite;
+    transform-origin: top left;
+  }
+
+  .animate-loading-card-front {
+    animation: loading-card-front 1.5s ease-in-out infinite;
   }
 }

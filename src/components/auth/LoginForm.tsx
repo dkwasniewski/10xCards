@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { LoadingCards } from "@/components/ui/loading-cards";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -146,7 +146,7 @@ export function LoginForm({ redirectTo = "/generate", initialError = null, initi
         <Button type="submit" disabled={isLoading} className="w-full" aria-busy={isLoading}>
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+              <LoadingCards size={16} className="mr-2" />
               Signing in...
             </>
           ) : (

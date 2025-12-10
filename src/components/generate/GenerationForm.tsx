@@ -1,7 +1,7 @@
 // src/components/generate/GenerationForm.tsx
 
 import * as React from "react";
-import { Loader2 } from "lucide-react";
+import { LoadingCards } from "@/components/ui/loading-cards";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -173,7 +173,7 @@ export function GenerationForm({ onSubmit, isLoading = false }: GenerationFormPr
       >
         {isLoading ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" data-testid="loading-spinner" />
+            <LoadingCards size={16} className="mr-2" data-testid="loading-spinner" />
             Generating flashcards...
           </>
         ) : (

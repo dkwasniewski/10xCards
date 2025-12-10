@@ -1,7 +1,7 @@
 // src/components/flashcards/DeleteConfirmDialog.tsx
 
 import * as React from "react";
-import { Loader2 } from "lucide-react";
+import { LoadingCards } from "@/components/ui/loading-cards";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -62,7 +62,7 @@ export function DeleteConfirmDialog({ isOpen, flashcard, onClose, onConfirm, isD
             disabled={isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isDeleting && <LoadingCards size={16} className="mr-2" />}
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>

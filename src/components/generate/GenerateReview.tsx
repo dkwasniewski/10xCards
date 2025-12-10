@@ -471,13 +471,17 @@ export default function GenerateReview() {
       />
 
       {/* Pending Candidates Section */}
-      {pendingCandidates.length > 0 && (
+      {(isPendingLoading || pendingCandidates.length > 0) && (
         <section className="mb-12" data-testid="pending-candidates-section">
-          <h2 className="text-2xl font-semibold mb-4">Pending Candidates</h2>
-          <p className="text-muted-foreground mb-6" data-testid="pending-candidates-count">
-            You have {pendingCandidates.length} pending candidate{pendingCandidates.length > 1 ? "s" : ""} from previous
-            sessions.
-          </p>
+          {!isPendingLoading && (
+            <>
+              <h2 className="text-2xl font-semibold mb-4">Pending Candidates</h2>
+              <p className="text-muted-foreground mb-6" data-testid="pending-candidates-count">
+                You have {pendingCandidates.length} pending candidate{pendingCandidates.length > 1 ? "s" : ""} from
+                previous sessions.
+              </p>
+            </>
+          )}
           <CandidateList
             candidates={pendingCandidates}
             isLoading={isPendingLoading}

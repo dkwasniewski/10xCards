@@ -35,6 +35,6 @@ const message = url.searchParams.get("message");
 
 <Layout title="Login - 10xCards">
   <main class="min-h-screen flex items-center justify-center p-4">
-    <LoginForm client:load redirectTo={redirectTo} initialError={error} initialMessage={message} />
+    <LoginForm client:idle redirectTo={redirectTo} initialError={error} initialMessage={message} />
   </main>
 </Layout>

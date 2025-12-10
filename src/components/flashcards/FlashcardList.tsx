@@ -1,7 +1,7 @@
 // src/components/flashcards/FlashcardList.tsx
 
 import * as React from "react";
-import { Loader2 } from "lucide-react";
+import { LoadingCards } from "@/components/ui/loading-cards";
 import { FlashcardRow } from "./FlashcardRow";
 import { ListHeader } from "./ListHeader";
 import { EmptyState } from "./EmptyState";
@@ -41,7 +41,7 @@ export function FlashcardList({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-16" data-testid="flashcards-loading">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <LoadingCards size={64} />
         <span className="ml-3 text-muted-foreground">Loading flashcards...</span>
       </div>
     );
