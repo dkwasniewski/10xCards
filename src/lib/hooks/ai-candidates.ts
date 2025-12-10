@@ -106,32 +106,45 @@ export function useCandidates(sessionId: string | null): UseCandidatesResult {
     // eslint-disable-next-line no-console
     console.log("[useCandidates.refresh] Called with sessionId:", sessionId);
 
-    if (!sessionId) {
-      // eslint-disable-next-line no-console
-      console.log("[useCandidates.refresh] No sessionId, skipping fetch");
-      setData([]);
-      setIsLoading(false);
-      setError(null);
-      return;
-    }
-
-    // eslint-disable-next-line no-console
-    console.log("[useCandidates.refresh] Starting fetch for sessionId:", sessionId);
     setIsLoading(true);
     setError(null);
 
     try {
-      const candidates = await fetchCandidates(sessionId);
-      // eslint-disable-next-line no-console
-      console.log("[useCandidates.refresh] Received candidates:", candidates.length);
+      let candidates: CandidateDto[];
 
-      // If we got an empty array back (404 was handled), clear the invalid session
-      if (candidates.length === 0) {
-        // Clear localStorage if this session doesn't exist or doesn't belong to current user
-        if (typeof window !== "undefined") {
-          const storedSessionId = localStorage.getItem("10xCards_lastSessionId");
-          if (storedSessionId === sessionId) {
-            localStorage.removeItem("10xCards_lastSessionId");
+      if (!sessionId) {
+        // No session ID - fetch ALL pending candidates across all sessions
+        // eslint-disable-next-line no-console
+        console.log("[useCandidates.refresh] No sessionId, fetching ALL pending candidates");
+        const response = await fetch("/api/candidates/pending");
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            window.location.href = "/";
+            throw new Error("Unauthorized");
+          }
+          throw new Error("Failed to fetch pending candidates");
+        }
+
+        candidates = await response.json();
+        // eslint-disable-next-line no-console
+        console.log("[useCandidates.refresh] Received ALL pending candidates:", candidates.length);
+      } else {
+        // Session ID provided - fetch candidates for specific session
+        // eslint-disable-next-line no-console
+        console.log("[useCandidates.refresh] Starting fetch for sessionId:", sessionId);
+        candidates = await fetchCandidates(sessionId);
+        // eslint-disable-next-line no-console
+        console.log("[useCandidates.refresh] Received candidates for session:", candidates.length);
+
+        // If we got an empty array back (404 was handled), clear the invalid session
+        if (candidates.length === 0) {
+          // Clear localStorage if this session doesn't exist or doesn't belong to current user
+          if (typeof window !== "undefined") {
+            const storedSessionId = localStorage.getItem("10xCards_lastSessionId");
+            if (storedSessionId === sessionId) {
+              localStorage.removeItem("10xCards_lastSessionId");
+            }
           }
         }
       }
@@ -141,7 +154,7 @@ export function useCandidates(sessionId: string | null): UseCandidatesResult {
         front: c.front,
         back: c.back,
         prompt: c.prompt,
-        aiSessionId: sessionId,
+        aiSessionId: c.ai_session_id || sessionId || "", // Use candidate's session ID if available
         created_at: new Date().toISOString(), // Backend doesn't return this yet
         status: "pending" as const,
       }));

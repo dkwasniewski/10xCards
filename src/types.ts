@@ -52,7 +52,7 @@ export interface CandidateCreateDto {
   prompt: string;
 }
 
-export type CandidateDto = Pick<Tables<"flashcards">, "id" | "front" | "back" | "prompt">;
+export type CandidateDto = Pick<Tables<"flashcards">, "id" | "front" | "back" | "prompt" | "ai_session_id">;
 
 export interface GenerationSessionResponseDto {
   id: string;

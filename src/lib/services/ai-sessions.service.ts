@@ -163,7 +163,7 @@ export async function getAiSessionCandidates(
   // 2. Fetch candidates (flashcards linked to the session)
   const { data, error } = await supabase
     .from("flashcards")
-    .select("id, front, back, prompt")
+    .select("id, front, back, prompt, ai_session_id")
     .eq("ai_session_id", sessionId)
     .eq("user_id", userId)
     .order("created_at", { ascending: true });
