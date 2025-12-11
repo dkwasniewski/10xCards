@@ -44,6 +44,11 @@ export default function GenerateReview() {
   // Local state for new candidates (after generation)
   const [newCandidates, setNewCandidates] = React.useState<CandidateViewModel[]>([]);
 
+  // Orphaned candidates state
+  const [orphanedCount, setOrphanedCount] = React.useState<number | null>(null);
+  const [isLoadingOrphaned, setIsLoadingOrphaned] = React.useState(false);
+  const [isCleaningUp, setIsCleaningUp] = React.useState(false);
+
   // Selection state
   const [pendingSelection, setPendingSelection] = React.useState<Set<string>>(new Set());
   const [newSelection, setNewSelection] = React.useState<Set<string>>(new Set());
@@ -60,6 +65,27 @@ export default function GenerateReview() {
   // Combined selection count
   const totalSelected = pendingSelection.size + newSelection.size;
   const maxSelectionReached = totalSelected >= MAX_SELECTION;
+
+  // Fetch orphaned candidates count on mount
+  React.useEffect(() => {
+    const fetchOrphanedCount = async () => {
+      setIsLoadingOrphaned(true);
+      try {
+        const response = await fetch("/api/candidates/orphaned");
+        if (response.ok) {
+          const data = await response.json();
+          setOrphanedCount(data.count);
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to fetch orphaned count:", error);
+      } finally {
+        setIsLoadingOrphaned(false);
+      }
+    };
+
+    fetchOrphanedCount();
+  }, []);
 
   // Show error toasts
   React.useEffect(() => {
@@ -463,12 +489,58 @@ export default function GenerateReview() {
     [currentSessionId, processActions, refreshPending, pendingCandidates, newCandidates]
   );
 
+  // Cleanup orphaned candidates
+  const handleCleanupOrphaned = React.useCallback(async () => {
+    setIsCleaningUp(true);
+    try {
+      const response = await fetch("/api/candidates/orphaned", {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to cleanup orphaned candidates");
+      }
+
+      const result = await response.json();
+      toast.success(result.message);
+      setOrphanedCount(0); // Reset count after cleanup
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to cleanup orphaned candidates:", error);
+      toast.error("Failed to cleanup orphaned candidates");
+    } finally {
+      setIsCleaningUp(false);
+    }
+  }, []);
+
   return (
     <div className="container mx-auto py-8 px-4 md:max-w-5xl" data-testid="generate-review-page">
       <PageHeader
         title="Generate & Review"
         description="Generate new flashcards from text or review pending candidates"
       />
+
+      {/* Orphaned Candidates Alert */}
+      {!isLoadingOrphaned && orphanedCount !== null && orphanedCount > 0 && (
+        <div className="mb-6 border rounded-lg p-4 bg-muted/50" data-testid="orphaned-candidates-alert">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <h3 className="font-medium mb-1">Database Cleanup Available</h3>
+              <p className="text-sm text-muted-foreground">
+                You have {orphanedCount} old pending candidate{orphanedCount > 1 ? "s" : ""} from sessions older than 7
+                days that are no longer accessible. These can be safely removed to free up database space.
+              </p>
+            </div>
+            <button
+              onClick={handleCleanupOrphaned}
+              disabled={isCleaningUp}
+              className="px-4 py-2 text-sm font-medium rounded-md bg-destructive text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isCleaningUp ? "Cleaning..." : "Clean Up"}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Pending Candidates Section */}
       {(isPendingLoading || pendingCandidates.length > 0) && (
