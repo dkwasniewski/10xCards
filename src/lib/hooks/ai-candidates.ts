@@ -58,93 +58,53 @@ export interface UseCandidateActionsResult {
  * Fetch candidates for a specific AI session
  */
 async function fetchCandidates(sessionId: string): Promise<CandidateDto[]> {
-  const url = `/api/ai-sessions/${sessionId}/candidates`;
-  // eslint-disable-next-line no-console
-  console.log("[fetchCandidates] About to fetch:", url);
-
-  const response = await fetch(url);
-  // eslint-disable-next-line no-console
-  console.log("[fetchCandidates] Response received. Status:", response.status);
+  const response = await fetch(`/api/ai-sessions/${sessionId}/candidates`);
 
   if (!response.ok) {
     if (response.status === 401) {
-      // eslint-disable-next-line no-console
-      console.error("[fetchCandidates] 401 Unauthorized - redirecting");
       window.location.href = "/";
       throw new Error("Unauthorized");
     }
     if (response.status === 404) {
-      // eslint-disable-next-line no-console
-      console.warn("[fetchCandidates] 404 Not Found - returning empty array");
       // Session not found - this is expected for new users or sessions from other users
       // Return empty array instead of throwing error
       return [];
     }
-    // eslint-disable-next-line no-console
-    console.error("[fetchCandidates] Error response status:", response.status);
     throw new Error("Failed to fetch candidates");
   }
 
-  const data = await response.json();
-  // eslint-disable-next-line no-console
-  console.log("[fetchCandidates] Parsed response data:", data);
-  return data;
+  return await response.json();
 }
 
 /**
  * Custom hook to fetch and manage candidates for a specific session
  */
 export function useCandidates(sessionId: string | null): UseCandidatesResult {
-  // eslint-disable-next-line no-console
-  console.log("[useCandidates] Hook called with sessionId:", sessionId);
-
   const [data, setData] = useState<CandidateViewModel[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
-    // eslint-disable-next-line no-console
-    console.log("[useCandidates.refresh] Called with sessionId:", sessionId);
+    if (!sessionId) {
+      setData([]);
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
 
     try {
-      let candidates: CandidateDto[];
+      const candidates = await fetchCandidates(sessionId);
 
-      if (!sessionId) {
-        // No session ID - fetch ALL pending candidates across all sessions
-        // eslint-disable-next-line no-console
-        console.log("[useCandidates.refresh] No sessionId, fetching ALL pending candidates");
-        const response = await fetch("/api/candidates/pending");
-
-        if (!response.ok) {
-          if (response.status === 401) {
-            window.location.href = "/";
-            throw new Error("Unauthorized");
-          }
-          throw new Error("Failed to fetch pending candidates");
-        }
-
-        candidates = await response.json();
-        // eslint-disable-next-line no-console
-        console.log("[useCandidates.refresh] Received ALL pending candidates:", candidates.length);
-      } else {
-        // Session ID provided - fetch candidates for specific session
-        // eslint-disable-next-line no-console
-        console.log("[useCandidates.refresh] Starting fetch for sessionId:", sessionId);
-        candidates = await fetchCandidates(sessionId);
-        // eslint-disable-next-line no-console
-        console.log("[useCandidates.refresh] Received candidates for session:", candidates.length);
-
-        // If we got an empty array back (404 was handled), clear the invalid session
-        if (candidates.length === 0) {
-          // Clear localStorage if this session doesn't exist or doesn't belong to current user
-          if (typeof window !== "undefined") {
-            const storedSessionId = localStorage.getItem("10xCards_lastSessionId");
-            if (storedSessionId === sessionId) {
-              localStorage.removeItem("10xCards_lastSessionId");
-            }
+      // If we got an empty array back (404 was handled), clear the invalid session
+      if (candidates.length === 0) {
+        // Clear localStorage if this session doesn't exist or doesn't belong to current user
+        if (typeof window !== "undefined") {
+          const storedSessionId = localStorage.getItem("10xCards_lastSessionId");
+          if (storedSessionId === sessionId) {
+            localStorage.removeItem("10xCards_lastSessionId");
           }
         }
       }
@@ -154,7 +114,7 @@ export function useCandidates(sessionId: string | null): UseCandidatesResult {
         front: c.front,
         back: c.back,
         prompt: c.prompt,
-        aiSessionId: c.ai_session_id || sessionId || "", // Use candidate's session ID if available
+        aiSessionId: sessionId,
         created_at: new Date().toISOString(), // Backend doesn't return this yet
         status: "pending" as const,
       }));
@@ -169,13 +129,8 @@ export function useCandidates(sessionId: string | null): UseCandidatesResult {
   }, [sessionId]);
 
   useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log("[useCandidates.useEffect] Running effect, calling refresh()");
     refresh();
   }, [refresh]);
-
-  // eslint-disable-next-line no-console
-  console.log("[useCandidates] Returning state:", { dataLength: data.length, isLoading, error });
 
   return {
     data,
