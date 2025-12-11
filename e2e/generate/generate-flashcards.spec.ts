@@ -326,4 +326,60 @@ test.describe("Generate Flashcards", () => {
     const triggerText = await generatePage.generationForm.modelSelectTrigger.textContent();
     expect(triggerText).toContain("gpt-4o-mini");
   });
+
+  test("should not show pending candidates when new candidates exist (no duplication)", async ({ page }) => {
+    const generatePage = new GeneratePage(page);
+    await generatePage.waitForPageLoad();
+
+    // Generate flashcards - use the more robust method
+    await generatePage.generationForm.fillSourceTextAndWaitForReady(SAMPLE_TEXT_1000_CHARS);
+    await generatePage.generationForm.selectModel("openai/gpt-4o-mini");
+    await generatePage.generationForm.clickGenerate();
+    await generatePage.generationForm.waitForGenerationComplete(40000);
+    await expect(generatePage.newCandidatesSection).toBeVisible({ timeout: 40000 });
+
+    // Verify new candidates section is visible
+    expect(await generatePage.hasNewCandidates()).toBe(true);
+
+    // Verify pending candidates section is NOT visible (to prevent duplication)
+    expect(await generatePage.hasPendingCandidates()).toBe(false);
+
+    // Verify candidates are displayed only in new section
+    const newCount = await generatePage.newCandidatesList.getRowCount();
+    expect(newCount).toBeGreaterThan(0);
+  });
+
+  test("should show pending candidates after page refresh (new candidates cleared)", async ({ page }) => {
+    const generatePage = new GeneratePage(page);
+    await generatePage.waitForPageLoad();
+
+    // Generate flashcards first
+    await generatePage.generationForm.fillSourceTextAndWaitForReady(SAMPLE_TEXT_1000_CHARS);
+    await generatePage.generationForm.selectModel("openai/gpt-4o-mini");
+    await generatePage.generationForm.clickGenerate();
+    await generatePage.generationForm.waitForGenerationComplete(40000);
+    await expect(generatePage.newCandidatesSection).toBeVisible({ timeout: 40000 });
+
+    // Verify new candidates are visible initially
+    expect(await generatePage.hasNewCandidates()).toBe(true);
+    expect(await generatePage.hasPendingCandidates()).toBe(false);
+
+    // Get count before refresh
+    const countBeforeRefresh = await generatePage.newCandidatesList.getRowCount();
+
+    // Refresh the page
+    await page.reload();
+    await generatePage.waitForPageLoad();
+
+    // Wait a bit for data to load
+    await page.waitForTimeout(1000);
+
+    // After refresh: new candidates should be gone, pending should appear
+    expect(await generatePage.hasNewCandidates()).toBe(false);
+    expect(await generatePage.hasPendingCandidates()).toBe(true);
+
+    // Verify same candidates now appear as pending
+    const pendingCount = await generatePage.pendingCandidatesList.getRowCount();
+    expect(pendingCount).toBe(countBeforeRefresh);
+  });
 });

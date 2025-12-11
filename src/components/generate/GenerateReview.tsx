@@ -20,6 +20,12 @@ const MAX_SELECTION = 100;
  * - Pending candidates from previous sessions
  * - New candidate generation
  * - Bulk actions on candidates (accept/reject)
+ *
+ * UI Behavior:
+ * - When candidates are freshly generated, they appear in "New Candidates" section
+ * - "Pending Candidates" section is hidden while "New Candidates" exist (prevents duplication)
+ * - After page refresh, "New Candidates" state clears and candidates move to "Pending Candidates"
+ * - This session-based approach keeps candidates tied to localStorage session ID
  */
 export default function GenerateReview() {
   // Get last session ID from localStorage
