@@ -542,8 +542,8 @@ export default function GenerateReview() {
         </div>
       )}
 
-      {/* Pending Candidates Section */}
-      {(isPendingLoading || pendingCandidates.length > 0) && (
+      {/* Pending Candidates Section - Only show if no new candidates are being displayed */}
+      {newCandidates.length === 0 && (isPendingLoading || pendingCandidates.length > 0) && (
         <section className="mb-12" data-testid="pending-candidates-section">
           {!isPendingLoading && (
             <>
