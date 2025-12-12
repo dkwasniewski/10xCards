@@ -78,6 +78,12 @@ async function fetchCandidates(sessionId: string): Promise<CandidateDto[]> {
 
 /**
  * Custom hook to fetch and manage candidates for a specific session
+ *
+ * This hook fetches candidates for the CURRENT session only (identified by sessionId).
+ * Used in the hybrid approach to show "Pending Candidates" from the current generation session.
+ *
+ * @param sessionId - The AI generation session ID to fetch candidates for (from localStorage)
+ * @returns Candidates, loading state, error, and refresh function
  */
 export function useCandidates(sessionId: string | null): UseCandidatesResult {
   const [data, setData] = useState<CandidateViewModel[]>([]);
@@ -127,6 +133,85 @@ export function useCandidates(sessionId: string | null): UseCandidatesResult {
       setIsLoading(false);
     }
   }, [sessionId]);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  return {
+    data,
+    isLoading,
+    error,
+    refresh,
+  };
+}
+
+/**
+ * Custom hook to fetch candidates from OTHER sessions (not the current one)
+ *
+ * Part of the hybrid approach to prevent candidates from being lost when creating new sessions.
+ * This hook fetches all pending candidates EXCEPT those from the specified session.
+ *
+ * **Hybrid Approach:**
+ * - Current session candidates: shown in "Pending Candidates" (via `useCandidates`)
+ * - Other session candidates: shown in "Other Pending Candidates" (via this hook)
+ * - This ensures candidates from session A remain accessible after creating session B
+ *
+ * **Example Flow:**
+ * 1. User generates session A with 10 candidates
+ * 2. User generates session B with 10 more candidates (localStorage updates to session B)
+ * 3. After page refresh:
+ *    - Session B candidates appear in "Pending Candidates" (`useCandidates(sessionB)`)
+ *    - Session A candidates appear in "Other Pending Candidates" (this hook excludes sessionB)
+ *
+ * @param excludeSessionId - The session ID to exclude (typically the current session from localStorage)
+ * @returns Candidates from all other sessions, loading state, error, and refresh function
+ */
+export function useOtherPendingCandidates(excludeSessionId: string | null): UseCandidatesResult {
+  const [data, setData] = useState<CandidateViewModel[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const refresh = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const url = excludeSessionId
+        ? `/api/candidates/other-pending?excludeSessionId=${excludeSessionId}`
+        : "/api/candidates/other-pending";
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          window.location.href = "/";
+          throw new Error("Unauthorized");
+        }
+        throw new Error("Failed to fetch other pending candidates");
+      }
+
+      const candidates: CandidateDto[] = await response.json();
+
+      const viewModels: CandidateViewModel[] = candidates.map((c) => ({
+        id: c.id,
+        front: c.front,
+        back: c.back,
+        prompt: c.prompt,
+        aiSessionId: c.ai_session_id || "", // Use the candidate's actual session ID
+        created_at: new Date().toISOString(),
+        status: "pending" as const,
+      }));
+
+      setData(viewModels);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to fetch other pending candidates:", err);
+      setError(err instanceof Error ? err.message : "Failed to load other pending candidates");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [excludeSessionId]);
 
   useEffect(() => {
     refresh();

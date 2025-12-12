@@ -2,7 +2,13 @@
 
 import * as React from "react";
 import { toast, Toaster } from "sonner";
-import { useCandidates, useGeneration, useCandidateActions, type CandidateViewModel } from "@/lib/hooks/ai-candidates";
+import {
+  useCandidates,
+  useOtherPendingCandidates,
+  useGeneration,
+  useCandidateActions,
+  type CandidateViewModel,
+} from "@/lib/hooks/ai-candidates";
 import type { CandidateActionCommand } from "@/types";
 import { PageHeader } from "@/components/flashcards/PageHeader";
 import { BulkActionBar } from "@/components/flashcards/BulkActionBar";
@@ -17,15 +23,18 @@ const MAX_SELECTION = 100;
 /**
  * GenerateReview is the main container for the Generate & Review view
  * It manages:
- * - Pending candidates from previous sessions
+ * - Pending candidates from current session
+ * - Pending candidates from other sessions
  * - New candidate generation
  * - Bulk actions on candidates (accept/reject)
  *
- * UI Behavior:
+ * UI Behavior (Hybrid Approach):
  * - When candidates are freshly generated, they appear in "New Candidates" section
- * - "Pending Candidates" section is hidden while "New Candidates" exist (prevents duplication)
- * - After page refresh, "New Candidates" state clears and candidates move to "Pending Candidates"
- * - This session-based approach keeps candidates tied to localStorage session ID
+ * - "Pending Candidates" sections are hidden while "New Candidates" exist (prevents duplication)
+ * - After page refresh, "New Candidates" state clears and candidates move to pending sections:
+ *   1. "Pending Candidates" - from current session (if any)
+ *   2. "Other Pending Candidates" - from previous sessions (if any)
+ * - This ensures no candidates are lost when creating new generation sessions
  */
 export default function GenerateReview() {
   // Get last session ID from localStorage
@@ -44,6 +53,13 @@ export default function GenerateReview() {
     refresh: refreshPending,
   } = useCandidates(currentSessionId);
 
+  const {
+    data: otherPendingCandidates,
+    isLoading: isOtherPendingLoading,
+    error: otherPendingError,
+    refresh: refreshOtherPending,
+  } = useOtherPendingCandidates(currentSessionId);
+
   const { isGenerating, error: generationError, generate } = useGeneration();
   const { isProcessing, error: actionsError, processActions } = useCandidateActions();
 
@@ -57,6 +73,7 @@ export default function GenerateReview() {
 
   // Selection state
   const [pendingSelection, setPendingSelection] = React.useState<Set<string>>(new Set());
+  const [otherPendingSelection, setOtherPendingSelection] = React.useState<Set<string>>(new Set());
   const [newSelection, setNewSelection] = React.useState<Set<string>>(new Set());
 
   // Editor state
@@ -69,7 +86,7 @@ export default function GenerateReview() {
   });
 
   // Combined selection count
-  const totalSelected = pendingSelection.size + newSelection.size;
+  const totalSelected = pendingSelection.size + otherPendingSelection.size + newSelection.size;
   const maxSelectionReached = totalSelected >= MAX_SELECTION;
 
   // Fetch orphaned candidates count on mount
@@ -101,6 +118,12 @@ export default function GenerateReview() {
   }, [pendingError]);
 
   React.useEffect(() => {
+    if (otherPendingError) {
+      toast.error(otherPendingError);
+    }
+  }, [otherPendingError]);
+
+  React.useEffect(() => {
     if (generationError) {
       toast.error(generationError);
     }
@@ -115,6 +138,7 @@ export default function GenerateReview() {
   // Clear selections when session changes
   React.useEffect(() => {
     setPendingSelection(new Set());
+    setOtherPendingSelection(new Set());
     setNewSelection(new Set());
   }, [currentSessionId]);
 
@@ -212,6 +236,41 @@ export default function GenerateReview() {
     [pendingCandidates, pendingSelection.size]
   );
 
+  // Selection handlers for other pending candidates
+  const handleToggleOtherPendingSelection = React.useCallback((id: string, selected: boolean) => {
+    setOtherPendingSelection((prev) => {
+      const next = new Set(prev);
+      if (selected) {
+        if (next.size >= MAX_SELECTION) {
+          toast.error("Maximum of 100 candidates can be selected at once");
+          return prev;
+        }
+        next.add(id);
+      } else {
+        next.delete(id);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleSelectAllOtherPending = React.useCallback(
+    (selected: boolean) => {
+      if (selected) {
+        const remainingSlots = MAX_SELECTION - otherPendingSelection.size;
+        const candidatesToSelect = otherPendingCandidates.slice(0, remainingSlots);
+
+        if (candidatesToSelect.length < otherPendingCandidates.length) {
+          toast.error("Maximum of 100 candidates can be selected at once");
+        }
+
+        setOtherPendingSelection(new Set(candidatesToSelect.map((c) => c.id)));
+      } else {
+        setOtherPendingSelection(new Set());
+      }
+    },
+    [otherPendingCandidates, otherPendingSelection.size]
+  );
+
   // Selection handlers for new candidates
   const handleToggleNewSelection = React.useCallback((id: string, selected: boolean) => {
     setNewSelection((prev) => {
@@ -250,19 +309,41 @@ export default function GenerateReview() {
   // Clear all selections
   const handleClearSelection = React.useCallback(() => {
     setPendingSelection(new Set());
+    setOtherPendingSelection(new Set());
     setNewSelection(new Set());
   }, []);
 
   // Bulk accept handler
   const handleBulkAccept = React.useCallback(async () => {
-    if (!currentSessionId || totalSelected === 0) return;
+    if (totalSelected === 0) return;
 
-    const allSelectedIds = [...Array.from(pendingSelection), ...Array.from(newSelection)];
+    const allSelectedIds = [
+      ...Array.from(pendingSelection),
+      ...Array.from(otherPendingSelection),
+      ...Array.from(newSelection),
+    ];
 
     if (allSelectedIds.length > MAX_SELECTION) {
       toast.error("Maximum of 100 candidates can be accepted at once");
       return;
     }
+
+    // Get all selected candidates with their session IDs
+    const allCandidates = [...pendingCandidates, ...otherPendingCandidates, ...newCandidates];
+    const selectedCandidates = allCandidates.filter((c) => allSelectedIds.includes(c.id));
+
+    // Group candidates by session ID
+    const candidatesBySession = selectedCandidates.reduce(
+      (acc, candidate) => {
+        const sessionId = candidate.aiSessionId;
+        if (!acc[sessionId]) {
+          acc[sessionId] = [];
+        }
+        acc[sessionId].push(candidate.id);
+        return acc;
+      },
+      {} as Record<string, string[]>
+    );
 
     // Optimistic update: remove selected candidates from UI
     const selectedNewCandidates = newCandidates.filter((c) => allSelectedIds.includes(c.id));
@@ -270,20 +351,26 @@ export default function GenerateReview() {
     handleClearSelection();
 
     try {
-      const command: CandidateActionCommand = {
-        actions: allSelectedIds.map((id) => ({
-          candidate_id: id,
-          action: "accept",
-        })),
-      };
+      let totalAccepted = 0;
 
-      const result = await processActions(currentSessionId, command);
-      toast.success(
-        `${result.accepted.length} candidate${result.accepted.length > 1 ? "s" : ""} added to your flashcards!`
-      );
+      // Process each session separately
+      for (const [sessionId, candidateIds] of Object.entries(candidatesBySession)) {
+        const command: CandidateActionCommand = {
+          actions: candidateIds.map((id) => ({
+            candidate_id: id,
+            action: "accept",
+          })),
+        };
 
-      // Refresh to get updated state from server
+        const result = await processActions(sessionId, command);
+        totalAccepted += result.accepted.length;
+      }
+
+      toast.success(`${totalAccepted} candidate${totalAccepted > 1 ? "s" : ""} added to your flashcards!`);
+
+      // Refresh both pending lists
       await refreshPending();
+      await refreshOtherPending();
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error("Failed to accept candidates:", error);
@@ -292,28 +379,53 @@ export default function GenerateReview() {
       // Rollback: restore the candidates
       setNewCandidates((prev) => [...prev, ...selectedNewCandidates]);
       await refreshPending();
+      await refreshOtherPending();
     }
   }, [
-    currentSessionId,
     totalSelected,
     pendingSelection,
+    otherPendingSelection,
     newSelection,
+    pendingCandidates,
+    otherPendingCandidates,
+    newCandidates,
     processActions,
     handleClearSelection,
     refreshPending,
-    newCandidates,
+    refreshOtherPending,
   ]);
 
   // Bulk reject handler
   const handleBulkReject = React.useCallback(async () => {
-    if (!currentSessionId || totalSelected === 0) return;
+    if (totalSelected === 0) return;
 
-    const allSelectedIds = [...Array.from(pendingSelection), ...Array.from(newSelection)];
+    const allSelectedIds = [
+      ...Array.from(pendingSelection),
+      ...Array.from(otherPendingSelection),
+      ...Array.from(newSelection),
+    ];
 
     if (allSelectedIds.length > MAX_SELECTION) {
       toast.error("Maximum of 100 candidates can be rejected at once");
       return;
     }
+
+    // Get all selected candidates with their session IDs
+    const allCandidates = [...pendingCandidates, ...otherPendingCandidates, ...newCandidates];
+    const selectedCandidates = allCandidates.filter((c) => allSelectedIds.includes(c.id));
+
+    // Group candidates by session ID
+    const candidatesBySession = selectedCandidates.reduce(
+      (acc, candidate) => {
+        const sessionId = candidate.aiSessionId;
+        if (!acc[sessionId]) {
+          acc[sessionId] = [];
+        }
+        acc[sessionId].push(candidate.id);
+        return acc;
+      },
+      {} as Record<string, string[]>
+    );
 
     // Optimistic update: remove selected candidates from UI
     const selectedNewCandidates = newCandidates.filter((c) => allSelectedIds.includes(c.id));
@@ -321,18 +433,26 @@ export default function GenerateReview() {
     handleClearSelection();
 
     try {
-      const command: CandidateActionCommand = {
-        actions: allSelectedIds.map((id) => ({
-          candidate_id: id,
-          action: "reject",
-        })),
-      };
+      let totalRejected = 0;
 
-      const result = await processActions(currentSessionId, command);
-      toast.success(`${result.rejected.length} candidate${result.rejected.length > 1 ? "s" : ""} rejected!`);
+      // Process each session separately
+      for (const [sessionId, candidateIds] of Object.entries(candidatesBySession)) {
+        const command: CandidateActionCommand = {
+          actions: candidateIds.map((id) => ({
+            candidate_id: id,
+            action: "reject",
+          })),
+        };
 
-      // Refresh to get updated state from server
+        const result = await processActions(sessionId, command);
+        totalRejected += result.rejected.length;
+      }
+
+      toast.success(`${totalRejected} candidate${totalRejected > 1 ? "s" : ""} rejected!`);
+
+      // Refresh both pending lists
       await refreshPending();
+      await refreshOtherPending();
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error("Failed to reject candidates:", error);
@@ -341,62 +461,66 @@ export default function GenerateReview() {
       // Rollback: restore the candidates
       setNewCandidates((prev) => [...prev, ...selectedNewCandidates]);
       await refreshPending();
+      await refreshOtherPending();
     }
   }, [
-    currentSessionId,
     totalSelected,
     pendingSelection,
+    otherPendingSelection,
     newSelection,
+    pendingCandidates,
+    otherPendingCandidates,
+    newCandidates,
     processActions,
     handleClearSelection,
     refreshPending,
-    newCandidates,
+    refreshOtherPending,
   ]);
 
   // Individual candidate action handlers
   const handleAcceptCandidate = React.useCallback(
     async (id: string) => {
-      if (!currentSessionId) return;
+      // Find the candidate in all lists to get its session ID
+      const allCandidates = [...pendingCandidates, ...otherPendingCandidates, ...newCandidates];
+      const candidate = allCandidates.find((c) => c.id === id);
+
+      if (!candidate || !candidate.aiSessionId) return;
 
       // Optimistic update: remove from UI immediately
-      const removedFromPending = pendingCandidates.find((c) => c.id === id);
-      const removedFromNew = newCandidates.find((c) => c.id === id);
+      setNewCandidates((prev) => prev.filter((c) => c.id !== id));
 
-      if (removedFromPending || removedFromNew) {
-        // Remove from lists optimistically
-        setNewCandidates((prev) => prev.filter((c) => c.id !== id));
+      try {
+        const command: CandidateActionCommand = {
+          actions: [{ candidate_id: id, action: "accept" }],
+        };
 
-        try {
-          const command: CandidateActionCommand = {
-            actions: [{ candidate_id: id, action: "accept" }],
-          };
+        // Use the candidate's own session ID, not currentSessionId
+        await processActions(candidate.aiSessionId, command);
+        toast.success("Candidate added to your flashcards!");
 
-          await processActions(currentSessionId, command);
-          toast.success("Candidate added to your flashcards!");
+        // Refresh both pending lists
+        await refreshPending();
+        await refreshOtherPending();
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to accept candidate:", error);
+        toast.error("Failed to accept candidate - rolled back");
 
-          // Refresh to get updated state from server
-          await refreshPending();
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error("Failed to accept candidate:", error);
-          toast.error("Failed to accept candidate - rolled back");
-
-          // Rollback: restore the candidate
-          if (removedFromNew) {
-            setNewCandidates((prev) => [...prev, removedFromNew]);
-          }
-          // For pending candidates, refresh will restore them
-          await refreshPending();
+        // Rollback: restore the candidate if it was from new list
+        if (newCandidates.find((c) => c.id === id)) {
+          setNewCandidates((prev) => [...prev, candidate]);
         }
+        await refreshPending();
+        await refreshOtherPending();
       }
     },
-    [currentSessionId, processActions, refreshPending, pendingCandidates, newCandidates]
+    [processActions, refreshPending, refreshOtherPending, pendingCandidates, otherPendingCandidates, newCandidates]
   );
 
   const handleEditCandidate = React.useCallback(
     (id: string) => {
-      // Find candidate in either pending or new lists
-      const candidate = [...pendingCandidates, ...newCandidates].find((c) => c.id === id);
+      // Find candidate in all lists
+      const candidate = [...pendingCandidates, ...otherPendingCandidates, ...newCandidates].find((c) => c.id === id);
       if (candidate) {
         setEditorState({
           isOpen: true,
@@ -404,7 +528,7 @@ export default function GenerateReview() {
         });
       }
     },
-    [pendingCandidates, newCandidates]
+    [pendingCandidates, otherPendingCandidates, newCandidates]
   );
 
   const handleEditorClose = React.useCallback(() => {
@@ -416,10 +540,13 @@ export default function GenerateReview() {
 
   const handleEditorSave = React.useCallback(
     async (id: string, front: string, back: string) => {
-      if (!currentSessionId) return;
+      // Find the candidate in all lists to get its session ID
+      const allCandidates = [...pendingCandidates, ...otherPendingCandidates, ...newCandidates];
+      const candidate = allCandidates.find((c) => c.id === id);
+
+      if (!candidate || !candidate.aiSessionId) return;
 
       // Optimistic update: remove from lists immediately
-      const removedFromNew = newCandidates.find((c) => c.id === id);
       setNewCandidates((prev) => prev.filter((c) => c.id !== id));
 
       try {
@@ -434,65 +561,68 @@ export default function GenerateReview() {
           ],
         };
 
-        await processActions(currentSessionId, command);
+        // Use the candidate's own session ID, not currentSessionId
+        await processActions(candidate.aiSessionId, command);
         toast.success("Candidate edited and added to your flashcards!");
 
-        // Refresh to get updated state from server
+        // Refresh both pending lists
         await refreshPending();
+        await refreshOtherPending();
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to update candidate:", error);
         toast.error("Failed to update candidate - rolled back");
 
-        // Rollback: restore the candidate
-        if (removedFromNew) {
-          setNewCandidates((prev) => [...prev, removedFromNew]);
+        // Rollback: restore the candidate if it was from new list
+        if (newCandidates.find((c) => c.id === id)) {
+          setNewCandidates((prev) => [...prev, candidate]);
         }
         await refreshPending();
+        await refreshOtherPending();
 
         throw error; // Re-throw to let dialog handle it
       }
     },
-    [currentSessionId, processActions, refreshPending, newCandidates]
+    [processActions, refreshPending, refreshOtherPending, pendingCandidates, otherPendingCandidates, newCandidates]
   );
 
   const handleRejectCandidate = React.useCallback(
     async (id: string) => {
-      if (!currentSessionId) return;
+      // Find the candidate in all lists to get its session ID
+      const allCandidates = [...pendingCandidates, ...otherPendingCandidates, ...newCandidates];
+      const candidate = allCandidates.find((c) => c.id === id);
+
+      if (!candidate || !candidate.aiSessionId) return;
 
       // Optimistic update: remove from UI immediately
-      const removedFromPending = pendingCandidates.find((c) => c.id === id);
-      const removedFromNew = newCandidates.find((c) => c.id === id);
+      setNewCandidates((prev) => prev.filter((c) => c.id !== id));
 
-      if (removedFromPending || removedFromNew) {
-        // Remove from lists optimistically
-        setNewCandidates((prev) => prev.filter((c) => c.id !== id));
+      try {
+        const command: CandidateActionCommand = {
+          actions: [{ candidate_id: id, action: "reject" }],
+        };
 
-        try {
-          const command: CandidateActionCommand = {
-            actions: [{ candidate_id: id, action: "reject" }],
-          };
+        // Use the candidate's own session ID, not currentSessionId
+        await processActions(candidate.aiSessionId, command);
+        toast.success("Candidate rejected!");
 
-          await processActions(currentSessionId, command);
-          toast.success("Candidate rejected!");
+        // Refresh both pending lists
+        await refreshPending();
+        await refreshOtherPending();
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to reject candidate:", error);
+        toast.error("Failed to reject candidate - rolled back");
 
-          // Refresh to get updated state from server
-          await refreshPending();
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error("Failed to reject candidate:", error);
-          toast.error("Failed to reject candidate - rolled back");
-
-          // Rollback: restore the candidate
-          if (removedFromNew) {
-            setNewCandidates((prev) => [...prev, removedFromNew]);
-          }
-          // For pending candidates, refresh will restore them
-          await refreshPending();
+        // Rollback: restore the candidate if it was from new list
+        if (newCandidates.find((c) => c.id === id)) {
+          setNewCandidates((prev) => [...prev, candidate]);
         }
+        await refreshPending();
+        await refreshOtherPending();
       }
     },
-    [currentSessionId, processActions, refreshPending, pendingCandidates, newCandidates]
+    [processActions, refreshPending, refreshOtherPending, pendingCandidates, otherPendingCandidates, newCandidates]
   );
 
   // Cleanup orphaned candidates
@@ -555,8 +685,8 @@ export default function GenerateReview() {
             <>
               <h2 className="text-2xl font-semibold mb-4">Pending Candidates</h2>
               <p className="text-muted-foreground mb-6" data-testid="pending-candidates-count">
-                You have {pendingCandidates.length} pending candidate{pendingCandidates.length > 1 ? "s" : ""} from
-                previous sessions.
+                You have {pendingCandidates.length} pending candidate{pendingCandidates.length > 1 ? "s" : ""} from your
+                current session.
               </p>
             </>
           )}
@@ -571,6 +701,33 @@ export default function GenerateReview() {
             onReject={handleRejectCandidate}
             disabled={isProcessing}
             testIdPrefix="pending-candidate"
+          />
+        </section>
+      )}
+
+      {/* Other Pending Candidates Section - Only show if no new candidates are being displayed */}
+      {newCandidates.length === 0 && (isOtherPendingLoading || otherPendingCandidates.length > 0) && (
+        <section className="mb-12" data-testid="other-pending-candidates-section">
+          {!isOtherPendingLoading && (
+            <>
+              <h2 className="text-2xl font-semibold mb-4">Other Pending Candidates</h2>
+              <p className="text-muted-foreground mb-6" data-testid="other-pending-candidates-count">
+                You have {otherPendingCandidates.length} pending candidate
+                {otherPendingCandidates.length > 1 ? "s" : ""} from previous sessions.
+              </p>
+            </>
+          )}
+          <CandidateList
+            candidates={otherPendingCandidates}
+            isLoading={isOtherPendingLoading}
+            selectedIds={otherPendingSelection}
+            onToggleSelection={handleToggleOtherPendingSelection}
+            onSelectAll={handleSelectAllOtherPending}
+            onAccept={handleAcceptCandidate}
+            onEdit={handleEditCandidate}
+            onReject={handleRejectCandidate}
+            disabled={isProcessing}
+            testIdPrefix="other-pending-candidate"
           />
         </section>
       )}

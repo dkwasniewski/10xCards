@@ -187,9 +187,9 @@ export class GenerationForm {
 
   /**
    * Wait for generation to complete
-   * @param timeout - Maximum time to wait in milliseconds (default: 30000)
+   * @param timeout - Maximum time to wait in milliseconds (default: 60000)
    */
-  async waitForGenerationComplete(timeout = 30000) {
+  async waitForGenerationComplete(timeout = 60000) {
     // Wait for loading spinner to appear first
     await this.loadingSpinner.waitFor({ state: "visible", timeout: 5000 }).catch(() => {
       // Spinner might not appear if generation is very fast

@@ -78,13 +78,30 @@ Manually creating high-quality flashcards is time-consuming and discourages use 
   - Multiple front/back suggestions appear.
   - User can accept, edit, or reject each suggestion.
 
-- **ID: US-005**  
-  **Title:** Bulk Review of Candidates  
-  **Description:** An authenticated user sees a list of AI-generated flashcards and can select multiple items to perform bulk accept/edit/reject actions.  
+- **ID: US-005**
+  **Title:** Bulk Review of Candidates
+  **Description:** An authenticated user sees a list of AI-generated flashcards and can select multiple items to perform bulk accept/edit/reject actions.
   **Acceptance Criteria:**
   - List shows front, back, and generation timestamp.
   - User can select multiple items and apply bulk operations.
   - Accepted cards go to the CRUD database, rejected ones are deleted, and edited ones return to the review list.
+
+- **ID: US-005a**
+  **Title:** Hybrid Candidate Management (Multi-Session Support)
+  **Description:** An authenticated user can see and manage candidates from multiple generation sessions without losing access to previous candidates when creating new sessions.
+  **Acceptance Criteria:**
+  - When generating new flashcards, freshly generated candidates appear in a "New Candidates" section.
+  - "Pending Candidates" section shows candidates from the current session (after page refresh).
+  - "Other Pending Candidates" section shows candidates from all previous sessions.
+  - User can accept/edit/reject candidates from any section.
+  - Candidates persist across sessions and page refreshes.
+  - localStorage tracks the current session ID.
+  - No candidates are lost when creating multiple generation sessions.
+  **Technical Implementation:**
+  - `/api/ai-sessions/[sessionId]/candidates` - Get candidates for specific session
+  - `/api/candidates/other-pending?excludeSessionId=X` - Get candidates from other sessions
+  - `/api/candidates/orphaned` - Get orphaned candidates older than 7 days
+  - Hybrid UI approach: Three separate sections for new/current/other candidates
 
 - **ID: US-006**  
   **Title:** Browsing & Searching Flashcards  
