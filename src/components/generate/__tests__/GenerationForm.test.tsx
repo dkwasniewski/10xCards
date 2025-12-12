@@ -352,8 +352,6 @@ describe("GenerationForm", () => {
       // Check a few specific ones to avoid duplicate regex matches
       expect(screen.getByRole("option", { name: /openai.*gpt-4o-mini/i })).toBeInTheDocument();
       expect(screen.getByRole("option", { name: /openai.*gpt-4$/i })).toBeInTheDocument();
-      expect(screen.getByRole("option", { name: /anthropic.*claude-3-sonnet/i })).toBeInTheDocument();
-      expect(screen.getByRole("option", { name: /anthropic.*claude-3-haiku/i })).toBeInTheDocument();
     });
 
     it("should use default model on initial render", () => {

@@ -14,8 +14,8 @@ export const ALLOWED_MODELS = [
   "openai/gpt-4o-mini",
   "openai/gpt-4",
   "openai/gpt-3.5-turbo",
-  "anthropic/claude-3-sonnet",
-  "anthropic/claude-3-haiku",
+  // "anthropic/claude-3-sonnet",
+  // "anthropic/claude-3-haiku",
 ];
 
 export const DEFAULT_MODEL = "openai/gpt-4o-mini";

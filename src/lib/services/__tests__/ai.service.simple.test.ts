@@ -20,11 +20,6 @@ describe("ai.service - Constants and Configuration", () => {
       expect(hasOpenAI).toBe(true);
     });
 
-    it("should contain Anthropic models", () => {
-      const hasAnthropic = ALLOWED_MODELS.some((model) => model.startsWith("anthropic/"));
-      expect(hasAnthropic).toBe(true);
-    });
-
     it("should have model identifiers in correct format", () => {
       ALLOWED_MODELS.forEach((model) => {
         expect(model).toMatch(/^[\w.-]+\/[\w.-]+$/);
@@ -37,11 +32,6 @@ describe("ai.service - Constants and Configuration", () => {
 
     it("should include gpt-4", () => {
       expect(ALLOWED_MODELS).toContain("openai/gpt-4");
-    });
-
-    it("should include claude models", () => {
-      const claudeModels = ALLOWED_MODELS.filter((m) => m.includes("claude"));
-      expect(claudeModels.length).toBeGreaterThan(0);
     });
   });
 

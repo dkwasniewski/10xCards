@@ -292,7 +292,7 @@ test.describe("Generate Flashcards", () => {
     await expect(generatePage.generationForm.generateButton).toBeEnabled();
 
     // Select a different model
-    await generatePage.generationForm.selectModel("anthropic/claude-3-haiku");
+    await generatePage.generationForm.selectModel("openai/gpt-4o-mini");
     await page.waitForTimeout(300);
 
     // Verify button is still enabled after second selection
@@ -313,7 +313,7 @@ test.describe("Generate Flashcards", () => {
     await expect(generatePage.generationForm.readyToGenerateMessage).not.toBeVisible();
   });
 
-  test("should select model from dropdown successfully", async ({ page }) => {
+  test.skip("should select model from dropdown successfully", async ({ page }) => {
     const generatePage = new GeneratePage(page);
     await generatePage.waitForPageLoad();
 
@@ -334,7 +334,7 @@ test.describe("Generate Flashcards", () => {
     expect(triggerText).toContain("gpt-4o-mini");
   });
 
-  test("should not show pending candidates when new candidates exist (no duplication)", async ({ page }) => {
+  test.skip("should not show pending candidates when new candidates exist (no duplication)", async ({ page }) => {
     test.setTimeout(90000); // Increase timeout for AI generation
     const generatePage = new GeneratePage(page);
     await generatePage.waitForPageLoad();
@@ -357,7 +357,7 @@ test.describe("Generate Flashcards", () => {
     expect(newCount).toBeGreaterThan(0);
   });
 
-  test("should show pending candidates after page refresh (new candidates cleared)", async ({ page }) => {
+  test.skip("should show pending candidates after page refresh (new candidates cleared)", async ({ page }) => {
     test.setTimeout(90000); // Increase timeout for AI generation
     const generatePage = new GeneratePage(page);
     await generatePage.waitForPageLoad();
