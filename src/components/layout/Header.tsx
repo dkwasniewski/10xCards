@@ -143,17 +143,38 @@ export function Header({ user }: HeaderProps) {
                   <a href="/generate" className="cursor-pointer">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
+                      width="32"
+                      height="32"
+                      viewBox="0 0 32 32"
                       fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="mr-2"
+                      className="text-primary"
                     >
-                      <path d="M12 5v14M5 12h14" />
+                      {/* Back card - rotated 12 degrees */}
+                      <rect
+                        x="9"
+                        y="7"
+                        width="18"
+                        height="13"
+                        rx="2"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        opacity="0.25"
+                        transform="rotate(-12 18 13.5)"
+                      />
+                      {/* Middle card - rotated 6 degrees */}
+                      <rect
+                        x="7"
+                        y="9"
+                        width="18"
+                        height="13"
+                        rx="2"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        opacity="0.5"
+                        transform="rotate(-6 16 15.5)"
+                      />
+                      {/* Front card - no rotation */}
+                      <rect x="5" y="11" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
                     </svg>
                     Generate
                   </a>
@@ -162,17 +183,38 @@ export function Header({ user }: HeaderProps) {
                   <a href="/flashcards" className="cursor-pointer" data-testid="dropdown-my-flashcards">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
+                      width="32"
+                      height="32"
+                      viewBox="0 0 32 32"
                       fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="mr-2"
+                      className="text-primary"
                     >
-                      <rect x="2" y="4" width="20" height="16" rx="2" />
+                      {/* Back card - rotated 12 degrees */}
+                      <rect
+                        x="9"
+                        y="7"
+                        width="18"
+                        height="13"
+                        rx="2"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        opacity="0.25"
+                        transform="rotate(-12 18 13.5)"
+                      />
+                      {/* Middle card - rotated 6 degrees */}
+                      <rect
+                        x="7"
+                        y="9"
+                        width="18"
+                        height="13"
+                        rx="2"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        opacity="0.5"
+                        transform="rotate(-6 16 15.5)"
+                      />
+                      {/* Front card - no rotation */}
+                      <rect x="5" y="11" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="2" />
                     </svg>
                     My Flashcards
                   </a>

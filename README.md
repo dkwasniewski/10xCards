@@ -38,7 +38,7 @@ A web application for rapid generation and management of educational flashcards,
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/your-org/10xCards.git
+   git clone https://github.com/dkwasniewski/10xCards
    cd 10xCards
    ```
 
@@ -117,10 +117,12 @@ The application is configured for deployment to **Cloudflare Pages** with automa
 ## User Flow
 
 ### For New Visitors
+
 - Landing page at `/` provides product overview with features and CTAs
 - Users can sign up via `/register` or sign in via `/login`
 
 ### For Authenticated Users
+
 - Root path `/` redirects to `/generate` (main generation workflow)
 - Full access to Generate, My Flashcards, and account management features
 
@@ -134,12 +136,12 @@ The application is configured for deployment to **Cloudflare Pages** with automa
 - AI-powered flashcard generation from pasted text (1,000–10,000 characters)
 - Manual creation and editing of individual flashcards (front/back length validation)
 - Persistent CRUD interface for flashcards with text search (front/back)
-- Event logging (create/edit, source, sessions, timestamps)
-- Spaced-repetition session view using external algorithm
 
 ### Out of Scope (for MVP)
 
 - Custom spaced-repetition algorithms (Anki, SuperMemo)
+- Event logging (create/edit, source, sessions, timestamps)
+- Spaced-repetition session view using external algorithm
 - Importing flashcards from PDF, DOCX, or other formats
 - Sharing or collaborating on flashcard sets
 - Mobile applications
