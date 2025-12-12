@@ -5,8 +5,8 @@
 - **User** (`users`)
 - **AI Session** (`ai_generation_sessions`)
 - **Flashcard** (`flashcards`)
-- **Review** (`reviews`)
-- **Learning Session** (virtual, not stored)
+- **Review** (`reviews`) **[OPTIONAL - for Learning Session feature]**
+- **Learning Session** (virtual, not stored) **[OPTIONAL FEATURE]**
 - **Event Log** (`event_logs`)
 
 ## 2. Endpoints
@@ -170,7 +170,9 @@
   - Response 201: review object (includes `next_due`)
   - Errors: 400, 404
 
-### Learning Session
+### Learning Session **[OPTIONAL FEATURE]**
+
+> **Note:** Learning Session endpoints are optional and not required for MVP. They can be implemented in a future iteration.
 
 - GET `/learning-sessions`
   - Description: Fetch next due flashcards for spaced repetition
@@ -178,6 +180,7 @@
     ```json
     [{"flashcard_id":"uuid","front":""}, ...]
     ```
+  - Status: ⏸️ Optional - Not required for MVP
 
 - POST `/learning-sessions/responses`
   - Description: Submit rating in learning flow
@@ -186,6 +189,7 @@
     [{"flashcard_id":"uuid","rating":1-5}, ...]
     ```
   - Response 200: updated reviews
+  - Status: ⏸️ Optional - Not required for MVP
 
 ### Event Logs (Internal)
 

@@ -2,7 +2,7 @@
 
 ## 1. Product Overview
 
-10xCards is a web application for quickly generating and managing educational flashcards. With AI integration (Openrouter.ai) and a simple user interface, it enables creating flashcards from pasted text or manually, organizing them, and leveraging a pre-built spaced-repetition algorithm.
+10xCards is a web application for quickly generating and managing educational flashcards. With AI integration (Openrouter.ai) and a simple user interface, it enables creating flashcards from pasted text or manually, organizing them, and optionally leveraging a pre-built spaced-repetition algorithm (optional feature, not required for MVP).
 
 ## 2. User Problem
 
@@ -17,7 +17,7 @@ Manually creating high-quality flashcards is time-consuming and discourages use 
 - Persistent storage of accepted flashcards in the database
 - CRUD view (browse, search, edit, delete) for saved flashcards
 - Event logging (creation, edit, AI/manual source, sessions, timestamps)
-- Integration with an existing spaced-repetition algorithm (external package)
+- Integration with an existing spaced-repetition algorithm (external package) **[OPTIONAL FEATURE]**
 
 ## 4. Product Scope
 
@@ -29,10 +29,11 @@ Manually creating high-quality flashcards is time-consuming and discourages use 
 - Simple CRUD interface for flashcards
 - Text search on front/back fields
 - Event logging
-- "Study Session" view using an external spaced-repetition algorithm (see US-010)
+- "Study Session" view using an external spaced-repetition algorithm (see US-010) **[OPTIONAL FEATURE]**
 
 ### Out of Scope for MVP
 
+- Study Session view with spaced-repetition algorithm (US-010) - **OPTIONAL, can be implemented in future iteration**
 - Custom spaced-repetition algorithms (Anki, SuperMemo)
 - Importing file formats (PDF, DOCX)
 - Sharing decks between users
@@ -97,7 +98,7 @@ Manually creating high-quality flashcards is time-consuming and discourages use 
   - Candidates persist across sessions and page refreshes.
   - localStorage tracks the current session ID.
   - No candidates are lost when creating multiple generation sessions.
-  **Technical Implementation:**
+    **Technical Implementation:**
   - `/api/ai-sessions/[sessionId]/candidates` - Get candidates for specific session
   - `/api/candidates/other-pending?excludeSessionId=X` - Get candidates from other sessions
   - `/api/candidates/orphaned` - Get orphaned candidates older than 7 days

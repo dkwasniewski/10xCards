@@ -30,13 +30,13 @@ This specification defines the complete authentication system architecture for 1
 - **RESOLUTION**: US-004 takes precedence - system generates **multiple** candidates
 - **AUTH SPEC UPDATED**: Assumes multiple flashcard generation
 
-#### 3. Study Session MVP Status (Scope Conflict)
+#### 3. Study Session MVP Status (Scope Conflict) ✅ UPDATED
 
-- **PRD Line 32**: Study Session included in MVP scope
-- **PRD US-010**: Detailed study session requirements
+- **PRD Line 32**: Study Session included in MVP scope **[NOW OPTIONAL]**
+- **PRD US-010**: Detailed study session requirements **[NOW OPTIONAL]**
 - **Auth Spec Original**: Marked `/study` route as "future"
-- **RESOLUTION**: Study session IS part of MVP
-- **AUTH SPEC UPDATED**: `/study` route marked as protected, MVP scope
+- **RESOLUTION**: Study session is **OPTIONAL** and not required for MVP. Can be implemented in future iteration.
+- **AUTH SPEC UPDATED**: `/study` route marked as optional/future feature
 
 ### 🟡 TECHNICAL CONFLICTS RESOLVED:
 
@@ -86,7 +86,7 @@ This specification defines the complete authentication system architecture for 1
 Before implementing this specification, the following must be clarified:
 
 1. ✅ **RESOLVED**: AI generates multiple candidates (not single)
-2. ✅ **RESOLVED**: Study session is MVP (not future)
+2. ✅ **RESOLVED**: Study session is **OPTIONAL** (not required for MVP, can be future)
 3. ✅ **RESOLVED**: Supabase manages cookies automatically
 4. ✅ **RESOLVED**: Landing page `/` redirects to `/auth/login` (unauthenticated) or `/generate` (authenticated)
 5. ✅ **RESOLVED**: Reviews table NOT needed - removed from documentation
@@ -98,7 +98,7 @@ Before implementing this specification, the following must be clarified:
 
 1. **AI Generation**: Produces **multiple** flashcard candidates per session (US-004), not single flashcard
 2. **Landing Page Access**: Per US-001 line 53, unauthenticated users should NOT access any pages except login/registration
-3. **Study Session**: Included in MVP scope (US-010) - needs route protection
+3. **Study Session**: **OPTIONAL** feature (US-010) - not required for MVP, can be implemented in future iteration
 4. **Reviews Table**: Not mentioned in PRD - RLS policies for this table should be removed or clarified
 
 ---
@@ -1494,7 +1494,7 @@ export default defineConfig({
 
 - `/generate` - Flashcard generation (AI-powered)
 - `/flashcards` - My flashcards CRUD (**includes button to open manual creation modal**)
-- `/study` - Study session (**INCLUDED IN MVP per PRD US-010**, not future)
+- `/study` - Study session (**OPTIONAL** feature per PRD US-010, not required for MVP)
 - All `/api/*` endpoints (except auth endpoints)
 
 **Redirect Logic:**
@@ -2139,17 +2139,17 @@ supabase db test
 
 ### 8.5 Page Route Summary
 
-| Route                   | Access                | Purpose                                                      |
-| ----------------------- | --------------------- | ------------------------------------------------------------ |
-| `/`                     | **Public (CONFLICT)** | Landing page - **PRD US-001 line 53 suggests auth required** |
-| `/auth/login`           | Public                | Login page                                                   |
-| `/auth/register`        | Public                | Registration page                                            |
-| `/auth/forgot-password` | Public                | Forgot password page                                         |
-| `/auth/reset-password`  | Public                | Reset password page                                          |
-| `/auth/verify-email`    | Public                | Email verification confirmation                              |
-| `/generate`             | Protected             | Flashcard generation                                         |
-| `/flashcards`           | Protected             | My flashcards CRUD                                           |
-| `/study`                | Protected             | **Study session (MVP per US-010, not future)**               |
+| Route                   | Access                | Purpose                                                       |
+| ----------------------- | --------------------- | ------------------------------------------------------------- |
+| `/`                     | **Public (CONFLICT)** | Landing page - **PRD US-001 line 53 suggests auth required**  |
+| `/auth/login`           | Public                | Login page                                                    |
+| `/auth/register`        | Public                | Registration page                                             |
+| `/auth/forgot-password` | Public                | Forgot password page                                          |
+| `/auth/reset-password`  | Public                | Reset password page                                           |
+| `/auth/verify-email`    | Public                | Email verification confirmation                               |
+| `/generate`             | Protected             | Flashcard generation                                          |
+| `/flashcards`           | Protected             | My flashcards CRUD                                            |
+| `/study`                | Protected             | **Study session (OPTIONAL per US-010, not required for MVP)** |
 
 ---
 
